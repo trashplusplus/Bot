@@ -9,7 +9,7 @@ public class Inv
 	private ArrayList<Item> allItems = new ArrayList<Item>();
 
 	private static int balance;
-	private static Random ran;
+	private static Random ran = new Random();
 
 	public Inv()
 	{
@@ -39,7 +39,6 @@ public class Inv
 
 	public Item findItem()
 	{
-		Random ran = new Random();
 		int randomNumber = ran.nextInt(allItems.size());
 		Item currentItem = allItems.get(randomNumber);
 		inventory.add(currentItem);
