@@ -36,7 +36,7 @@ public class Bot extends TelegramLongPollingBot{
 		}catch (TelegramApiRequestException e) {
 			e.printStackTrace(); 
 		}
-			//test
+			
 		
 	}
 	
@@ -67,10 +67,6 @@ public class Bot extends TelegramLongPollingBot{
 		
 		}
 		
-		
-	public void registerUniqueUser() {
-		
-	}
 	
 	//метод для приема сообщений и обновлений
 	public void onUpdateReceived(Update update) {
@@ -86,11 +82,14 @@ public class Bot extends TelegramLongPollingBot{
 			case "/start":
 				long id = message.getChatId();
 
-				sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inventory - посмотреть инвентарь \n" + "/find - искать новый предмет"); 
+				sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inv - посмотреть инвентарь \n" + "/find - искать новый предмет"); 
 						
 				break;
 				
-			case "/inventory":
+			case "/inv":
+				if(inv.getInvSize() != 0) {
+					
+			
 				sendMsg(message, "Ваш инвентарь: ");
 	
 				
@@ -98,7 +97,9 @@ public class Bot extends TelegramLongPollingBot{
 
 					sendMsg(message, "\n" + inv.showInventory() + "\n");
 	
-				
+				}else {
+					sendMsg(message, "Ваш инвентарь пуст ");
+				}
 				break;
 				
 			case "/find":
@@ -106,6 +107,7 @@ public class Bot extends TelegramLongPollingBot{
 				Item i = inv.findItem();
 				sendMsg(message, "Вы нашли: " + i.getTitle() + " |" + i.getRarity() + "| " + 
 				i.getCost() + "$");
+				
 				System.out.println("Взывано /find: " + co + " " + message.getChatId());
 				System.out.println("Текстик: " + message.getText());
 				co++;
@@ -113,9 +115,9 @@ public class Bot extends TelegramLongPollingBot{
 				
 				
 				break;
-			case "/pidoras":
+			case "/balance":
 				
-				sendMsg(message, "Роман Орел поставь хорошую оценку пж");
+				sendMsg(message, "Ваш баланс: " + inv.getBalance() + "$");
 				
 				break;
 			
@@ -123,7 +125,21 @@ public class Bot extends TelegramLongPollingBot{
 				sendMsg(message, "Неизвестная команда");
 				break;
 				
-		
+				/*
+				 * TODO LIST
+				 * 
+				 * 
+				 * Нужно сделать для каждого пользователя уникальный экземпляр Inv
+				 * чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
+				 * message.getChatId() - возвращает ID вшитый в телеграм аккаунт
+				 * 
+				 * Возможно нужно написать класс User и какой-то контейнер хранить, чтобы перед добавлением нового пользователя пробегаться
+				 * по всем юзерам и если такого нет, добавлять его.
+				 * 
+				 * Добавить команду /allplayers чтобы считать всех участников игры
+				 * 
+				 * Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
+				 */
 					
 					
 			}
@@ -165,6 +181,7 @@ public class Bot extends TelegramLongPollingBot{
 	public String getBotToken() {
 	
 		return "1286692994:AAFxHRBuJ1FIzQFBizgPHrng37ctoFtzLLY";
+		//токен регается через бот самого тг BotFather, там же пишется описание, название и токен
 	}
 
 }

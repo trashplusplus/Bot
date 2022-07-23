@@ -55,6 +55,8 @@ public class Inv {
 		return inventory.size();
 	}
 	
-	
+	public int getBalance() {
+		return balance;
+	}
 	
 }
