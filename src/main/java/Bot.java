@@ -1,13 +1,10 @@
 import java.io.IOException;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -22,8 +19,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 public class Bot extends TelegramLongPollingBot
 {
-	Inv inv = new Inv();
-	int co = 0;
+	private Map<Long, Player> players = new HashMap<>();
 
 	public static void main(String[] args) throws IOException
 	{
@@ -74,11 +70,16 @@ public class Bot extends TelegramLongPollingBot
 		if (message != null && message.hasText())
 		{
 			System.out.println("Текстик: " + message.getText());
+
+			Inventory inv = null;
+
 			switch (message.getText())
 			{
 				case "/start":
 
 					long id = message.getChatId();
+
+					players.put(id, new Player(id));
 
 					sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inv - посмотреть инвентарь \n" + "/find - искать новый предмет");
 
@@ -86,17 +87,15 @@ public class Bot extends TelegramLongPollingBot
 
 				case "/inv":
 
+					inv = players.get(message.getChatId()).getInventory();
+
 					if (inv.getInvSize() != 0)
 					{
-
-
 						sendMsg(message, "Ваш инвентарь: ");
-
 
 						//sendMsg(message, "\u26BD");
 
 						sendMsg(message, "\n" + inv.showInventory() + "\n");
-
 					}
 					else
 					{
@@ -107,15 +106,15 @@ public class Bot extends TelegramLongPollingBot
 
 				case "/find":
 
+					inv = players.get(message.getChatId()).getInventory();
 					Item i = inv.findItem();
+
 					/* sendMsg(message, "Вы нашли: " + i.getTitle() + " |" + i.getRarity() + "| " +
 							i.getCost() + "$"); */
 
 					sendMsg(message, String.format("Вы нашли: %s", i.toString()));
 
-					System.out.println("Взывано /find: " + co + " " + message.getChatId());
 					System.out.println("Текстик: " + message.getText());
-					co++;
 
 					break;
 
