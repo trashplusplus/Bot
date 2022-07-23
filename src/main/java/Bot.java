@@ -1,9 +1,6 @@
 import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -71,7 +68,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			System.out.println("Текстик: " + message.getText());
 
-			Inventory inv = null;
+			Inventory inv;
 
 			switch (message.getText())
 			{
@@ -79,8 +76,16 @@ public class Bot extends TelegramLongPollingBot
 
 					long id = message.getChatId();
 
-					players.put(id, new Player(id));
-
+				//Проверка на ID, чтобы нажав два раза /start не создавался новый пользователь
+					if(players.isEmpty()){
+						players.put(id, new Player(id));
+					}else{
+						for(Map.Entry<Long, Player> pair : players.entrySet()){
+							if (pair.getKey() != id){
+								players.put(id, new Player(id));
+							}
+						}
+					}
 					sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inv - посмотреть инвентарь \n" + "/find - искать новый предмет");
 
 					break;
@@ -96,6 +101,7 @@ public class Bot extends TelegramLongPollingBot
 						//sendMsg(message, "\u26BD");
 
 						sendMsg(message, "\n" + inv.showInventory() + "\n");
+						sendMsg(message, "Всего предметов: " + inv.getInvSize());
 					}
 					else
 					{
@@ -108,22 +114,40 @@ public class Bot extends TelegramLongPollingBot
 
 					inv = players.get(message.getChatId()).getInventory();
 					Item i = inv.findItem();
-
-					/* sendMsg(message, "Вы нашли: " + i.getTitle() + " |" + i.getRarity() + "| " +
-							i.getCost() + "$"); */
-
 					sendMsg(message, String.format("Вы нашли: %s", i.toString()));
-
 					System.out.println("Текстик: " + message.getText());
 
 					break;
 
 				case "/balance":
-
+					inv = players.get(message.getChatId()).getInventory();
 					sendMsg(message, "Ваш баланс: " + inv.getBalance() + "$");
+					break;
+				case "/stats":
+					sendMsg(message, "Всего игроков: " + players.size());
+					break;
+				case "/sell":
+					//на /sell ошибка
+					int itemSellIndex = 0;
+					inv = players.get(message.getChatId()).getInventory();
+					sendMsg(message, "Предметы, доступные для продажи: ");
+
+					for(int j = 0; j < inv.getInvSize(); j++){
+						sendMsg(message, "Предмет" + "|"  + itemSellIndex + "|: " + inv.getItem(j) );
+						itemSellIndex++;
+					}
+
+					//не работает, идите в пизду
+					sendMsg(message, "Введите ID предмета, который вы хотите продать: ");
+
+					String sellID = message.getText();
+					inv.sellItem(Integer.parseInt(sellID));
+
+
+					sendMsg(message, "Предмет успешно продан");
+
 
 					break;
-
 				default:
 					sendMsg(message, "Неизвестная команда");
 					break;
@@ -169,6 +193,7 @@ public class Bot extends TelegramLongPollingBot
 		keyboardFirstRow.add(new KeyboardButton("/find"));
 		//добавили в спиок всех кнопок
 		keyboardRowList.add(keyboardFirstRow);
+
 	}
 
 
