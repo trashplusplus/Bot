@@ -20,168 +20,168 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
-public class Bot extends TelegramLongPollingBot{
-		
+public class Bot extends TelegramLongPollingBot
+{
 	Inv inv = new Inv();
 	int co = 0;
-	
-	
-	public static void main(String[] args) throws IOException {
-		
-		ApiContextInitializer.init(); //инициализация API
-		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(); //создание объекта в API
-		try {
+
+	public static void main(String[] args) throws IOException
+	{
+		ApiContextInitializer.init(); //РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ API
+		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(); //СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РІ API
+		try
+		{
 			telegramBotsApi.registerBot(new Bot());
-			
-		}catch (TelegramApiRequestException e) {
-			e.printStackTrace(); 
+
 		}
-			
-		
+		catch (TelegramApiRequestException e)
+		{
+			e.printStackTrace();
+		}
 	}
-	
-		//что бот будет отвечать
-		public void sendMsg(Message message, String text) {
-		
-			
-			
-			SendMessage sendMessage = new SendMessage();
-			sendMessage.enableMarkdown(true);
-			
-			//чат айди, чтобы было понятно кому отвечать
-			sendMessage.setChatId(message.getChatId());
-			
-			//конкретно, на какое сообщение ответить
-			//sendMessage.setReplyToMessageId(message.getMessageId());
-			
-			sendMessage.setText(text);
-			try {
-				//добавили кнопку и поместили в нее сообщение
-				setButtons(sendMessage);
-				sendMessage(sendMessage);
-			} catch (TelegramApiException e) {
-				e.printStackTrace();
-			}
-			
-			
-		
+
+	//С‡С‚Рѕ Р±РѕС‚ Р±СѓРґРµС‚ РѕС‚РІРµС‡Р°С‚СЊ
+	public void sendMsg(Message message, String text)
+	{
+		SendMessage sendMessage = new SendMessage();
+		sendMessage.enableMarkdown(true);
+
+		//С‡Р°С‚ Р°Р№РґРё, С‡С‚РѕР±С‹ Р±С‹Р»Рѕ РїРѕРЅСЏС‚РЅРѕ РєРѕРјСѓ РѕС‚РІРµС‡Р°С‚СЊ
+		sendMessage.setChatId(message.getChatId());
+
+		//РєРѕРЅРєСЂРµС‚РЅРѕ, РЅР° РєР°РєРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РѕС‚РІРµС‚РёС‚СЊ
+		//sendMessage.setReplyToMessageId(message.getMessageId());
+
+		sendMessage.setText(text);
+		try
+		{
+			//РґРѕР±Р°РІРёР»Рё РєРЅРѕРїРєСѓ Рё РїРѕРјРµСЃС‚РёР»Рё РІ РЅРµРµ СЃРѕРѕР±С‰РµРЅРёРµ
+			setButtons(sendMessage);
+			sendMessage(sendMessage);
 		}
-		
-	
-	//метод для приема сообщений и обновлений
-	public void onUpdateReceived(Update update) {
-		
+		catch (TelegramApiException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+
+	//РјРµС‚РѕРґ РґР»СЏ РїСЂРёРµРјР° СЃРѕРѕР±С‰РµРЅРёР№ Рё РѕР±РЅРѕРІР»РµРЅРёР№
+	public void onUpdateReceived(Update update)
+	{
 		Message message = update.getMessage();
-	
-		if (message != null && message.hasText()){
-			
-			System.out.println("Текстик: " + message.getText());
-			switch(message.getText()) {
-			
-				
-			case "/start":
-				long id = message.getChatId();
 
-				sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inv - посмотреть инвентарь \n" + "/find - искать новый предмет"); 
-						
-				break;
-				
-			case "/inv":
-				if(inv.getInvSize() != 0) {
-					
-			
-				sendMsg(message, "Ваш инвентарь: ");
-	
-				
-				//sendMsg(message, "\u26BD");
+		if (message != null && message.hasText())
+		{
+			System.out.println("РўРµРєСЃС‚РёРє: " + message.getText());
+			switch (message.getText())
+			{
+				case "/start":
 
-					sendMsg(message, "\n" + inv.showInventory() + "\n");
-	
-				}else {
-					sendMsg(message, "Ваш инвентарь пуст ");
-				}
-				break;
-				
-			case "/find":
+					long id = message.getChatId();
 
-				Item i = inv.findItem();
-				sendMsg(message, "Вы нашли: " + i.getTitle() + " |" + i.getRarity() + "| " + 
-				i.getCost() + "$");
-				
-				System.out.println("Взывано /find: " + co + " " + message.getChatId());
-				System.out.println("Текстик: " + message.getText());
-				co++;
-				
-				
-				
-				break;
-			case "/balance":
-				
-				sendMsg(message, "Ваш баланс: " + inv.getBalance() + "$");
-				
-				break;
-			
-			default: 
-				sendMsg(message, "Неизвестная команда");
-				break;
-				
+					sendMsg(message, "Р‘РѕС‚ СЃРѕРґРµСЂР¶РёС‚ СЃР»РµРґСѓСЋС‰РёРµ РєРѕРјР°РЅРґС‹: \n /help - РїРѕРјРѕС‰СЊ \n" + "/inv - РїРѕСЃРјРѕС‚СЂРµС‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ \n" + "/find - РёСЃРєР°С‚СЊ РЅРѕРІС‹Р№ РїСЂРµРґРјРµС‚");
+
+					break;
+
+				case "/inv":
+
+					if (inv.getInvSize() != 0)
+					{
+
+
+						sendMsg(message, "Р’Р°С€ РёРЅРІРµРЅС‚Р°СЂСЊ: ");
+
+
+						//sendMsg(message, "\u26BD");
+
+						sendMsg(message, "\n" + inv.showInventory() + "\n");
+
+					}
+					else
+					{
+						sendMsg(message, "Р’Р°С€ РёРЅРІРµРЅС‚Р°СЂСЊ РїСѓСЃС‚ ");
+					}
+
+					break;
+
+				case "/find":
+
+					Item i = inv.findItem();
+					/* sendMsg(message, "Р’С‹ РЅР°С€Р»Рё: " + i.getTitle() + " |" + i.getRarity() + "| " +
+							i.getCost() + "$"); */
+
+					sendMsg(message, String.format("Р’С‹ РЅР°С€Р»Рё: %s", i.toString()));
+
+					System.out.println("Р’Р·С‹РІР°РЅРѕ /find: " + co + " " + message.getChatId());
+					System.out.println("РўРµРєСЃС‚РёРє: " + message.getText());
+					co++;
+
+					break;
+
+				case "/balance":
+
+					sendMsg(message, "Р’Р°С€ Р±Р°Р»Р°РЅСЃ: " + inv.getBalance() + "$");
+
+					break;
+
+				default:
+					sendMsg(message, "РќРµРёР·РІРµСЃС‚РЅР°СЏ РєРѕРјР°РЅРґР°");
+					break;
+
 				/*
 				 * TODO LIST
-				 * 
-				 * 
-				 * Нужно сделать для каждого пользователя уникальный экземпляр Inv
-				 * чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
-				 * message.getChatId() - возвращает ID вшитый в телеграм аккаунт
-				 * 
-				 * Возможно нужно написать класс User и какой-то контейнер хранить, чтобы перед добавлением нового пользователя пробегаться
-				 * по всем юзерам и если такого нет, добавлять его.
-				 * 
-				 * Добавить команду /allplayers чтобы считать всех участников игры
-				 * 
-				 * Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
+				 *
+				 *
+				 * РќСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ РґР»СЏ РєР°Р¶РґРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СѓРЅРёРєР°Р»СЊРЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ Inv
+				 * С‡С‚РѕР±С‹ СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏР»СЃСЏ ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, Р° РїРѕС‚РѕРј РµСЃР»Рё РµРіРѕ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ С‚Рѕ РёРЅСЃС‚Р°РЅС†РёСЂРѕРІР°С‚СЊ РґР»СЏ РЅРµРіРѕ РЅРѕРІС‹Р№ ID
+				 * message.getChatId() - РІРѕР·РІСЂР°С‰Р°РµС‚ ID РІС€РёС‚С‹Р№ РІ С‚РµР»РµРіСЂР°Рј Р°РєРєР°СѓРЅС‚
+				 *
+				 * Р’РѕР·РјРѕР¶РЅРѕ РЅСѓР¶РЅРѕ РЅР°РїРёСЃР°С‚СЊ РєР»Р°СЃСЃ User Рё РєР°РєРѕР№-С‚Рѕ РєРѕРЅС‚РµР№РЅРµСЂ С…СЂР°РЅРёС‚СЊ, С‡С‚РѕР±С‹ РїРµСЂРµРґ РґРѕР±Р°РІР»РµРЅРёРµРј РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РїСЂРѕР±РµРіР°С‚СЊСЃСЏ
+				 * РїРѕ РІСЃРµРј СЋР·РµСЂР°Рј Рё РµСЃР»Рё С‚Р°РєРѕРіРѕ РЅРµС‚, РґРѕР±Р°РІР»СЏС‚СЊ РµРіРѕ.
+				 *
+				 * Р”РѕР±Р°РІРёС‚СЊ РєРѕРјР°РЅРґСѓ /allplayers С‡С‚РѕР±С‹ СЃС‡РёС‚Р°С‚СЊ РІСЃРµС… СѓС‡Р°СЃС‚РЅРёРєРѕРІ РёРіСЂС‹
+				 *
+				 * РќСѓ Рё СЃР°РјРѕРµ СЃР»РѕР¶РЅРѕРµ РїРѕРєР° С‡С‚Рѕ, СЌС‚Рѕ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ /find РёС‚СЊ РїСЂРµРґРјРµС‚С‹ СЂР°Р· РІ 20 РјРёРЅСѓС‚ РЅР°РїСЂРёРјРµСЂ, РїСЂРѕРІРµСЂСЏС‚СЊ РґР°С‚Сѓ РЅСѓР¶РЅРѕ Рё РІСЂРµРјСЏ
 				 */
-					
-					
 			}
 		}
-		
 	}
-	
-	//кнопки
-	
-	public void setButtons(SendMessage sendMessage) {
-		//инициаллизация клавиатуры 
+
+	//РєРЅРѕРїРєРё
+
+	public void setButtons(SendMessage sendMessage)
+	{
+		//РёРЅРёС†РёР°Р»Р»РёР·Р°С†РёСЏ РєР»Р°РІРёР°С‚СѓСЂС‹ 
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-		//установка разметки
+		//СѓСЃС‚Р°РЅРѕРІРєР° СЂР°Р·РјРµС‚РєРё
 		sendMessage.setReplyMarkup(replyKeyboardMarkup);
-		//вывод клавиатуры (видел или нет)
+		//РІС‹РІРѕРґ РєР»Р°РІРёР°С‚СѓСЂС‹ (РІРёРґРµР» РёР»Рё РЅРµС‚)
 		replyKeyboardMarkup.setSelective(true);
 		replyKeyboardMarkup.setResizeKeyboard(true);
-		//скрывать или не скрывать после использования
+		//СЃРєСЂС‹РІР°С‚СЊ РёР»Рё РЅРµ СЃРєСЂС‹РІР°С‚СЊ РїРѕСЃР»Рµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ
 		replyKeyboardMarkup.setOneTimeKeyboard(true);
-		
+
 		List<KeyboardRow> keyboardRowList = new ArrayList<>();
 		KeyboardRow keyboardFirstRow = new KeyboardRow();
-		
-		//добавили новую кнопку в первый ряд
+
+		//РґРѕР±Р°РІРёР»Рё РЅРѕРІСѓСЋ РєРЅРѕРїРєСѓ РІ РїРµСЂРІС‹Р№ СЂСЏРґ
 		keyboardFirstRow.add(new KeyboardButton("/inventory"));
 		keyboardFirstRow.add(new KeyboardButton("/find"));
-		//добавили в спиок всех кнопок
+		//РґРѕР±Р°РІРёР»Рё РІ СЃРїРёРѕРє РІСЃРµС… РєРЅРѕРїРѕРє
 		keyboardRowList.add(keyboardFirstRow);
-		
 	}
-	
 
-	public String getBotUsername() {
-		
+
+	public String getBotUsername()
+	{
 		return "Needle";
 	}
 
-	 
-	public String getBotToken() {
-	
-		return "1286692994:AAFxHRBuJ1FIzQFBizgPHrng37ctoFtzLLY";
-		//токен регается через бот самого тг BotFather, там же пишется описание, название и токен
-	}
 
+	public String getBotToken()
+	{
+		return "1286692994:AAFxHRBuJ1FIzQFBizgPHrng37ctoFtzLLY";
+		//С‚РѕРєРµРЅ СЂРµРіР°РµС‚СЃСЏ С‡РµСЂРµР· Р±РѕС‚ СЃР°РјРѕРіРѕ С‚Рі BotFather, С‚Р°Рј Р¶Рµ РїРёС€РµС‚СЃСЏ РѕРїРёСЃР°РЅРёРµ, РЅР°Р·РІР°РЅРёРµ Рё С‚РѕРєРµРЅ
+	}
 }

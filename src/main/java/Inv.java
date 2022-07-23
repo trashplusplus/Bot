@@ -3,60 +3,61 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class Inv {
-	
-
+public class Inv
+{
 	private ArrayList<Item> inventory = new ArrayList<Item>();
 	private ArrayList<Item> allItems = new ArrayList<Item>();
 
 	private static int balance;
 	private static Random ran;
-	
-	public Inv(){
+
+	public Inv()
+	{
 		balance = 0;
-		allItems.add(new Item("Лопата", 'О', 20));
-		allItems.add(new Item("Поисковый фонарь", 'Р', 300));
-		allItems.add(new Item("Подвеска \"Nosebleed\"", 'Р', 1000));
-		allItems.add(new Item("Струны", 'О', 35));
-		allItems.add(new Item("Футболка \"Drain\"", 'О', 55));
-		allItems.add(new Item("Банан", 'О', 5));
-		allItems.add(new Item("Чашка \"Египет\"", 'Р', 75));
-		allItems.add(new Item("Носки", 'О', 5));
-		allItems.add(new Item("Ручка", 'О', 5));
-		allItems.add(new Item("Баллончик с краской", 'О', 25));
-		allItems.add(new Item("Платок", 'О', 10));
-		allItems.add(new Item("Пачка сигарет", 'О', 5));
-		allItems.add(new Item("Синий браслет", 'О', 10));
-		allItems.add(new Item("Красный браслет", 'О', 10));
-		allItems.add(new Item("Желтый браслет", 'О', 10));
-		allItems.add(new Item("Зеленый браслет", 'О', 10));
-		allItems.add(new Item("Браслет \"Орион\"", 'О', 60));
-		allItems.add(new Item("Браслет \"Сириус\"", 'О', 65));
-		allItems.add(new Item("Зубная щетка", 'О', 5));
-		allItems.add(new Item("Шоколадка", 'О', 10));
-		allItems.add(new Item("Рюкзак", 'Р', 700));
+		allItems.add(new Item("Р›РѕРїР°С‚Р°", 'Рћ', 20));
+		allItems.add(new Item("РџРѕРёСЃРєРѕРІС‹Р№ С„РѕРЅР°СЂСЊ", 'Р ', 300));
+		allItems.add(new Item("РџРѕРґРІРµСЃРєР° \"Nosebleed\"", 'Р ', 1000));
+		allItems.add(new Item("РЎС‚СЂСѓРЅС‹", 'Рћ', 35));
+		allItems.add(new Item("Р¤СѓС‚Р±РѕР»РєР° \"Drain\"", 'Рћ', 55));
+		allItems.add(new Item("Р‘Р°РЅР°РЅ", 'Рћ', 5));
+		allItems.add(new Item("Р§Р°С€РєР° \"Р•РіРёРїРµС‚\"", 'Р ', 75));
+		allItems.add(new Item("РќРѕСЃРєРё", 'Рћ', 5));
+		allItems.add(new Item("Р СѓС‡РєР°", 'Рћ', 5));
+		allItems.add(new Item("Р‘Р°Р»Р»РѕРЅС‡РёРє СЃ РєСЂР°СЃРєРѕР№", 'Рћ', 25));
+		allItems.add(new Item("РџР»Р°С‚РѕРє", 'Рћ', 10));
+		allItems.add(new Item("РџР°С‡РєР° СЃРёРіР°СЂРµС‚", 'Рћ', 5));
+		allItems.add(new Item("РЎРёРЅРёР№ Р±СЂР°СЃР»РµС‚", 'Рћ', 10));
+		allItems.add(new Item("РљСЂР°СЃРЅС‹Р№ Р±СЂР°СЃР»РµС‚", 'Рћ', 10));
+		allItems.add(new Item("Р–РµР»С‚С‹Р№ Р±СЂР°СЃР»РµС‚", 'Рћ', 10));
+		allItems.add(new Item("Р—РµР»РµРЅС‹Р№ Р±СЂР°СЃР»РµС‚", 'Рћ', 10));
+		allItems.add(new Item("Р‘СЂР°СЃР»РµС‚ \"РћСЂРёРѕРЅ\"", 'Рћ', 60));
+		allItems.add(new Item("Р‘СЂР°СЃР»РµС‚ \"РЎРёСЂРёСѓСЃ\"", 'Рћ', 65));
+		allItems.add(new Item("Р—СѓР±РЅР°СЏ С‰РµС‚РєР°", 'Рћ', 5));
+		allItems.add(new Item("РЁРѕРєРѕР»Р°РґРєР°", 'Рћ', 10));
+		allItems.add(new Item("Р СЋРєР·Р°Рє", 'Р ', 700));
 	}
-	
-	public Item findItem() {
+
+	public Item findItem()
+	{
 		Random ran = new Random();
 		int randomNumber = ran.nextInt(allItems.size());
 		Item currentItem = allItems.get(randomNumber);
 		inventory.add(currentItem);
 		return currentItem;
 	}
-		
-	public String showInventory() {
-		
+
+	public String showInventory()
+	{
 		return inventory.toString();
-		
 	}
-	
-	public int getInvSize() {
+
+	public int getInvSize()
+	{
 		return inventory.size();
 	}
-	
-	public int getBalance() {
+
+	public int getBalance()
+	{
 		return balance;
 	}
-	
 }
