@@ -1,34 +1,40 @@
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Inventory
 {
 	private List<Item> inventory = new ArrayList<>();
 
-	private static List<Item> allItems = new ArrayList<>(List.of(
-			new Item("Лопата", 'О', 200),
-			new Item("Поисковый фонарь", 'Р', 7000),
-			new Item("Подвеска \"Nosebleed\"", 'Р', 30000),
-			new Item("Струны", 'О', 500),
-			new Item("Футболка \"Drain\"", 'О', 500),
-			new Item("Банан", 'О', 100),
-			new Item("Чашка \"Египет\"", 'Р', 1000),
-			new Item("Носки", 'О', 100),
-			new Item("Ручка", 'О', 100),
-			new Item("Баллончик с краской", 'О', 750),
-			new Item("Платок", 'О', 150),
-			new Item("Пачка сигарет", 'О', 50),
-			new Item("Синий браслет", 'О', 300),
-			new Item("Красный браслет", 'О', 300),
-			new Item("Желтый браслет", 'О', 300),
-			new Item("Зеленый браслет", 'О', 300),
-			new Item("Браслет \"Орион\"", 'О', 1000),
-			new Item("Браслет \"Сириус\"", 'О', 900),
-			new Item("Зубная щетка", 'О', 50),
-			new Item("Шоколадка", 'О', 200),
-			new Item("Рюкзак", 'Р', 700),
-			new Item("Синий фонарик", 'П', 25000)
-	));
+	private static List<Item> allItems;
+
+	static
+	{
+		allItems = new ArrayList<>(List.of(
+				new Item("Лопата", ItemRarity.Common, 200),
+				new Item("Поисковый фонарь", ItemRarity.Rare, 7000),
+				new Item("Подвеска \"Nosebleed\"", ItemRarity.Rare, 30000),
+				new Item("Струны", ItemRarity.Common, 500),
+				new Item("Футболка \"Drain\"", ItemRarity.Common, 500),
+				new Item("Банан", ItemRarity.Common, 100),
+				new Item("Чашка \"Египет\"", ItemRarity.Rare, 1000),
+				new Item("Носки", ItemRarity.Common, 100),
+				new Item("Ручка", ItemRarity.Common, 100),
+				new Item("Баллончик с краской", ItemRarity.Common, 750),
+				new Item("Платок", ItemRarity.Common, 150),
+				new Item("Пачка сигарет", ItemRarity.Common, 50),
+				new Item("Синий браслет", ItemRarity.Common, 300),
+				new Item("Красный браслет", ItemRarity.Common, 300),
+				new Item("Желтый браслет", ItemRarity.Common, 300),
+				new Item("Зеленый браслет", ItemRarity.Common, 300),
+				new Item("Браслет \"Орион\"", ItemRarity.Common, 1000),
+				new Item("Браслет \"Сириус\"", ItemRarity.Common, 900),
+				new Item("Зубная щетка", ItemRarity.Common, 50),
+				new Item("Шоколадка", ItemRarity.Common, 200),
+				new Item("Рюкзак", ItemRarity.Rare, 700),
+				new Item("Синий фонарик", ItemRarity.Gift, 25000)
+		));
+	}
 
 	private int balance;
 	private static Random ran = new Random();
@@ -61,13 +67,26 @@ public class Inventory
 		return balance;
 	}
 
-	public Item getItem(int index){
+	public Item getItem(int index)
+	{
 		return inventory.get(index);
 	}
 
-	public void sellItem(int index){
+	public void sellItem(int index)
+	{
 		balance += inventory.get((index)).getCost();
 		inventory.remove(index);
+	}
 
+	public boolean putItem(Item item)
+	{
+		inventory.add(item);
+
+		return true;
+	}
+
+	public static Item getRandomItem()
+	{
+		return allItems.get(ran.nextInt(allItems.size()));
 	}
 }
