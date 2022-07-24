@@ -87,6 +87,9 @@ public class Inventory
 
 	public static Item getRandomItem()
 	{
+		//добавить к каждой категории редкости какой-то коэффициент
+		//например Common = inv.size() / 2 и потом nextInt() + Common
+		//Gift = inv.size() / 25 => nextInt() + Gift
 		return allItems.get(ran.nextInt(allItems.size()));
 	}
 }
