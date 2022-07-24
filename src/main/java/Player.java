@@ -3,16 +3,18 @@ public class Player
 {
 	private long id;
 	private Inventory inventory;
+	private String username;
 
-	Player(long id)
+	Player(long id, String username)
 	{
+		this.username = username;
 		this.id = id;
 		inventory = new Inventory();
 	}
 
-	public void check()
+	public String getUsername()
 	{
-
+		return username;
 	}
 
 	public Inventory getInventory()
