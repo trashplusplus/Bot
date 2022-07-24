@@ -58,10 +58,11 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
-
+	String waitCommand = "";
 	//метод для приема сообщений и обновлений
 	public void onUpdateReceived(Update update)
 	{
+
 		Message message = update.getMessage();
 
 		if (message != null && message.hasText())
@@ -70,103 +71,110 @@ public class Bot extends TelegramLongPollingBot
 
 			Inventory inv;
 
-			switch (message.getText())
-			{
-				case "/start":
+			if (waitCommand != "/sell"){
 
-					long id = message.getChatId();
 
-				//Проверка на ID, чтобы нажав два раза /start не создавался новый пользователь
-					if(players.isEmpty()){
-						players.put(id, new Player(id));
-					}else{
-						for(Map.Entry<Long, Player> pair : players.entrySet()){
-							if (pair.getKey() != id){
-								players.put(id, new Player(id));
+				switch (message.getText())
+				{
+					case "/start":
+
+						long id = message.getChatId();
+
+						//Проверка на ID, чтобы нажав два раза /start не создавался новый пользователь
+						if(players.isEmpty()){
+							players.put(id, new Player(id));
+						}else{
+							for(Map.Entry<Long, Player> pair : players.entrySet()){
+								if (pair.getKey() != id){
+									players.put(id, new Player(id));
+								}
 							}
 						}
-					}
-					sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inv - посмотреть инвентарь \n" + "/find - искать новый предмет");
+						sendMsg(message, "Бот содержит следующие команды: \n /help - помощь \n" + "/inv - посмотреть инвентарь \n" + "/find - искать новый предмет");
 
-					break;
+						break;
 
-				case "/inv":
+					case "/inv":
 
-					inv = players.get(message.getChatId()).getInventory();
+						inv = players.get(message.getChatId()).getInventory();
 
-					if (inv.getInvSize() != 0)
-					{
-						sendMsg(message, "Ваш инвентарь: ");
+						if (inv.getInvSize() != 0)
+						{
+							sendMsg(message, "Ваш инвентарь: ");
 
-						//sendMsg(message, "\u26BD");
+							//sendMsg(message, "\u26BD");
 
-						sendMsg(message, "\n" + inv.showInventory() + "\n");
-						sendMsg(message, "Всего предметов: " + inv.getInvSize());
-					}
-					else
-					{
-						sendMsg(message, "Ваш инвентарь пуст ");
-					}
+							sendMsg(message, "\n" + inv.showInventory() + "\n");
+							sendMsg(message, "Всего предметов: " + inv.getInvSize());
+						}
+						else
+						{
+							sendMsg(message, "Ваш инвентарь пуст ");
+						}
 
-					break;
+						break;
 
-				case "/find":
+					case "/find":
 
-					inv = players.get(message.getChatId()).getInventory();
-					Item i = inv.findItem();
-					sendMsg(message, String.format("Вы нашли: %s", i.toString()));
-					System.out.println("Текстик: " + message.getText());
+						inv = players.get(message.getChatId()).getInventory();
+						Item i = inv.findItem();
+						sendMsg(message, String.format("Вы нашли: %s", i.toString()));
+						System.out.println("Текстик: " + message.getText());
 
-					break;
+						break;
 
-				case "/balance":
-					inv = players.get(message.getChatId()).getInventory();
-					sendMsg(message, "Ваш баланс: " + inv.getBalance() + "$");
-					break;
-				case "/stats":
-					sendMsg(message, "Всего игроков: " + players.size());
-					break;
-				case "/sell":
-					//на /sell ошибка
-					int itemSellIndex = 0;
-					inv = players.get(message.getChatId()).getInventory();
-					sendMsg(message, "Предметы, доступные для продажи: ");
+					case "/balance":
+						inv = players.get(message.getChatId()).getInventory();
+						sendMsg(message, "Ваш баланс: " + inv.getBalance() + "$");
+						break;
+					case "/stats":
+						sendMsg(message, "Всего игроков: " + players.size());
+						break;
+					case "/sell":
+						waitCommand = "/sell";
+						sendMsg(message, "Введите ID предмета, который вы хотите продать: ");
+						int itemSellIndex = 0;
+						inv = players.get(message.getChatId()).getInventory();
+						sendMsg(message, "Предметы, доступные для продажи: ");
 
-					for(int j = 0; j < inv.getInvSize(); j++){
-						sendMsg(message, "Предмет" + "|"  + itemSellIndex + "|: " + inv.getItem(j) );
-						itemSellIndex++;
-					}
+						for(int j = 0; j < inv.getInvSize(); j++){
+							sendMsg(message, "Предмет" + "|"  + itemSellIndex + "|: " + inv.getItem(j) );
+							itemSellIndex++;
+						}
 
-					//не работает, идите в пизду
-					sendMsg(message, "Введите ID предмета, который вы хотите продать: ");
+						break;
+					default:
+						sendMsg(message, "Неизвестная команда");
 
-					String sellID = message.getText();
-					inv.sellItem(Integer.parseInt(sellID));
+						break;
+					/*
+					 * TODO LIST
+					 *
+					 *
+					 * Нужно сделать для каждого пользователя уникальный экземпляр Inv
+					 * чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
+					 * message.getChatId() - возвращает ID вшитый в телеграм аккаунт
+					 *
+					 * Возможно нужно написать класс User и какой-то контейнер хранить, чтобы перед добавлением нового пользователя пробегаться
+					 * по всем юзерам и если такого нет, добавлять его.
+					 *
+					 * Добавить команду /allplayers чтобы считать всех участников игры
+					 *
+					 * Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
+					 */
+				}
+			}else{
 
+				switch (message.getText()){
+					default:
+						inv = players.get(message.getChatId()).getInventory();
+						String sellID = message.getText();
+						inv.sellItem(Integer.parseInt(sellID));
+						sendMsg(message, "Предмет успешно продан");
+						waitCommand = "";
 
-					sendMsg(message, "Предмет успешно продан");
-
-
-					break;
-				default:
-					sendMsg(message, "Неизвестная команда");
-					break;
-
-				/*
-				 * TODO LIST
-				 *
-				 *
-				 * Нужно сделать для каждого пользователя уникальный экземпляр Inv
-				 * чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
-				 * message.getChatId() - возвращает ID вшитый в телеграм аккаунт
-				 *
-				 * Возможно нужно написать класс User и какой-то контейнер хранить, чтобы перед добавлением нового пользователя пробегаться
-				 * по всем юзерам и если такого нет, добавлять его.
-				 *
-				 * Добавить команду /allplayers чтобы считать всех участников игры
-				 *
-				 * Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
-				 */
+						break;
+				}
 			}
 		}
 	}
