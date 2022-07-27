@@ -18,7 +18,15 @@ import java.util.regex.*;
 
 public class Bot extends TelegramLongPollingBot
 {
-	private Map<Long, Player> players = new HashMap<>();
+	private Map<Long, Player> players = new HashMap<>(); //контейнер игроков
+	private List<Integer> activeInputByPlayers = new ArrayList<>();
+
+	public static enum State{
+		AwaitingCommands,
+		AwaitingArguments;
+	}
+
+	private List<State> player_state = new LinkedList<>();
 
 
 
@@ -127,27 +135,30 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_sell(Message message, Inventory inv){
 		inv = players.get(message.getChatId()).getInventory();
+
 		if(inv.getInvSize() > 0){
-			waitCommand = "/sell";
 			sendMsg(message, " Введите ID предмета, который вы хотите продать: ");
 			int itemSellIndex = 0;
-
 			sendMsg(message, "Предметы, доступные для продажи: ");
 
 			for(int j = 0; j < inv.getInvSize(); j++){
 				sendMsg(message, "Предмет " + "|"  + itemSellIndex + "|: " + inv.getItem(j) );
 				itemSellIndex++;
 			}
-		}else{
-			sendMsg(message, "⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ");
-		}
+
+			}else{
+				sendMsg(message, "⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ");
+			}
+
+
 	}
 
 	public void command_input_sell(Message message, Inventory inv){
 		inv = players.get(message.getChatId()).getInventory();
+
 	}
 
-	String waitCommand = "";
+	String simpleState = "";
 	//метод для приема сообщений и обновлений
 	public void onUpdateReceived(Update update)
 	{
@@ -159,21 +170,21 @@ public class Bot extends TelegramLongPollingBot
 			System.out.println("Текстик: " + message.getText());
 
 			Inventory inv = null;
-			String regexCommandStart = message.getText();
-			String regexSplit[] = regexCommandStart.split(" ", 1);
+			Player player = players.get(message.getChatId());
 
-			if (waitCommand != "/sell" && waitCommand != "/start"){
 				switch (message.getText())
+
 				{
 					case "/start":
-
+						if(players.isEmpty()) {
+							players.put(message.getChatId(), new Player(message.getChatId(), "player" + message.getChatId()));
+						}else{
+							players.put(message.getChatId(), new Player(message.getChatId(), "player" + message.getChatId()));
+						}
 						sendMsg(message, "\uD83C\uDF77 Добро пожаловать в Needle");
 						sendMsg(message, "Введите ник: ");
-						waitCommand = "/start";
-
-
+						player.setState("start");
 						break;
-
 					case "/inv":
 						command_inv(message, inv);
 						break;
@@ -190,6 +201,7 @@ public class Bot extends TelegramLongPollingBot
 						break;
 					case "/sell":
 						command_sell(message, inv);
+						player.setState("sell");
 						break;
 					case "/top":
 						command_top(message);
@@ -201,71 +213,64 @@ public class Bot extends TelegramLongPollingBot
 						command_info(message);
 						break;
 					default:
-						if(regexCommandStart.matches("\\/start (\\w{3,32})")){
-							System.out.println("Имя: " + regexSplit[1]);
-						}else{
-							sendMsg(message, "⚠\t Неизвестная команда");
-						}
-						break;
-					/*
-					 * TODO LIST
-					 *
-					 * чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
-					 *
-					 * Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
-					 */
-				}
-			}else if(waitCommand == "/sell"){
-				switch (message.getText()){
-					default:
+						player = players.get(message.getChatId());
+						if(player.getId() == message.getChatId()){
+							if(player.getState() == "start"){
+								String username = message.getText();
 
-						try{
-							inv = players.get(message.getChatId()).getInventory();
-							String sellID = message.getText();
-							long idOfSeller = message.getChatId();
-							Integer.parseInt(sellID);
-
-								inv.sellItem(Integer.parseInt(sellID));
-								sendMsg(message, "✔ Предмет успешно продан");
-
-						}catch(NumberFormatException e) {
-							e.printStackTrace();
-							sendMsg(message, "⚠\t Пожалуйста, введите целое число");
-							waitCommand = "";
-						}catch(IndexOutOfBoundsException ee){
-							ee.printStackTrace();
-							sendMsg(message, "⚠\t Указан неверный ID");
-							waitCommand = "";
-						}
-
-						waitCommand = "";
-						break;
-				}
-			}else if(waitCommand == "/start") {
-				switch (message.getText()) {
-
-					default:
-						String username = message.getText();
-			
-						long id = message.getChatId();
-						//Проверка на ID, чтобы нажав два раза /start не создавался новый пользователь
-						if(players.isEmpty()){
-							players.put(id, new Player(id, username));
-						}else{
-							for(Map.Entry<Long, Player> pair : players.entrySet()){
-								if (pair.getKey() != id && pair.getValue().getUsername() != username){
+								long id = message.getChatId();
+								//Проверка на ID, чтобы нажав два раза /start не создавался новый пользователь
+								if(players.isEmpty()){
 									players.put(id, new Player(id, username));
 								}else{
-									sendMsg(message, "Пользователь с таким именем уже есть ");
+									for(Map.Entry<Long, Player> pair : players.entrySet()){
+										if (pair.getKey() != id){
+											players.put(id, new Player(id, username));
+										}
+									}
 								}
+
+								command_help(message);
+								player.setState("");
+							}else if(player.getState() == "sell"){
+
+								try{
+									inv = players.get(message.getChatId()).getInventory();
+									String sellID = message.getText();
+									long idOfSeller = message.getChatId();
+									Integer.parseInt(sellID);
+
+									inv.sellItem(Integer.parseInt(sellID));
+									sendMsg(message, "✔ Предмет успешно продан");
+									player.setState("");
+								}catch(NumberFormatException e) {
+									e.printStackTrace();
+									sendMsg(message, "⚠\t Пожалуйста, введите целое число");
+									player.setState("");
+								}catch(IndexOutOfBoundsException ee){
+									ee.printStackTrace();
+									sendMsg(message, "⚠\t Указан неверный ID");
+									player.setState("");
+								}
+							}else{
+								sendMsg(message, "⚠\t Неизвестная команда");
 							}
 						}
-						command_help(	message);
-						waitCommand = "";
+
+
 						break;
+
+
+
+					 // чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
+
+					 //Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
+
 				}
+
 		}
-		}
+
+
 
 	}
 
