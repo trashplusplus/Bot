@@ -2,19 +2,18 @@ import java.io.IOException;
 
 import java.util.*;
 
+import ability.Ability;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import java.util.regex.*;
 
 
 public class Bot extends TelegramLongPollingBot
@@ -99,9 +98,21 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_find(Message message, Inventory inv){
 
-		inv = players.get(message.getChatId()).getInventory();
-		Item i = inv.findItem();
-		sendMsg(message, String.format("\uD83C\uDF81\t Вы нашли: %s", i.toString()));
+		//inv = players.get(message.getChatId()).getInventory();
+		//Item i = inv.findItem();
+		//sendMsg(message, String.format("\uD83C\uDF81\t Вы нашли: %s", i.toString()));
+		long id = message.getChatId();
+		Player player = players.get(id);
+		Ability<Item> fia = player.getFindItemAbility();
+		if (fia.isUsable())
+		{
+			Item new_item = fia.use();
+			sendMsg(message, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
+		}
+		else
+		{
+			sendMsg(message, String.format("\u231B Вы не можете использовать эту способность в течение %s", fia.getCDTimer()));
+		}
 	}
 
 	public void command_balance(Message message, Inventory inv){
