@@ -2,10 +2,10 @@ package ability;
 
 import java.util.concurrent.Callable;
 
-public class Ability
+public class Ability<T>
 {
 	Cooldown cooldown;
-	Callable action;
+	Callable<T> action;
 
 	public Ability(Cooldown cooldown, Callable action)
 	{
@@ -13,14 +13,14 @@ public class Ability
 		this.action = action;
 	}
 
-	public void use()
+	public T use()
 	{
 		if (cooldown.isAvailable())
 		{
 			try
 			{
-				action.call();
 				cooldown.startCooldown();
+				return action.call();
 			}
 			catch (Exception e)
 			{
@@ -32,5 +32,16 @@ public class Ability
 		{
 			System.out.printf("%d", cooldown.cdTimerLeft());
 		}
+		return null;
+	}
+
+	public boolean isUsable()
+	{
+		return cooldown.isAvailable();
+	}
+
+	public long getCDTimer()
+	{
+		return cooldown.cdTimerLeft();
 	}
 }

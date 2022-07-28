@@ -1,3 +1,6 @@
+import ability.Ability;
+import ability.Cooldown;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +10,7 @@ public class Player
 	private Inventory inventory;
 	private String username;
 	private String state;
+	private Ability<Item> findItemAbility;
 
 	Player(long id, String username)
 	{
@@ -14,7 +18,7 @@ public class Player
 		this.id = id;
 		inventory = new Inventory();
 		state = "start";
-
+		findItemAbility = new Ability(new Cooldown(10L), new FindItemAction(this));
 	}
 
 	public void setUsername(String username) {
@@ -41,5 +45,15 @@ public class Player
 	public Inventory getInventory()
 	{
 		return inventory;
+	}
+
+	public Item findItem()
+	{
+		return findItemAbility.use();
+	}
+
+	public Ability<Item> getFindItemAbility()
+	{
+		return findItemAbility;
 	}
 }
