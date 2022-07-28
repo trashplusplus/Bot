@@ -16,6 +16,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import java.util.regex.*;
 
+
 public class Bot extends TelegramLongPollingBot
 {
 	private Map<Long, Player> players = new HashMap<>(); //контейнер игроков
@@ -27,8 +28,6 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	private List<State> player_state = new LinkedList<>();
-
-
 
 	public static void main(String[] args) throws IOException
 	{
@@ -152,17 +151,16 @@ public class Bot extends TelegramLongPollingBot
 
 	}
 
-	public void command_input_sell(Message message, Inventory inv){
-		inv = players.get(message.getChatId()).getInventory();
-
-	}
-
 	//метод для приема сообщений и обновлений
 	public void onUpdateReceived(Update update)
 	{
 
 		Message message = update.getMessage();
 		long chatId = message.getChatId();
+		//regex для ника
+		String usernameTemplate = "(\\w{3,32})";
+
+
 
 		if (message != null && message.hasText()){
 
@@ -180,7 +178,6 @@ public class Bot extends TelegramLongPollingBot
 							players.put(message.getChatId(), new Player(message.getChatId(), "player" + message.getChatId()));
 							player = players.get(message.getChatId());
 							sendMsg(message, "\uD83C\uDF77 Добро пожаловать в Needle");
-							sendMsg(message, "Введите ник: ");
 							player.setState("awaitingNickname");
 						}
 						break;
@@ -224,12 +221,16 @@ public class Bot extends TelegramLongPollingBot
 							if(player.getState() == "awaitingNickname"){
 								String username = message.getText();
 
-								player.setUsername(username);
+								if(username.matches(usernameTemplate)){
+									player.setUsername(username);
+									player.setState("");
+									command_help(message);
+								}else{
+									//sendMsg(message, "Введите корректный ник: ");
+									sendMsg(message, "Введите ник: ");
+									player.setState("awaitingNickname");
+								}
 
-
-								command_help(message);
-
-								player.setState("");
 
 							}else if(player.getState() == "sell"){
 
@@ -252,7 +253,17 @@ public class Bot extends TelegramLongPollingBot
 									player.setState("");
 								}
 							}else{
-								sendMsg(message, "⚠\t Неизвестная команда");
+
+								//небольшая проверка /start и чтобы не писало Неизвестная команда
+								//FIX HERE
+								if(message.getText() == "/start"){
+
+								}else{
+									sendMsg(message, "⚠\t Неизвестная команда");
+								}
+
+
+
 							}
 						}
 
