@@ -17,6 +17,10 @@ public class Player
 
 	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	public void setState(String state){
 		this.state = state;
 	}

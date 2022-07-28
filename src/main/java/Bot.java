@@ -37,7 +37,6 @@ public class Bot extends TelegramLongPollingBot
 		try
 		{
 			telegramBotsApi.registerBot(new Bot());
-
 		}
 		catch (TelegramApiRequestException e)
 		{
@@ -158,33 +157,40 @@ public class Bot extends TelegramLongPollingBot
 
 	}
 
-	String simpleState = "";
 	//метод для приема сообщений и обновлений
 	public void onUpdateReceived(Update update)
 	{
 
 		Message message = update.getMessage();
+		long chatId = message.getChatId();
 
 		if (message != null && message.hasText()){
 
 			System.out.println("Текстик: " + message.getText());
 
 			Inventory inv = null;
-			Player player = players.get(message.getChatId());
+			Player player = null;
 
-				switch (message.getText())
-
-				{
+				switch (message.getText()){
 					case "/start":
-						if(players.isEmpty()) {
+						if (players.containsKey(message.getChatId())) {
+							sendMsg(message, "Вы уже зарегестрированы");
+						} else {
+
 							players.put(message.getChatId(), new Player(message.getChatId(), "player" + message.getChatId()));
-						}else{
-							players.put(message.getChatId(), new Player(message.getChatId(), "player" + message.getChatId()));
+							player = players.get(message.getChatId());
+							sendMsg(message, "\uD83C\uDF77 Добро пожаловать в Needle");
+							sendMsg(message, "Введите ник: ");
+							player.setState("awaitingNickname");
 						}
-						sendMsg(message, "\uD83C\uDF77 Добро пожаловать в Needle");
-						sendMsg(message, "Введите ник: ");
-						player.setState("start");
 						break;
+				}
+
+				player = players.get(message.getChatId());
+
+
+				switch (message.getText()){
+
 					case "/inv":
 						command_inv(message, inv);
 						break;
@@ -213,25 +219,18 @@ public class Bot extends TelegramLongPollingBot
 						command_info(message);
 						break;
 					default:
-						player = players.get(message.getChatId());
+
 						if(player.getId() == message.getChatId()){
-							if(player.getState() == "start"){
+							if(player.getState() == "awaitingNickname"){
 								String username = message.getText();
 
-								long id = message.getChatId();
-								//Проверка на ID, чтобы нажав два раза /start не создавался новый пользователь
-								if(players.isEmpty()){
-									players.put(id, new Player(id, username));
-								}else{
-									for(Map.Entry<Long, Player> pair : players.entrySet()){
-										if (pair.getKey() != id){
-											players.put(id, new Player(id, username));
-										}
-									}
-								}
+								player.setUsername(username);
+
 
 								command_help(message);
+
 								player.setState("");
+
 							}else if(player.getState() == "sell"){
 
 								try{
