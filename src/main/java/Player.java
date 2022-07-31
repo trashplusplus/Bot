@@ -18,7 +18,7 @@ public class Player
 		this.id = id;
 		inventory = new Inventory();
 		state = "start";
-		findItemAbility = new Ability(new Cooldown(10L), new FindItemAction(this));
+		findItemAbility = new Ability(new Cooldown(30L), new FindItemAction(this));
 	}
 
 	public void setUsername(String username) {
