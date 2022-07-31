@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.*;
@@ -20,10 +22,15 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 public class Bot extends TelegramLongPollingBot
 {
 	private Map<Long, Player> players = new HashMap<>(); //контейнер игроков
+	private static File token = new File("token.txt");
+	private static Scanner scanner;
+	private static String tokBot;
+
 
 
 	public static void main(String[] args) throws IOException
 	{
+		readFile();
 		ApiContextInitializer.init(); //инициализация API
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(); //создание объекта в API
 		try
@@ -35,6 +42,7 @@ public class Bot extends TelegramLongPollingBot
 			e.printStackTrace();
 		}
 	}
+
 
 	//что бот будет отвечать
 	public void sendMsg(Message message, String text)
@@ -190,6 +198,7 @@ public class Bot extends TelegramLongPollingBot
 
 				player = players.get(message.getChatId());
 				//использовать containsKey
+
 				switch (message.getText()){
 					case "/inv":
 							command_inv(message, inv);
@@ -318,6 +327,13 @@ public class Bot extends TelegramLongPollingBot
 
 	}
 
+	public static void readFile() throws FileNotFoundException {
+		scanner = new Scanner(token);
+
+		while(scanner.hasNextLine()){
+			tokBot = scanner.nextLine();
+		}
+	}
 
 	public String getBotUsername()
 	{
@@ -327,7 +343,8 @@ public class Bot extends TelegramLongPollingBot
 
 	public String getBotToken()
 	{
-		return "1286692994:AAFxHRBuJ1FIzQFBizgPHrng37ctoFtzLLY";
+		//return "1286692994:AAFxHRBuJ1FIzQFBizgPHrng37ctoFtzLLY";
+		return tokBot;
 		//токен регается через бот самого тг BotFather, там же пишется описание, название и токен
 	}
 }
