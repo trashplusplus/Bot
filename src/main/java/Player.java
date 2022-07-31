@@ -14,11 +14,10 @@ public class Player
 	public static enum State{
 		awaitingNickname,
 		awaitingSellArguments,
-		awaitingCommands;
+		awaitingCommands,
+		awaitingChangeNickname;
 	}
 	private State state;
-
-
 
 	Player(long id, String username)
 	{
@@ -26,7 +25,7 @@ public class Player
 		this.id = id;
 		inventory = new Inventory();
 		state = State.awaitingNickname;
-		findItemAbility = new Ability(new Cooldown(120L), new FindItemAction(this));
+		findItemAbility = new Ability(new Cooldown(20000L), new FindItemAction(this));
 	}
 
 	public void setUsername(String username) {

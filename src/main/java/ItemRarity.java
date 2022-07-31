@@ -10,4 +10,6 @@ public enum ItemRarity
 	{
 		return super.toString();
 	}
+
+
 }

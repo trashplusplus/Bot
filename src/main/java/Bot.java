@@ -26,8 +26,7 @@ public class Bot extends TelegramLongPollingBot
 	private static File token = new File("token");
 	private static Scanner scanner;
 	private static String tokBot;
-
-
+	//🐳
 
 	public static void main(String[] args) throws IOException
 	{
@@ -72,15 +71,25 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	public void command_help(Message message){
-		sendMsg(message, "Бот содержит следующие команды: \n" +
+		sendMsg(message, "\\[`Needle`] Бот содержит следующие команды: \n" +
+				"\n"+
 				"\uD83D\uDD0D /find - искать предметы \n" +
+				"\n"+
 				"\uD83D\uDCC3 /inv - открыть инвентарь \n" +
+				"\n"+
 				"\uD83C\uDF80 /top - посмотреть рейтинг всех игроков \n" +
+				"\n"+
 				"\uD83D\uDCB9 /stats - онлайн игроков \n" +
+				"\n"+
 				"\uD83D\uDCB3 /balance - проверить баланс  \n" +
-				"\uD83D\uDCB0 /sell - продать предмет \n" +
+				"\n"+
+				"\uD83D\uDCB0 /sell - продать предмет скупщику\n" +
+				"\n"+
 				"\uD83D\uDCE9 /help - список всех команд \n" +
-				"ℹ /info - информация об игре"
+				"\n"+
+				"ℹ /info - информация об игре \n" +
+				"\n"+
+				"\uD83D\uDC80 /changenickname - сменить никнейм"
 		);
 	}
 
@@ -102,20 +111,17 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_find(Message message, Inventory inv){
 
-		//inv = players.get(message.getChatId()).getInventory();
-		//Item i = inv.findItem();
-		//sendMsg(message, String.format("\uD83C\uDF81\t Вы нашли: %s", i.toString()));
 		long id = message.getChatId();
 		Player player = players.get(id);
 		Ability<Item> fia = player.getFindItemAbility();
-		if (fia.isUsable())
-		{
+		if (fia.isUsable())	{
 			Item new_item = fia.use();
 			sendMsg(message, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 		}
 		else
 		{
-			sendMsg(message, String.format("\u231B Вы не можете использовать эту способность в течение %s", PrettyDate.prettify(fia.getCDTimer(), TimeUnit.SECONDS)));
+			sendMsg(message, String.format("\u231B Время ожидания: %s",
+					PrettyDate.prettify(fia.getCDTimer(), TimeUnit.SECONDS)));
 		}
 	}
 
@@ -166,6 +172,12 @@ public class Bot extends TelegramLongPollingBot
 
 	}
 
+	public void command_changeNickname(Message message){
+		Player player = players.get(message.getChatId());
+		sendMsg(message, "Введите никнейм, на который вы хотите сменить: ");
+		player.setState(Player.State.awaitingChangeNickname);
+	}
+
 	//метод для приема сообщений и обновлений
 	public void onUpdateReceived(Update update)
 	{
@@ -197,11 +209,15 @@ public class Bot extends TelegramLongPollingBot
 				player = players.get(message.getChatId());
 				//использовать containsKey
 
+			//if(!players.containsKey(player)){
+				//sendMsg(message, "Введите команду /start");
+		//	}
+
+
 				switch (message.getText()){
 					case "/inv":
 							command_inv(message, inv);
 						break;
-
 					case "/find":
 						command_find(message, inv);
 						break;
@@ -224,6 +240,9 @@ public class Bot extends TelegramLongPollingBot
 					case "/info":
 						command_info(message);
 						break;
+					case "/changenickname":
+						command_changeNickname(message);
+						break;
 					default:
 
 						if(player.getId() == message.getChatId()){
@@ -233,9 +252,8 @@ public class Bot extends TelegramLongPollingBot
 								if(username.matches(usernameTemplate)){
 									player.setUsername(username);
 									player.setState(Player.State.awaitingCommands);
-									sendMsg(message, "Игрок " + player.getUsername() + " успешно создан");
+									sendMsg(message, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
 									command_help(message);
-
 								}else{
 									//sendMsg(message, "Введите корректный ник: ");
 									sendMsg(message, "Введите ник: ");
@@ -251,7 +269,7 @@ public class Bot extends TelegramLongPollingBot
 									Integer.parseInt(sellID);
 
 									inv.sellItem(Integer.parseInt(sellID));
-									sendMsg(message, "✔ Предмет успешно продан");
+									sendMsg(message, "✅ Предмет успешно продан");
 									player.setState(Player.State.awaitingCommands);
 								}catch(NumberFormatException e) {
 									e.printStackTrace();
@@ -271,23 +289,26 @@ public class Bot extends TelegramLongPollingBot
 									}else{
 										sendMsg(message, "⚠\t Неизвестная команда");
 									}
+							}else if(player.getState() == Player.State.awaitingChangeNickname){
+								String nickname = message.getText();
+								if(nickname.matches(usernameTemplate)){
+									player.setUsername(nickname);
+									sendMsg(message, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
+									player.setState(Player.State.awaitingCommands);
+								}else{
+									sendMsg(message, "Пожалуйста, введите корректный ник");
+									player.setState(Player.State.awaitingChangeNickname);
+								}
+
 							}
-
 						}
-
 						break;
-
-
-
 					 // чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
 
 					 //Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
 
 				}
-
 		}
-
-
 
 	}
 
@@ -310,13 +331,12 @@ public class Bot extends TelegramLongPollingBot
 		KeyboardRow keyboardFirstRow = new KeyboardRow();
 
 		//добавили новую кнопку в первый ряд
-		if(players.containsKey(player)){
+		if(!players.containsKey(player)){
 			keyboardFirstRow.add(new KeyboardButton( "/start"));
 
 		}else{
 			keyboardFirstRow.add(new KeyboardButton( "/help"));
 		}
-
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));
 		//добавили в спиок всех кнопок
@@ -325,6 +345,7 @@ public class Bot extends TelegramLongPollingBot
 
 	}
 
+	//чтение токена из файла
 	public static void readFile() throws FileNotFoundException {
 		scanner = new Scanner(token);
 
@@ -338,10 +359,8 @@ public class Bot extends TelegramLongPollingBot
 		return "Needle";
 	}
 
-
 	public String getBotToken()
 	{
-		//return "1286692994:AAFxHRBuJ1FIzQFBizgPHrng37ctoFtzLLY";
 		return tokBot;
 		//токен регается через бот самого тг BotFather, там же пишется описание, название и токен
 	}
