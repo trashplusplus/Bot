@@ -165,7 +165,6 @@ public class Bot extends TelegramLongPollingBot
 	{
 
 		Message message = update.getMessage();
-		//long chatId = message.getChatId();
 		//regex для ника
 		String usernameTemplate = "(\\w{3,32})";
 
@@ -190,19 +189,15 @@ public class Bot extends TelegramLongPollingBot
 				}
 
 				player = players.get(message.getChatId());
-
+				//использовать containsKey
 				switch (message.getText()){
-
 					case "/inv":
-
 							command_inv(message, inv);
-
 						break;
 
 					case "/find":
 						command_find(message, inv);
 						break;
-
 					case "/balance":
 						command_balance(message, inv);
 						break;
@@ -211,7 +206,6 @@ public class Bot extends TelegramLongPollingBot
 						break;
 					case "/sell":
 						command_sell(message, inv);
-
 						break;
 					case "/top":
 						//bug
@@ -262,11 +256,11 @@ public class Bot extends TelegramLongPollingBot
 									player.setState(Player.State.awaitingCommands);
 								}
 							}else if(player.getState() == Player.State.awaitingCommands){
-
+								String getText = message.getText();
 								//небольшая проверка /start и чтобы не писало Неизвестная команда
 								//FIX HERE
-									if(message.getText() == "/start"){
-										//sendMsg(message, "Вы уже зарегестрированы");
+									if(getText.equals("/start")){
+
 									}else{
 										sendMsg(message, "⚠\t Неизвестная команда");
 									}
@@ -294,6 +288,7 @@ public class Bot extends TelegramLongPollingBot
 
 	public void setButtons(SendMessage sendMessage)
 	{
+		Player player = players.get(sendMessage.getChatId());
 		//инициаллизация клавиатуры 
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 		//установка разметки
@@ -308,7 +303,13 @@ public class Bot extends TelegramLongPollingBot
 		KeyboardRow keyboardFirstRow = new KeyboardRow();
 
 		//добавили новую кнопку в первый ряд
-		keyboardFirstRow.add(new KeyboardButton( "/help"));
+		if(players.containsKey(player)){
+			keyboardFirstRow.add(new KeyboardButton( "/start"));
+
+		}else{
+			keyboardFirstRow.add(new KeyboardButton( "/help"));
+		}
+
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));
 		//добавили в спиок всех кнопок
