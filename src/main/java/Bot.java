@@ -22,7 +22,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 public class Bot extends TelegramLongPollingBot
 {
 	private Map<Long, Player> players = new HashMap<>(); //контейнер игроков
-	private static File token = new File("token.txt");
+	private static File token = new File("token");
 	private static Scanner scanner;
 	private static String tokBot;
 
@@ -161,10 +161,7 @@ public class Bot extends TelegramLongPollingBot
 			player.setState(Player.State.awaitingSellArguments);
 			}else{
 				sendMsg(message, "⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ");
-
-
 			}
-
 
 	}
 
@@ -174,7 +171,7 @@ public class Bot extends TelegramLongPollingBot
 
 		Message message = update.getMessage();
 		//regex для ника
-		String usernameTemplate = "(\\w{3,32})";
+		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 
 		if (message != null && message.hasText()){
 
