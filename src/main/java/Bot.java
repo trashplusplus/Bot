@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import ability.Ability;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -114,7 +115,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			sendMsg(message, String.format("\u231B Вы не можете использовать эту способность в течение %s секунд", fia.getCDTimer()));
+			sendMsg(message, String.format("\u231B Вы не можете использовать эту способность в течение %s", PrettyDate.prettify(fia.getCDTimer(), TimeUnit.SECONDS)));
 		}
 	}
 
