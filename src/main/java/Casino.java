@@ -4,7 +4,6 @@ public class Casino {
     private int bid;
     private long coefficientX;
 
-
     Casino(){
         this.bid = 0;
     }
