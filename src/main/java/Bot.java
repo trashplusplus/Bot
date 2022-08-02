@@ -331,7 +331,9 @@ public class Bot extends TelegramLongPollingBot
 		KeyboardRow keyboardFirstRow = new KeyboardRow();
 
 		//добавили новую кнопку в первый ряд
-		if(!players.containsKey(player)){
+		//KeyboardButton startButton = new KeyboardButton("/start");
+
+		if(players.containsKey(player)){
 			keyboardFirstRow.add(new KeyboardButton( "/start"));
 
 		}else{
