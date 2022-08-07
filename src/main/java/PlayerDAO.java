@@ -1,15 +1,15 @@
 import javax.swing.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerDAO implements DAO<Player>
 {
 	private Connection connection;
-	private Statement statement;
 
 	public PlayerDAO(Connection connection) throws SQLException
 	{
 		this.connection = connection;
-		this.statement = connection.createStatement();
 	}
 
 	@Override
@@ -17,10 +17,10 @@ public class PlayerDAO implements DAO<Player>
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("insert into players values (?, ?, ?)");
+			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, state) values (?, ?, ?);");
 			ps.setLong(1, item.getId());
 			ps.setString(2, item.getUsername());
-			ps.setInt(3, item.getState().ordinal());
+			ps.setString(3, item.getState().name());
 			ps.execute();
 		}
 		catch (SQLException e)
@@ -37,11 +37,15 @@ public class PlayerDAO implements DAO<Player>
 		Player player = null;
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?");
+			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			rs.next();
-			player = new Player(rs.getInt("id"), rs.getString("name"));
+			player = new Player(
+					rs.getInt("id"),
+					rs.getString("name"),
+					Player.State.valueOf(rs.getString("state"))
+			);
 		}
 		catch (SQLException e)
 		{
@@ -52,15 +56,39 @@ public class PlayerDAO implements DAO<Player>
 		return player;
 	}
 
+	public List<Player> getAll()
+	{
+		List<Player> result = new ArrayList<>();
+		try
+		{
+			PreparedStatement ps = connection.prepareStatement("select * from players;");
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+			{
+				result.add(new Player(
+						rs.getLong("id"),
+						rs.getString("name"),
+						Player.State.valueOf(rs.getString("state"))
+				));
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	@Override
 	public void update(long id, Player new_item)
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set id = ?, name = ? where id = ?");
+			PreparedStatement ps = connection.prepareStatement("update players set id = ?, name = ?, state = ? where id = ?;");
 			ps.setLong(1, new_item.getId());
 			ps.setString(2, new_item.getUsername());
-			ps.setLong(3, id);
+			ps.setString(3, new_item.getState().name());
+			ps.setLong(4, id);
 			ps.execute();
 		}
 		catch (SQLException e)
@@ -74,7 +102,7 @@ public class PlayerDAO implements DAO<Player>
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("delete from players where id = ?");
+			PreparedStatement ps = connection.prepareStatement("delete from players where id = ?;");
 			ps.setLong(1, id);
 			ps.execute();
 		}

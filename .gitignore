@@ -27,5 +27,4 @@ replay_pid*
 .idea/*
 token
 
-*/DatabaseMap.java
-/src/main/java/DatabaseMap.java
+/data.db
