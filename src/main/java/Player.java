@@ -17,7 +17,7 @@ public class Player
 		awaitingSellArguments,
 		awaitingCommands,
 		awaitingChangeNickname,
-		casinoDash;
+		coinDash;
 	}
 	private State state;
 
