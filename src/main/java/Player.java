@@ -15,7 +15,8 @@ public class Player
 		awaitingNickname,
 		awaitingSellArguments,
 		awaitingCommands,
-		awaitingChangeNickname;
+		awaitingChangeNickname,
+		casinoDash;
 	}
 	private State state;
 
