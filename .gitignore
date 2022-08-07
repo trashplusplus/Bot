@@ -26,3 +26,6 @@ replay_pid*
 # IDEA files
 .idea/*
 token
+
+*/DatabaseMap.java
+/src/main/java/DatabaseMap.java
