@@ -204,6 +204,11 @@ public class Bot extends TelegramLongPollingBot
 							player.setState(Player.State.awaitingNickname);
 						}
 						break;
+					default:
+						if(!players.containsKey(message.getChatId())){
+							sendMsg(message, "⭐ Для регистрации введите команду /start");
+						}
+						break;
 				}
 
 				player = players.get(message.getChatId());
@@ -242,6 +247,12 @@ public class Bot extends TelegramLongPollingBot
 						break;
 					case "/changenickname":
 						command_changeNickname(message);
+						break;
+					case "/casino":
+						sendMsg(message, "1. Черное \n" +
+								              "2. Красное \n");
+						sendMsg(message, "Введите ставку: ");
+						player.setState(Player.State.casinoDash);
 						break;
 					default:
 
@@ -300,6 +311,18 @@ public class Bot extends TelegramLongPollingBot
 									player.setState(Player.State.awaitingChangeNickname);
 								}
 
+							}else if(player.getState() == Player.State.casinoDash){
+								String newDash = message.getText();
+
+								if(newDash.equals("1")){
+									//sendMsg(message, casino.roll());
+									//casino.check(Integer.parseInt(newDash), player);
+									player.setState(Player.State.awaitingCommands);
+								}else if(newDash.equals("2")){
+									//sendMsg(message, casino.roll());
+									//casino.check(Integer.parseInt(newDash), player);
+									player.setState(Player.State.awaitingCommands);
+								}
 							}
 						}
 						break;
