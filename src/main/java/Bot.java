@@ -2,10 +2,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.time.Clock;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import ability.Ability;
+import ability.Cooldown;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -26,6 +29,8 @@ public class Bot extends TelegramLongPollingBot
 	private static File token = new File("token");
 	private static Scanner scanner;
 	private static String tokBot;
+	Inventory inv = null;
+	Player player = null;
 	//🐳
 
 	public static void main(String[] args) throws IOException
@@ -41,7 +46,11 @@ public class Bot extends TelegramLongPollingBot
 		{
 			e.printStackTrace();
 		}
+
+
 	}
+
+
 
 
 	//что бот будет отвечать
@@ -89,7 +98,8 @@ public class Bot extends TelegramLongPollingBot
 				"\n"+
 				"ℹ /info - информация об игре \n" +
 				"\n"+
-				"\uD83D\uDC80 /changenickname - сменить никнейм"
+				"\uD83D\uDC80 /changenickname - сменить никнейм \n \n" +
+				"\uD83C\uDFB0 /coin - сыграть в Монетку"
 		);
 	}
 
@@ -190,8 +200,7 @@ public class Bot extends TelegramLongPollingBot
 
 			System.out.println("Текстик: " + message.getText());
 
-			Inventory inv = null;
-			Player player = null;
+
 
 				switch (message.getText()){
 					case "/start":
@@ -248,11 +257,20 @@ public class Bot extends TelegramLongPollingBot
 					case "/changenickname":
 						command_changeNickname(message);
 						break;
-					case "/casino":
-						sendMsg(message, "1. Черное \n" +
-								              "2. Красное \n");
-						sendMsg(message, "Введите ставку: ");
-						player.setState(Player.State.casinoDash);
+					case "/cheat":
+						sendMsg(message, "Игрок " + player.getUsername() + " обзавелся префиксом");
+						player.setUsername("\uD83D\uDC33 " + player.getUsername());
+						break;
+					case "/coin":
+
+						if(player.getInventory().getBalance() > 0){
+							sendMsg(message, "\uD83C\uDFB0 Введите ставку: ");
+						}else{
+							sendMsg(message, "\uD83C\uDFB0 У вас недостаточно денег	");
+						}
+
+
+						player.setState(Player.State.coinDash);
 						break;
 					default:
 
@@ -311,16 +329,30 @@ public class Bot extends TelegramLongPollingBot
 									player.setState(Player.State.awaitingChangeNickname);
 								}
 
-							}else if(player.getState() == Player.State.casinoDash){
-								String newDash = message.getText();
+							}else if(player.getState() == Player.State.coinDash){
+								try{
+									String dash = message.getText();
+									int i_dash = Integer.parseInt(dash);
+									inv = player.getInventory();
 
-								if(newDash.equals("1")){
-									//sendMsg(message, casino.roll());
-									//casino.check(Integer.parseInt(newDash), player);
-									player.setState(Player.State.awaitingCommands);
-								}else if(newDash.equals("2")){
-									//sendMsg(message, casino.roll());
-									//casino.check(Integer.parseInt(newDash), player);
+									if(i_dash > 0 && i_dash <= inv.getBalance()){
+										sendMsg(message, "\uD83C\uDFB0 Ваша ставка: " + "$" + i_dash);
+
+										sendMsg(message, "Подбрасываем монетку...");
+
+										Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, message, i_dash, this));
+										kd.startCooldown();
+
+
+
+
+									}else{
+										sendMsg(message, "⚠\t У вас нет такой суммы");
+
+									}
+								}catch (NumberFormatException e){
+									sendMsg(message, "⚠\tВаша ставка должна быть целым числом");
+									e.printStackTrace();
 									player.setState(Player.State.awaitingCommands);
 								}
 							}
@@ -389,4 +421,38 @@ public class Bot extends TelegramLongPollingBot
 		return tokBot;
 		//токен регается через бот самого тг BotFather, там же пишется описание, название и токен
 	}
+
+	private static class CooldownForPlayer implements Runnable{
+		private Player player;
+		private int i_dash;
+		private Message message;
+		private Bot botik;
+
+		CooldownForPlayer(Player player, Message message, int i_dash, Bot botik){
+			this.player = player;
+			this.i_dash = i_dash;
+			this.message = message;
+			this.botik = botik;
+		}
+
+		@Override
+		public void run() {
+			CoinGame coinGame = new CoinGame(i_dash);
+			if(coinGame.roll()){
+
+				botik.sendMsg(message, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
+				player.getInventory().coinWin(i_dash);
+				botik.sendMsg(message, "Ваш баланс: " + player.getInventory().getBalance() + " \uD83D\uDCB2");
+				player.setState(Player.State.awaitingCommands);
+			}else{
+				botik.sendMsg(message, "❌ Вы проиграли " + "$" + i_dash);
+				player.getInventory().coinLose(i_dash);
+				botik.sendMsg(message, "Ваш баланс: " + player.getInventory().getBalance() + " \uD83D\uDCB2");
+				player.setState(Player.State.awaitingCommands);
+			}
+
+		}
+	}
 }
+
+

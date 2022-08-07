@@ -78,6 +78,14 @@ public class Inventory
 		inventory.remove(index);
 	}
 
+	public void coinWin(int dash){
+		balance += dash;
+	}
+
+	public void coinLose(int dash){
+		balance -= dash;
+	}
+
 	public boolean putItem(Item item)
 	{
 		inventory.add(item);
