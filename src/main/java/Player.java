@@ -11,6 +11,7 @@ public class Player
 	private Inventory inventory;
 	private String username;
 	private Ability<Item> findItemAbility;
+
 	public static enum State{
 		awaitingNickname,
 		awaitingSellArguments,
@@ -27,6 +28,15 @@ public class Player
 		inventory = new Inventory();
 		state = State.awaitingNickname;
 		findItemAbility = new Ability(new Cooldown(20000L), new FindItemAction(this));
+	}
+
+	Player(long id, String username, State state)
+	{
+		this.id = id;
+		this.username = username;
+		this.state = state;
+		inventory = new Inventory();
+		findItemAbility = new Ability<>(new Cooldown(10L), new FindItemAction(this));
 	}
 
 	public void setUsername(String username) {
@@ -63,5 +73,10 @@ public class Player
 	public Ability<Item> getFindItemAbility()
 	{
 		return findItemAbility;
+	}
+
+	public int getMoney()
+	{
+		return inventory.getBalance();
 	}
 }
