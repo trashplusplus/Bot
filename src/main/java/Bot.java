@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -62,9 +63,54 @@ public class Bot extends TelegramLongPollingBot
 
 	private static void initDB() throws IOException, SQLException
 	{
-		connection = DriverManager.getConnection("jdbc:sqlite:data.db");
-		String sql = Files.readString(Path.of("src\\main\\java\\init.sql"));
-		connection.createStatement().execute(sql);
+		connection = SQLSession.sqlConnection;
+		Statement statement = connection.createStatement();
+		statement.execute("create table if not exists players\n" +
+				"(\n" +
+				"    id integer primary key,\n" +
+				"    name text,\n" +
+				"    state text not null,\n" +
+				"    lastfia text default \"NEVER\"\n" +
+				");");
+		statement.execute("create table if not exists items\n" +
+				"(\n" +
+				"    id integer primary key,\n" +
+				"    name text not null,\n" +
+				"    rarity text not null,\n" +
+				"    cost integer\n" +
+				");");
+		statement.execute("create table if not exists inventory\n" +
+				"(\n" +
+				"    id integer primary key,\n" +
+				"    player_id,\n" +
+				"    item_id,\n" +
+				"\n" +
+				"    foreign key (player_id) references players (id) on delete cascade,\n" +
+				"    foreign key (item_id) references items (id) on update cascade on delete cascade\n" +
+				");");
+		statement.execute("insert or ignore into items values\n" +
+				"(1, \"Лопата\", \"Common\", 200),\n" +
+				"(2, \"Поисковый фонарь\", \"Rare\", 7000),\n" +
+				"(3, \"Подвеска \"Nosebleed\"\", \"Rare\", 30000),\n" +
+				"(4, \"Струны\", \"Common\", 500),\n" +
+				"(5, \"Футболка \"Drain\"\", \"Common\", 500),\n" +
+				"(6, \"Банан\", \"Common\", 100),\n" +
+				"(7, \"Чашка \"Египет\"\", \"Rare\", 1000),\n" +
+				"(8, \"Носки\", \"Common\", 100),\n" +
+				"(9, \"Ручка\", \"Common\", 100),\n" +
+				"(10, \"Баллончик с краской\", \"Common\", 750),\n" +
+				"(11, \"Платок\", \"Common\", 150),\n" +
+				"(12, \"Пачка сигарет\", \"Common\", 50),\n" +
+				"(13, \"Синий браслет\", \"Common\", 300),\n" +
+				"(14, \"Красный браслет\", \"Common\", 300),\n" +
+				"(15, \"Желтый браслет\"\" \"Common\", 300),\n" +
+				"(16, \"Зеленый браслет\", \"Common\", 300),\n" +
+				"(17, \"Браслет \"Орион\"\", \"Common\", 1000),\n" +
+				"(18, \"Браслет \"Сириус\"\", \"Common\", 900),\n" +
+				"(19, \"Зубная щетка\", \"Common\", 50),\n" +
+				"(20, \"Шоколадка\", \"Common\", 200),\n" +
+				"(21, \"Рюкзак\", \"Rare\", 700),\n" +
+				"(22, \"Синий фонарик\", \"Gift\", 25000);");
 	}
 
 

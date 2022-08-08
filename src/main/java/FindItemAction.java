@@ -12,7 +12,7 @@ public class FindItemAction implements Callable<Item>
 	@Override
 	public Item call() throws Exception
 	{
-		Item new_item = Inventory.getRandomItem();
+		Item new_item = ItemFactory.getRandomItem();
 		player.getInventory().putItem(new_item);
 		return new_item;
 	}

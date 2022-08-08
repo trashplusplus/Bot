@@ -28,3 +28,4 @@ replay_pid*
 token
 
 /data.db
+/sqlite3.exe

@@ -1,12 +1,14 @@
 
 public class Item
 {
+	private long id;
 	private int cost;
 	private ItemRarity rarity;
 	private String title;
 
-	Item(String title, ItemRarity rarity, int cost)
+	Item(long id, String title, ItemRarity rarity, int cost)
 	{
+		this.id = id;
 		this.title = title;
 		this.rarity = rarity;
 		this.cost = cost;
@@ -27,7 +29,10 @@ public class Item
 		return title;
 	}
 
-
+	public long getId()
+	{
+		return id;
+	}
 
 	@Override
 	public String toString()

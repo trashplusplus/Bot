@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -6,35 +7,33 @@ public class Inventory
 {
 	private List<Item> inventory = new ArrayList<>();
 
-	private static List<Item> allItems;
-
-	static
-	{
-		allItems = new ArrayList<>(List.of(
-				new Item("Лопата", ItemRarity.Common, 200),
-				new Item("Поисковый фонарь", ItemRarity.Rare, 7000),
-				new Item("Подвеска \"Nosebleed\"", ItemRarity.Rare, 30000),
-				new Item("Струны", ItemRarity.Common, 500),
-				new Item("Футболка \"Drain\"", ItemRarity.Common, 500),
-				new Item("Банан", ItemRarity.Common, 100),
-				new Item("Чашка \"Египет\"", ItemRarity.Rare, 1000),
-				new Item("Носки", ItemRarity.Common, 100),
-				new Item("Ручка", ItemRarity.Common, 100),
-				new Item("Баллончик с краской", ItemRarity.Common, 750),
-				new Item("Платок", ItemRarity.Common, 150),
-				new Item("Пачка сигарет", ItemRarity.Common, 50),
-				new Item("Синий браслет", ItemRarity.Common, 300),
-				new Item("Красный браслет", ItemRarity.Common, 300),
-				new Item("Желтый браслет", ItemRarity.Common, 300),
-				new Item("Зеленый браслет", ItemRarity.Common, 300),
-				new Item("Браслет \"Орион\"", ItemRarity.Common, 1000),
-				new Item("Браслет \"Сириус\"", ItemRarity.Common, 900),
-				new Item("Зубная щетка", ItemRarity.Common, 50),
-				new Item("Шоколадка", ItemRarity.Common, 200),
-				new Item("Рюкзак", ItemRarity.Rare, 700),
-				new Item("Синий фонарик", ItemRarity.Gift, 25000)
-		));
-	}
+	//static
+	//{
+	//	allItems = new ArrayList<>(List.of(
+	//			new Item("Лопата", ItemRarity.Common, 200),
+	//			new Item("Поисковый фонарь", ItemRarity.Rare, 7000),
+	//			new Item("Подвеска \"Nosebleed\"", ItemRarity.Rare, 30000),
+	//			new Item("Струны", ItemRarity.Common, 500),
+	//			new Item("Футболка \"Drain\"", ItemRarity.Common, 500),
+	//			new Item("Банан", ItemRarity.Common, 100),
+	//			new Item("Чашка \"Египет\"", ItemRarity.Rare, 1000),
+	//			new Item("Носки", ItemRarity.Common, 100),
+	//			new Item("Ручка", ItemRarity.Common, 100),
+	//			new Item("Баллончик с краской", ItemRarity.Common, 750),
+	//			new Item("Платок", ItemRarity.Common, 150),
+	//			new Item("Пачка сигарет", ItemRarity.Common, 50),
+	//			new Item("Синий браслет", ItemRarity.Common, 300),
+	//			new Item("Красный браслет", ItemRarity.Common, 300),
+	//			new Item("Желтый браслет", ItemRarity.Common, 300),
+	//			new Item("Зеленый браслет", ItemRarity.Common, 300),
+	//			new Item("Браслет \"Орион\"", ItemRarity.Common, 1000),
+	//			new Item("Браслет \"Сириус\"", ItemRarity.Common, 900),
+	//			new Item("Зубная щетка", ItemRarity.Common, 50),
+	//			new Item("Шоколадка", ItemRarity.Common, 200),
+	//			new Item("Рюкзак", ItemRarity.Rare, 700),
+	//			new Item("Синий фонарик", ItemRarity.Gift, 25000)
+	//	));
+	//}
 
 	private int balance;
 	private static Random ran = new Random();
@@ -44,12 +43,9 @@ public class Inventory
 		balance = 0;
 	}
 
-	public Item findItem()
+	public List<Item> getItems()
 	{
-		int randomNumber = ran.nextInt(allItems.size());
-		Item currentItem = allItems.get(randomNumber);
-		inventory.add(currentItem);
-		return currentItem;
+		return new ArrayList<>(this.inventory);
 	}
 
 	public String showInventory()
@@ -83,13 +79,5 @@ public class Inventory
 		inventory.add(item);
 
 		return true;
-	}
-
-	public static Item getRandomItem()
-	{
-		//добавить к каждой категории редкости какой-то коэффициент
-		//например Common = inv.size() / 2 и потом nextInt() + Common
-		//Gift = inv.size() / 25 => nextInt() + Gift
-		return allItems.get(ran.nextInt(allItems.size()));
 	}
 }
