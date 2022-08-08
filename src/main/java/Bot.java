@@ -88,14 +88,15 @@ public class Bot extends TelegramLongPollingBot
 				"    foreign key (player_id) references players (id) on delete cascade,\n" +
 				"    foreign key (item_id) references items (id) on update cascade on delete cascade\n" +
 				");");
-		statement.execute("insert or ignore into items values\n" +
+		/*
+		* 	statement.execute("insert or ignore into items values\n" +
 				"(1, \"Лопата\", \"Common\", 200),\n" +
 				"(2, \"Поисковый фонарь\", \"Rare\", 7000),\n" +
-				"(3, \"Подвеска \"Nosebleed\"\", \"Rare\", 30000),\n" +
+				"(3, \"Подвеска 'Nosebleed'\", \"Rare\", 30000),\n" +
 				"(4, \"Струны\", \"Common\", 500),\n" +
-				"(5, \"Футболка \"Drain\"\", \"Common\", 500),\n" +
+				"(5, \"Футболка 'Drain'\", \"Common\", 500),\n" +
 				"(6, \"Банан\", \"Common\", 100),\n" +
-				"(7, \"Чашка \"Египет\"\", \"Rare\", 1000),\n" +
+				"(7, \"Чашка 'Египет'\", \"Rare\", 1000),\n" +
 				"(8, \"Носки\", \"Common\", 100),\n" +
 				"(9, \"Ручка\", \"Common\", 100),\n" +
 				"(10, \"Баллончик с краской\", \"Common\", 750),\n" +
@@ -105,12 +106,15 @@ public class Bot extends TelegramLongPollingBot
 				"(14, \"Красный браслет\", \"Common\", 300),\n" +
 				"(15, \"Желтый браслет\"\" \"Common\", 300),\n" +
 				"(16, \"Зеленый браслет\", \"Common\", 300),\n" +
-				"(17, \"Браслет \"Орион\"\", \"Common\", 1000),\n" +
-				"(18, \"Браслет \"Сириус\"\", \"Common\", 900),\n" +
+				"(17, \"Браслет 'Орион'\", \"Common\", 1000),\n" +
+				"(18, \"Браслет 'Сириус'\", \"Common\", 900),\n" +
 				"(19, \"Зубная щетка\", \"Common\", 50),\n" +
 				"(20, \"Шоколадка\", \"Common\", 200),\n" +
 				"(21, \"Рюкзак\", \"Rare\", 700),\n" +
 				"(22, \"Синий фонарик\", \"Gift\", 25000);");
+		*
+		*
+		* */
 	}
 
 
