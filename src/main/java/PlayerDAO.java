@@ -6,22 +6,25 @@ import java.util.List;
 public class PlayerDAO implements DAO<Player>
 {
 	private Connection connection;
+	private InventoryDAO inventoryDAO;
 
 	public PlayerDAO(Connection connection) throws SQLException
 	{
 		this.connection = connection;
+		inventoryDAO = new InventoryDAO(connection);
 	}
 
 	@Override
-	public void put(Player item)
+	public void put(Player player)
 	{
 		try
 		{
 			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, state) values (?, ?, ?);");
-			ps.setLong(1, item.getId());
-			ps.setString(2, item.getUsername());
-			ps.setString(3, item.getState().name());
+			ps.setLong(1, player.getId());
+			ps.setString(2, player.getUsername());
+			ps.setString(3, player.getState().name());
 			ps.execute();
+			inventoryDAO.put(player.getId(), player.getInventory());
 		}
 		catch (SQLException e)
 		{
@@ -44,7 +47,8 @@ public class PlayerDAO implements DAO<Player>
 			player = new Player(
 					rs.getInt("id"),
 					rs.getString("name"),
-					Player.State.valueOf(rs.getString("state"))
+					Player.State.valueOf(rs.getString("state")),
+					inventoryDAO.get(id)
 			);
 		}
 		catch (SQLException e)
@@ -65,10 +69,12 @@ public class PlayerDAO implements DAO<Player>
 			ResultSet rs = ps.executeQuery();
 			while (rs.next())
 			{
+				long id = rs.getLong("id");
 				result.add(new Player(
-						rs.getLong("id"),
+						id,
 						rs.getString("name"),
-						Player.State.valueOf(rs.getString("state"))
+						Player.State.valueOf(rs.getString("state")),
+						inventoryDAO.get(id)
 				));
 			}
 		}
@@ -80,16 +86,16 @@ public class PlayerDAO implements DAO<Player>
 	}
 
 	@Override
-	public void update(long id, Player new_item)
+	public void update(long id, Player player)
 	{
 		try
 		{
 			PreparedStatement ps = connection.prepareStatement("update players set id = ?, name = ?, state = ? where id = ?;");
-			ps.setLong(1, new_item.getId());
-			ps.setString(2, new_item.getUsername());
-			ps.setString(3, new_item.getState().name());
+			ps.setLong(1, player.getId());
+			ps.setString(2, player.getUsername());
+			ps.setString(3, player.getState().name());
 			ps.setLong(4, id);
-			ps.setInt(5, new_item.getInventory().getBalance());
+			ps.setInt(5, player.getMoney());
 			ps.execute();
 		}
 		catch (SQLException e)

@@ -8,8 +8,8 @@ import java.util.List;
 public class Player
 {
 	private long id;
-	private Inventory inventory;
 	private String username;
+	private Inventory inventory;
 	private Ability<Item> findItemAbility;
 
 	public static enum State{
@@ -23,19 +23,20 @@ public class Player
 
 	Player(long id, String username)
 	{
-		this.username = username;
-		this.id = id;
-		inventory = new Inventory();
-		state = State.awaitingNickname;
-		findItemAbility = new Ability(new Cooldown(20000L), new FindItemAction(this));
+		this(id, username, State.awaitingNickname);
 	}
 
 	Player(long id, String username, State state)
 	{
+		this(id, username, state, new Inventory());
+	}
+
+	public Player(long id, String username, State state, Inventory inventory)
+	{
 		this.id = id;
 		this.username = username;
 		this.state = state;
-		inventory = new Inventory();
+		this.inventory = inventory;
 		findItemAbility = new Ability<>(new Cooldown(10L), new FindItemAction(this));
 	}
 

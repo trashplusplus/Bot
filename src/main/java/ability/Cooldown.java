@@ -59,7 +59,7 @@ public class Cooldown
 		return !running;
 	}
 
-	private class InnerOnCooldown implements Runnable
+	private static class InnerOnCooldown implements Runnable
 	{
 		Cooldown cooldown;
 
