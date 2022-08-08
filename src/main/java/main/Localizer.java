@@ -1,3 +1,5 @@
+package main;
+
 public class Localizer
 {
 	public String days(int value)
