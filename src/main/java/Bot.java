@@ -348,6 +348,7 @@ public class Bot extends TelegramLongPollingBot {
 								player.setUsername(nickname);
 								sendMsg(message, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
 								player.setState(Player.State.awaitingCommands);
+								playerDAO.update(player.getId(), player);
 							} else {
 								sendMsg(message, "Пожалуйста, введите корректный ник");
 								player.setState(Player.State.awaitingChangeNickname);

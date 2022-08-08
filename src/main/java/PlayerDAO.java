@@ -89,6 +89,7 @@ public class PlayerDAO implements DAO<Player>
 			ps.setString(2, new_item.getUsername());
 			ps.setString(3, new_item.getState().name());
 			ps.setLong(4, id);
+			ps.setInt(5, new_item.getInventory().getBalance());
 			ps.execute();
 		}
 		catch (SQLException e)
