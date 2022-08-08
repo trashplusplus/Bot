@@ -1,3 +1,4 @@
+package main;
 
 public class Item
 {
@@ -6,7 +7,7 @@ public class Item
 	private ItemRarity rarity;
 	private String title;
 
-	Item(long id, String title, ItemRarity rarity, int cost)
+	public Item(long id, String title, ItemRarity rarity, int cost)
 	{
 		this.id = id;
 		this.title = title;
