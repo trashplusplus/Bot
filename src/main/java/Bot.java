@@ -160,6 +160,7 @@ public class Bot extends TelegramLongPollingBot
 			players_list.append("\n");
 			players_list.append("========================");
 			players_list.append("\n");
+
 		}
 		sendMsg(id, players_list.toString());
 	}
@@ -223,28 +224,6 @@ public class Bot extends TelegramLongPollingBot
 
 			System.out.println("Текстик: " + message.getText());
 
-
-			switch (text)
-			{
-				case "/start":
-					if (playerDAO.get(id) != null)
-					{
-						sendMsg(id, "Вы уже зарегистрированы");
-					}
-					else
-					{
-						playerDAO.put(new Player(id, "player" + id, 0, Player.State.awaitingNickname, new Inventory()));
-						sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
-					}
-					break;
-				default:
-					if (playerDAO.get(id) == null)
-					{
-						sendMsg(id, "⭐ Для регистрации введите команду /start");
-					}
-					break;
-			}
-
 			Player player = playerDAO.get(id);
 			//использовать containsKey
 
@@ -253,189 +232,196 @@ public class Bot extends TelegramLongPollingBot
 			//	}
 
 
+			if(playerDAO.get(id) == null){
+				switch (text)
+				{
+					case "/start":
+						if (playerDAO.get(id) != null)
+						{
+							sendMsg(id, "Вы уже зарегистрированы");
+						}
+						else
+						{
+							playerDAO.put(new Player(id, "player" + id, 0, Player.State.awaitingNickname, new Inventory()));
+							sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
+							sendMsg(id, "Введите ник: ");
+						}
+						break;
+					default:
+						if (playerDAO.get(id) == null)
+						{
+							sendMsg(id, "⭐ Для регистрации введите команду /start");
+						}
+						break;
+				}
+			}
 
-			switch (text)
-			{
-				case "/inv":
-					command_inv(id);
-					break;
-				case "/find":
-					command_find(id);
-					break;
-				case "/balance":
-					command_balance(id);
-					break;
-				case "/stats":
-					command_stats(id);
-					break;
-				case "/sell":
-					command_sell(id);
-					break;
-				case "/top":
-					//bug
-					command_top(id);
-					break;
-				case "/help":
-					command_help(id);
-					break;
-				case "/info":
-					command_info(id);
-					break;
-				case "/changenickname":
-					command_changeNickname(id);
-					break;
-				case "/cheat":
-					sendMsg(id, "Игрок " + player.getUsername() + " обзавелся префиксом");
-					player.setUsername("\uD83D\uDC33 " + player.getUsername());
-					playerDAO.update(player);
-					break;
-				case "/coin":
-
-					if (player.balance > 0)
+			switch (player.getState()){
+				case awaitingNickname:
+					String username = message.getText();
+					if (username.matches(usernameTemplate))
 					{
-						sendMsg(id, "\uD83C\uDFB0 Введите ставку: ");
+						player.setUsername(username);
+						player.setState(Player.State.awaitingCommands);
+						playerDAO.update(player);
+						sendMsg(id, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
+						command_help(id);
 					}
 					else
 					{
-						sendMsg(id, "\uD83C\uDFB0 У вас недостаточно денег	");
+						sendMsg(id, "Введите корректный ник: ");
+
+						//player.setState(main.Player.State.awaitingNickname);
 					}
-
-
-					player.setState(Player.State.coinDash);
-					playerDAO.update(player);
 					break;
-				//case "/spam":
-				//	long spam_id = 5546773606L;
-				//	SendMessage sendMessage = new SendMessage();
-				//	sendMessage.setChatId(spam_id);
-				//	sendMessage.setText("SPAM!");
-				//	try
-				//	{
-				//		sendMessage(sendMessage);
-				//	}
-				//	catch (TelegramApiException e)
-				//	{
-				//		e.printStackTrace();
-				//	}
-				//	break;
-				default:
-
-					if (player.getId() == id)
-					{
-						if (player.getState() == Player.State.awaitingNickname)
-						{
-							String username = message.getText();
-
-							if (username.matches(usernameTemplate))
-							{
-								player.setUsername(username);
-								player.setState(Player.State.awaitingCommands);
+				case awaitingCommands:
+					switch (text) {
+						case "/inv":
+							command_inv(id);
+							break;
+						case "/find":
+							command_find(id);
+							break;
+						case "/balance":
+							command_balance(id);
+							break;
+						case "/stats":
+							command_stats(id);
+							break;
+						case "/sell":
+							command_sell(id);
+							break;
+						case "/top":
+							command_top(id);
+							break;
+						case "/help":
+							command_help(id);
+							break;
+						case "/info":
+							command_info(id);
+							break;
+						case "/changenickname":
+							command_changeNickname(id);
+							break;
+						case "/cheat":
+							sendMsg(id, "Игрок " + player.getUsername() + " обзавелся префиксом");
+							player.setUsername("\uD83D\uDC33 " + player.getUsername());
+							playerDAO.update(player);
+							break;
+						case "/coin":
+							if (player.balance > 0) {
+								sendMsg(id, "\uD83C\uDFB0 Введите ставку: ");
+								player.setState(Player.State.coinDash);
 								playerDAO.update(player);
-								sendMsg(id, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
-								command_help(id);
-							}
-							else
-							{
-								//sendMsg(message, "Введите корректный ник: ");
-								sendMsg(id, "Введите ник: ");
-								//player.setState(main.Player.State.awaitingNickname);
-							}
-
-
-						}
-						else if (player.getState() == Player.State.awaitingSellArguments)
-						{
-							try
-							{
-								Inventory inventory = player.getInventory();
-								String sellID = message.getText();
-								int sell_id = Integer.parseInt(sellID);
-								Item item = inventory.getItem(sell_id);
-								player.balance += item.getCost();
-								inventory.removeItem(sell_id);
-								inventoryDAO.delete(id, item.getId(), 1);
-
+							} else {
+								sendMsg(id, "\uD83C\uDFB0 У вас недостаточно денег	");
 								player.setState(Player.State.awaitingCommands);
-								playerDAO.update(player);
+							}
+							break;
+						case "/broadcast":
 
-								sendMsg(id, "✅ Предмет успешно продан");
+							/*
+							for(Player player1 : playerDAO.getAll()){
+								long idd = player1.getId();
+								sendMsg(idd, "\uD83D\uDC37 Ээй, давно тебя не было в игре, возращайся и сразись с нашим честным CoinDash \uD83D\uDC37");
 							}
-							catch (NumberFormatException e)
-							{
-								e.printStackTrace();
-								sendMsg(id, "⚠\t Пожалуйста, введите целое число");
-								player.setState(Player.State.awaitingCommands);
-								playerDAO.update(player);
-							}
-							catch (IndexOutOfBoundsException ee)
-							{
-								ee.printStackTrace();
-								sendMsg(id, "⚠\t Указан неверный ID");
-								player.setState(Player.State.awaitingCommands);
-								playerDAO.update(player);
-							}
-						}
-						else if (player.getState() == Player.State.awaitingCommands)
-						{
+							*/
+
+							break;
+
+						default:
+
 							String getText = message.getText();
-							//небольшая проверка /start и чтобы не писало Неизвестная команда
-							//FIX HERE
+
 							if (!getText.equals("/start"))
 							{
 								sendMsg(id, "⚠\t Неизвестная команда");
 							}
-						}
-						else if (player.getState() == Player.State.awaitingChangeNickname)
+
+							break;
+					}
+					break;
+				case awaitingSellArguments:
+
+						try
 						{
-							String nickname = message.getText();
-							if (nickname.matches(usernameTemplate))
-							{
-								player.setUsername(nickname);
-								sendMsg(id, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
-								player.setState(Player.State.awaitingCommands);
-								playerDAO.update(player);
-							}
-							else
-							{
-								sendMsg(id, "Пожалуйста, введите корректный ник");
-								player.setState(Player.State.awaitingChangeNickname);
-								playerDAO.update(player);
-							}
+							Inventory inventory = player.getInventory();
+							String sellID = message.getText();
+							int sell_id = Integer.parseInt(sellID);
+							Item item = inventory.getItem(sell_id);
+							player.balance += item.getCost();
+							inventory.removeItem(sell_id);
+							inventoryDAO.delete(id, item.getId(), 1);
 
+							player.setState(Player.State.awaitingCommands);
+							playerDAO.update(player);
+
+							sendMsg(id, "✅ Предмет успешно продан");
+						} catch (NumberFormatException e)	{
+
+							e.printStackTrace();
+							sendMsg(id, "⚠\t Пожалуйста, введите целое число");
+							player.setState(Player.State.awaitingCommands);
+							playerDAO.update(player);
+						}catch (IndexOutOfBoundsException ee){
+							ee.printStackTrace();
+							sendMsg(id, "⚠\t Указан неверный ID");
+							player.setState(Player.State.awaitingCommands);
+							playerDAO.update(player);
 						}
-						else if (player.getState() == Player.State.coinDash)
+
+					break;
+				case awaitingChangeNickname:
+
+					String nickname = message.getText();
+					if (nickname.matches(usernameTemplate))
+					{
+						player.setUsername(nickname);
+						sendMsg(id, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
+						player.setState(Player.State.awaitingCommands);
+						playerDAO.update(player);
+					}
+					else
+					{
+						sendMsg(id, "Пожалуйста, введите корректный ник");
+						player.setState(Player.State.awaitingChangeNickname);
+						playerDAO.update(player);
+					}
+
+
+					break;
+				case coinDash:
+					try
+					{
+						String dash = message.getText();
+						int i_dash = Integer.parseInt(dash);
+
+						if (i_dash > 0 && i_dash <= player.balance)
 						{
-							try
-							{
-								String dash = message.getText();
-								int i_dash = Integer.parseInt(dash);
+							sendMsg(id, "\uD83C\uDFB0 Ваша ставка: " + "$" + i_dash);
 
-								if (i_dash > 0 && i_dash <= player.balance)
-								{
-									sendMsg(id, "\uD83C\uDFB0 Ваша ставка: " + "$" + i_dash);
+							sendMsg(id, "Подбрасываем монетку...");
 
-									sendMsg(id, "Подбрасываем монетку...");
-
-									Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, id, i_dash, this));
-									kd.startCooldown();
-								}
-								else
-								{
-									sendMsg(id, "⚠\t У вас нет такой суммы");
-
-								}
-							}
-							catch (NumberFormatException e)
-							{
-								sendMsg(id, "⚠\tВаша ставка должна быть целым числом");
-								e.printStackTrace();
-								player.setState(Player.State.awaitingCommands);
-								playerDAO.update(player);
-							}
+							Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, id, i_dash, this));
+							kd.startCooldown();
+						}
+						else
+						{
+							sendMsg(id, "⚠\t У вас нет такой суммы");
 
 						}
 					}
+					catch (NumberFormatException e)
+					{
+						sendMsg(id, "⚠\tВаша ставка должна быть целым числом");
+						e.printStackTrace();
+						player.setState(Player.State.awaitingCommands);
+						playerDAO.update(player);
+					}
 					break;
+			}
+
+
 				// чтобы сначала проверялся ID пользователя, а потом если его не существует то инстанцировать для него новый ID
 
 				//Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
@@ -444,7 +430,7 @@ public class Bot extends TelegramLongPollingBot
 
 			//playerDAO.update(player);
 		}
-	}
+
 
 	//кнопки
 
