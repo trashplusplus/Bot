@@ -416,8 +416,6 @@ public class Bot extends TelegramLongPollingBot
 
 									Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, id, i_dash, this));
 									kd.startCooldown();
-
-
 								}
 								else
 								{
@@ -526,15 +524,16 @@ public class Bot extends TelegramLongPollingBot
 			if (coinGame.roll())
 			{
 				botik.sendMsg(chatId, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
-				player.getInventory().coinWin(i_dash);
+				coinGame.coinWin(player, i_dash);
 			}
 			else
 			{
 				botik.sendMsg(chatId, "❌ Вы проиграли " + "$" + i_dash);
-				player.getInventory().coinLose(i_dash);
+				coinGame.coinLose(player, i_dash);
 			}
-			botik.sendMsg(chatId, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
+
 			player.setState(Player.State.awaitingCommands);
+			botik.sendMsg(chatId, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
 			playerDAO.update(player);
 		}
 	}

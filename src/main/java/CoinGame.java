@@ -1,3 +1,5 @@
+import main.Player;
+
 import java.util.Random;
 
 public class CoinGame {
@@ -18,5 +20,15 @@ public class CoinGame {
         return side;
     }
 
+
+    public void coinWin(Player player, int money)
+    {
+        player.balance += money;
+    }
+
+    public void coinLose(Player player, int money)
+    {
+       player.balance -= money;
+    }
 
 }
