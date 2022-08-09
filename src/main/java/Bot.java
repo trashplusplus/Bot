@@ -151,7 +151,7 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_top(Long id)
 	{
-		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Все игроки:\n");
+		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ игроков:\n");
 		players_list.append("========================");
 		players_list.append("\n");
 		for (Player player : playerDAO.getAll())
@@ -251,6 +251,8 @@ public class Bot extends TelegramLongPollingBot
 			//if(!players.containsKey(player)){
 			//sendMsg(message, "Введите команду /start");
 			//	}
+
+
 
 			switch (text)
 			{

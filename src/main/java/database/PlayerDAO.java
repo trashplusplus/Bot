@@ -71,7 +71,7 @@ public class PlayerDAO
 		List<Player> result = new ArrayList<>();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("select * from players;");
+			PreparedStatement ps = connection.prepareStatement("select * from players order by balance desc;");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next())
 			{
