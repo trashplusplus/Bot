@@ -46,14 +46,16 @@ public class PlayerDAO
 			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			player = new Player(
-					rs.getInt("id"),
-					rs.getString("name"),
-					rs.getInt("balance"),
-					Player.State.valueOf(rs.getString("state")),
-					inventoryDAO.get(id)
-			);
+			if (rs.next())
+			{
+				player = new Player(
+						rs.getLong("id"),
+						rs.getString("name"),
+						rs.getInt("balance"),
+						Player.State.valueOf(rs.getString("state")),
+						inventoryDAO.get(id)
+				);
+			}
 		}
 		catch (SQLException e)
 		{
