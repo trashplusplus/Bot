@@ -1,14 +1,13 @@
+package main;
+
 import ability.Ability;
 import ability.Cooldown;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Player
 {
 	private long id;
 	private String username;
+	public int balance;
 	private Inventory inventory;
 	private Ability<Item> findItemAbility;
 
@@ -21,20 +20,16 @@ public class Player
 	}
 	private State state;
 
-	Player(long id, String username)
+	public Player(long id, String username)
 	{
-		this(id, username, State.awaitingNickname);
+		this(id, username, 0, State.awaitingNickname, new Inventory());
 	}
 
-	Player(long id, String username, State state)
-	{
-		this(id, username, state, new Inventory());
-	}
-
-	public Player(long id, String username, State state, Inventory inventory)
+	public Player(long id, String username, int balance, State state, Inventory inventory)
 	{
 		this.id = id;
 		this.username = username;
+		this.balance = balance;
 		this.state = state;
 		this.inventory = inventory;
 		findItemAbility = new Ability<>(new Cooldown(10L), new FindItemAction(this));
@@ -78,6 +73,6 @@ public class Player
 
 	public int getMoney()
 	{
-		return inventory.getBalance();
+		return balance;
 	}
 }

@@ -1,28 +1,32 @@
-import javax.swing.*;
+package database;
+
+import database.InventoryDAO;
+import main.Player;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerDAO implements DAO<Player>
+public class PlayerDAO
 {
 	private Connection connection;
 	private InventoryDAO inventoryDAO;
 
-	public PlayerDAO(Connection connection) throws SQLException
+	public PlayerDAO(Connection connection)
 	{
 		this.connection = connection;
 		inventoryDAO = new InventoryDAO(connection);
 	}
 
-	@Override
 	public void put(Player player)
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, state) values (?, ?, ?);");
+			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, balance, state) values (?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setString(2, player.getUsername());
-			ps.setString(3, player.getState().name());
+			ps.setInt(3, player.balance);
+			ps.setString(4, player.getState().name());
 			ps.execute();
 			inventoryDAO.put(player.getId(), player.getInventory());
 		}
@@ -34,7 +38,6 @@ public class PlayerDAO implements DAO<Player>
 		}
 	}
 
-	@Override
 	public Player get(long id)
 	{
 		Player player = null;
@@ -43,13 +46,16 @@ public class PlayerDAO implements DAO<Player>
 			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			player = new Player(
-					rs.getInt("id"),
-					rs.getString("name"),
-					Player.State.valueOf(rs.getString("state")),
-					inventoryDAO.get(id)
-			);
+			if (rs.next())
+			{
+				player = new Player(
+						rs.getLong("id"),
+						rs.getString("name"),
+						rs.getInt("balance"),
+						Player.State.valueOf(rs.getString("state")),
+						inventoryDAO.get(id)
+				);
+			}
 		}
 		catch (SQLException e)
 		{
@@ -73,6 +79,7 @@ public class PlayerDAO implements DAO<Player>
 				result.add(new Player(
 						id,
 						rs.getString("name"),
+						rs.getInt("balance"),
 						Player.State.valueOf(rs.getString("state")),
 						inventoryDAO.get(id)
 				));
@@ -85,18 +92,35 @@ public class PlayerDAO implements DAO<Player>
 		return result;
 	}
 
-	@Override
-	public void update(long id, Player player)
+	public int size()
 	{
+		String query = "select count(*) from players;";
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set id = ?, name = ?, state = ? where id = ?;");
-			ps.setLong(1, player.getId());
-			ps.setString(2, player.getUsername());
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+			rs.next();
+			return rs.getInt(1);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new RuntimeException("SQL Exception", e);
+		}
+	}
+
+	public void update(Player player)
+	{
+		long id = player.getId();
+		try
+		{
+			PreparedStatement ps = connection.prepareStatement("update players set name = ?, balance = ?, state = ? where id = ?;");
+			ps.setString(1, player.getUsername());
+			ps.setInt(2, player.balance);
 			ps.setString(3, player.getState().name());
 			ps.setLong(4, id);
-			ps.setInt(5, player.getMoney());
 			ps.execute();
+			//inventoryDAO.put(id, player.getInventory());
 		}
 		catch (SQLException e)
 		{
@@ -104,7 +128,6 @@ public class PlayerDAO implements DAO<Player>
 		}
 	}
 
-	@Override
 	public void delete(long id)
 	{
 		try

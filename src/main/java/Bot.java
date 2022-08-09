@@ -1,61 +1,49 @@
 import ability.Ability;
 import ability.Cooldown;
-import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
+import database.InventoryDAO;
+import database.PlayerDAO;
+import database.SQLExecutor;
+import database.SQLSession;
+import main.Inventory;
+import main.Item;
+import main.Player;
+import main.PrettyDate;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 
 public class Bot extends TelegramLongPollingBot
 {
-	private static Map<Long, Player> players = new HashMap<>(); //контейнер игроков
-	private static final File token = new File("token");
-	private static Scanner scanner;
-	private static String tokBot;
-
-	Inventory inv = null;
-	Player player = null;
-
-	private static Connection connection;
-	private static PlayerDAO playerDAO;
-
-	//🐳
+	static PlayerDAO playerDAO = new PlayerDAO(SQLSession.sqlConnection);
+	static InventoryDAO inventoryDAO = new InventoryDAO(SQLSession.sqlConnection);
 
 	public static void main(String[] args) throws IOException, SQLException
 	{
-		readFile();
 		initDB();
 
-		players = new HashMap<>();
-		playerDAO = new PlayerDAO(connection);
-		for (Player player : playerDAO.getAll())
-		{
-			players.put(player.getId(), player);
-		}
-
-		ApiContextInitializer.init(); //инициализация API
-		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(); //создание объекта в API
 		try
 		{
+			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class); //создание объекта в API
 			telegramBotsApi.registerBot(new Bot());
 		}
-		catch (TelegramApiRequestException e)
+		catch (TelegramApiException e)
 		{
 			e.printStackTrace();
 		}
@@ -63,69 +51,15 @@ public class Bot extends TelegramLongPollingBot
 
 	private static void initDB() throws IOException, SQLException
 	{
-		connection = SQLSession.sqlConnection;
-		Statement statement = connection.createStatement();
-		statement.execute("create table if not exists players\n" +
-				"(\n" +
-				"    id integer primary key,\n" +
-				"    name text,\n" +
-				"    state text not null,\n" +
-				"    lastfia text default \"NEVER\"\n" +
-				");");
-		statement.execute("create table if not exists items\n" +
-				"(\n" +
-				"    id integer primary key,\n" +
-				"    name text not null,\n" +
-				"    rarity text not null,\n" +
-				"    cost integer\n" +
-				");");
-		statement.execute("create table if not exists inventory\n" +
-				"(\n" +
-				"    id integer primary key,\n" +
-				"    player_id,\n" +
-				"    item_id,\n" +
-				"\n" +
-				"    foreign key (player_id) references players (id) on delete cascade,\n" +
-				"    foreign key (item_id) references items (id) on update cascade on delete cascade\n" +
-				");");
-		/*
-		* 	statement.execute("insert or ignore into items values\n" +
-				"(1, \"Лопата\", \"Common\", 200),\n" +
-				"(2, \"Поисковый фонарь\", \"Rare\", 7000),\n" +
-				"(3, \"Подвеска 'Nosebleed'\", \"Rare\", 30000),\n" +
-				"(4, \"Струны\", \"Common\", 500),\n" +
-				"(5, \"Футболка 'Drain'\", \"Common\", 500),\n" +
-				"(6, \"Банан\", \"Common\", 100),\n" +
-				"(7, \"Чашка 'Египет'\", \"Rare\", 1000),\n" +
-				"(8, \"Носки\", \"Common\", 100),\n" +
-				"(9, \"Ручка\", \"Common\", 100),\n" +
-				"(10, \"Баллончик с краской\", \"Common\", 750),\n" +
-				"(11, \"Платок\", \"Common\", 150),\n" +
-				"(12, \"Пачка сигарет\", \"Common\", 50),\n" +
-				"(13, \"Синий браслет\", \"Common\", 300),\n" +
-				"(14, \"Красный браслет\", \"Common\", 300),\n" +
-				"(15, \"Желтый браслет\"\" \"Common\", 300),\n" +
-				"(16, \"Зеленый браслет\", \"Common\", 300),\n" +
-				"(17, \"Браслет 'Орион'\", \"Common\", 1000),\n" +
-				"(18, \"Браслет 'Сириус'\", \"Common\", 900),\n" +
-				"(19, \"Зубная щетка\", \"Common\", 50),\n" +
-				"(20, \"Шоколадка\", \"Common\", 200),\n" +
-				"(21, \"Рюкзак\", \"Rare\", 700),\n" +
-				"(22, \"Синий фонарик\", \"Gift\", 25000);");
-		*
-		*
-		* */
+		SQLExecutor executor = new SQLExecutor(new File("src\\main\\java\\database\\init.sql"), SQLSession.sqlConnection);
+		executor.execute();
 	}
 
-
 	//что бот будет отвечать
-	public void sendMsg(Message message, String text)
+	public void sendMsg(Long chatId, String text)
 	{
-		SendMessage sendMessage = new SendMessage();
+		SendMessage sendMessage = new SendMessage(chatId.toString(), text);
 		sendMessage.enableMarkdown(true);
-
-		//чат айди, чтобы было понятно кому отвечать
-		sendMessage.setChatId(message.getChatId());
 
 		//конкретно, на какое сообщение ответить
 		//sendMessage.setReplyToMessageId(message.getMessageId());
@@ -135,18 +69,17 @@ public class Bot extends TelegramLongPollingBot
 		{
 			//добавили кнопку и поместили в нее сообщение
 			setButtons(sendMessage);
-			sendMessage(sendMessage);
+			execute(sendMessage);
 		}
 		catch (TelegramApiException e)
 		{
 			e.printStackTrace();
 		}
-
 	}
 
-	public void command_help(Message message)
+	public void command_help(Long id)
 	{
-		sendMsg(message, "\\[`Needle`] Бот содержит следующие команды: \n" +
+		sendMsg(id, "\\[`Needle`] Бот содержит следующие команды: \n" +
 				"\n" +
 				"\uD83D\uDD0D /find - искать предметы \n" +
 				"\n" +
@@ -167,80 +100,73 @@ public class Bot extends TelegramLongPollingBot
 				"\n" +
 				"\uD83D\uDC80 /changenickname - сменить никнейм \n \n" +
 				"\uD83C\uDFB0 /coin - сыграть в Монетку"
-
-
 		);
 	}
 
-	public void command_inv(Message message, Inventory inv)
+	public void command_inv(Long id)
 	{
-		inv = players.get(message.getChatId()).getInventory();
-		if (inv.getInvSize() != 0)
+		Inventory inventory = inventoryDAO.get(id);
+		if (inventory.getInvSize() != 0)
 		{
 
-			sendMsg(message, "\uD83C\uDF81\t Ваш инвентарь: ");
+			sendMsg(id, "\uD83C\uDF81\t Ваш инвентарь: ");
 			//sendMsg(message, "\u26BD");
-			sendMsg(message, "\n" + inv.showInventory() + "\n");
-			sendMsg(message, "\uD83C\uDF81\t Всего предметов: " + inv.getInvSize());
+			sendMsg(id, "\n" + inventory.showInventory() + "\n");
+			sendMsg(id, "\uD83C\uDF81\t Всего предметов: " + inventory.getInvSize());
 		}
 		else
 		{
-			sendMsg(message, "\uD83C\uDF81\t Ваш инвентарь пуст ");
+			sendMsg(id, "\uD83C\uDF81\t Ваш инвентарь пуст ");
 
 		}
 	}
 
-	public void command_find(Message message, Inventory inv)
+	public void command_find(Long id)
 	{
-
-		long id = message.getChatId();
-		Player player = players.get(id);
+		Player player = playerDAO.get(id);
 		Ability<Item> fia = player.getFindItemAbility();
 		if (fia.isUsable())
 		{
 			Item new_item = fia.use();
-			sendMsg(message, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
+			inventoryDAO.putItem(id, new_item.getId());
+			sendMsg(id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 		}
 		else
 		{
-			sendMsg(message, String.format("\u231B Время ожидания: %s",
+			sendMsg(id, String.format("\u231B Время ожидания: %s",
 					PrettyDate.prettify(fia.getCDTimer(), TimeUnit.SECONDS)));
 		}
 	}
 
-	public void command_balance(Message message, Inventory inv)
+	public void command_balance(Long id)
 	{
-		inv = players.get(message.getChatId()).getInventory();
-		sendMsg(message, "\uD83D\uDCB2 Ваш баланс: " + "$" + inv.getBalance());
+		sendMsg(id, String.format("\uD83D\uDCB2 Ваш баланс: $%d", playerDAO.get(id).balance));
 	}
 
 
-	public void command_stats(Message message)
+	public void command_stats(Long id)
 	{
-		sendMsg(message, "\uD83D\uDCBB Всего игроков: " + players.size());
+		sendMsg(id, "\uD83D\uDCBB Всего игроков: " + playerDAO.size());
 	}
 
-	public void command_top(Message message)
+	public void command_top(Long id)
 	{
 		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Все игроки:\n");
 		players_list.append("========================");
 		players_list.append("\n");
-		for (Player player : players.values())
+		for (Player player : playerDAO.getAll())
 		{
-			players_list.append(String.format("Игрок %s | $%d", player.getUsername(), player.getMoney()));
+			players_list.append(String.format("Игрок %s | $%d", player.getUsername(), player.balance));
 			players_list.append("\n");
 			players_list.append("========================");
 			players_list.append("\n");
 		}
-		sendMsg(message, players_list.toString());
-		//for(Map.Entry<Long, Player> pair : players.entrySet()){
-		//	sendMsg(message, "Игрок: " + pair.getValue().getUsername() + " | " + "$" + pair.getValue().getInventory().getBalance());
-		//}
+		sendMsg(id, players_list.toString());
 	}
 
-	public void command_info(Message message)
+	public void command_info(Long id)
 	{
-		sendMsg(message, "Needle - это многопользовательская телеграм игра, нацеленная на коллекционирование " +
+		sendMsg(id, "Needle - это многопользовательская телеграм игра, нацеленная на коллекционирование " +
 				"предметов. Вам как игроку предстоит собирать их, открывать ачивки и соревноваться с другими " +
 				"игроками. Предметы Вы можете продавать, тем самым увеличивая свой игровой баланс. Внутриигровую валюту " +
 				"вы можете тратить на покупку предметов у других игроков, на внутриигровое казино, а также на поиск предметов " +
@@ -249,134 +175,150 @@ public class Bot extends TelegramLongPollingBot
 				"цену. Покупать и выставлять предметы можно на аукционе. Удачи и приятной игры. ");
 	}
 
-	public void command_sell(Message message, Inventory inv)
+	public void command_sell(Long id)
 	{
-		inv = players.get(message.getChatId()).getInventory();
-		Player player = players.get(message.getChatId());
+		Player player = playerDAO.get(id);
+		Inventory inventory = player.getInventory();
 
-		if (inv.getInvSize() > 0)
+		StringBuilder stringBuilder = new StringBuilder();
+		if (inventory.getInvSize() > 0)
 		{
-			sendMsg(message, " Введите ID предмета, который вы хотите продать: ");
-			int itemSellIndex = 0;
-			sendMsg(message, "Предметы, доступные для продажи: ");
-
-			for (int j = 0; j < inv.getInvSize(); j++)
+			stringBuilder.append("Предметы, доступные к продаже:\n");
+			for (int i = 0; i < inventory.getInvSize(); i++)
 			{
-				sendMsg(message, "Предмет " + "|" + itemSellIndex + "|: " + inv.getItem(j));
-				itemSellIndex++;
+				stringBuilder.append(String.format("Предмет #[%d] : %s\n", i, inventory.getItem(i).toString()));
 			}
+			stringBuilder.append("Введите номер предмета, который хотите продать:\n");
 			player.setState(Player.State.awaitingSellArguments);
+			playerDAO.update(player);
 		}
 		else
 		{
-			sendMsg(message, "⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ");
+			stringBuilder.append("⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ");
 		}
 
+		sendMsg(id, stringBuilder.toString());
 	}
 
-	public void command_changeNickname(Message message)
+	public void command_changeNickname(Long id)
 	{
-		Player player = players.get(message.getChatId());
-		sendMsg(message, "Введите никнейм, на который вы хотите сменить: ");
+		Player player = playerDAO.get(id);
+		sendMsg(id, "Введите никнейм, на который вы хотите сменить: ");
 		player.setState(Player.State.awaitingChangeNickname);
+		playerDAO.update(player);
 	}
 
 	//метод для приема сообщений и обновлений
+	@Override
 	public void onUpdateReceived(Update update)
 	{
-
 		Message message = update.getMessage();
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 
 		if (message != null && message.hasText())
 		{
+			Long id = message.getChatId();
+			String text = message.getText();
 
 			System.out.println("Текстик: " + message.getText());
 
 
-			switch (message.getText())
+			switch (text)
 			{
 				case "/start":
-					if (players.containsKey(message.getChatId()))
+					if (playerDAO.get(id) != null)
 					{
-						sendMsg(message, "Вы уже зарегистрированы");
+						sendMsg(id, "Вы уже зарегистрированы");
 					}
 					else
 					{
-						players.put(message.getChatId(), new Player(message.getChatId(), "player" + message.getChatId()));
-						player = players.get(message.getChatId());
-						playerDAO.put(player);
-						sendMsg(message, "\uD83C\uDF77 Добро пожаловать в Needle");
-						player.setState(Player.State.awaitingNickname);
+						playerDAO.put(new Player(id, "player" + id, 0, Player.State.awaitingNickname, new Inventory()));
+						sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
 					}
 					break;
 				default:
-					if (!players.containsKey(message.getChatId()))
+					if (playerDAO.get(id) == null)
 					{
-						sendMsg(message, "⭐ Для регистрации введите команду /start");
+						sendMsg(id, "⭐ Для регистрации введите команду /start");
 					}
 					break;
 			}
 
-			player = players.get(message.getChatId());
+			Player player = playerDAO.get(id);
 			//использовать containsKey
 
 			//if(!players.containsKey(player)){
 			//sendMsg(message, "Введите команду /start");
 			//	}
 
-			switch (message.getText())
+			switch (text)
 			{
 				case "/inv":
-					command_inv(message, inv);
+					command_inv(id);
 					break;
 				case "/find":
-					command_find(message, inv);
+					command_find(id);
 					break;
 				case "/balance":
-					command_balance(message, inv);
+					command_balance(id);
 					break;
 				case "/stats":
-					command_stats(message);
+					command_stats(id);
 					break;
 				case "/sell":
-					command_sell(message, inv);
+					command_sell(id);
 					break;
 				case "/top":
 					//bug
-					command_top(message);
+					command_top(id);
 					break;
 				case "/help":
-					command_help(message);
+					command_help(id);
 					break;
 				case "/info":
-					command_info(message);
+					command_info(id);
 					break;
 				case "/changenickname":
-					command_changeNickname(message);
+					command_changeNickname(id);
 					break;
 				case "/cheat":
-					sendMsg(message, "Игрок " + player.getUsername() + " обзавелся префиксом");
+					sendMsg(id, "Игрок " + player.getUsername() + " обзавелся префиксом");
 					player.setUsername("\uD83D\uDC33 " + player.getUsername());
+					playerDAO.update(player);
 					break;
 				case "/coin":
 
-					if (player.getInventory().getBalance() > 0)
+					if (player.balance > 0)
 					{
-						sendMsg(message, "\uD83C\uDFB0 Введите ставку: ");
+						sendMsg(id, "\uD83C\uDFB0 Введите ставку: ");
 					}
 					else
 					{
-						sendMsg(message, "\uD83C\uDFB0 У вас недостаточно денег	");
+						sendMsg(id, "\uD83C\uDFB0 У вас недостаточно денег	");
 					}
 
 
 					player.setState(Player.State.coinDash);
+					playerDAO.update(player);
 					break;
+				//case "/spam":
+				//	long spam_id = 5546773606L;
+				//	SendMessage sendMessage = new SendMessage();
+				//	sendMessage.setChatId(spam_id);
+				//	sendMessage.setText("SPAM!");
+				//	try
+				//	{
+				//		sendMessage(sendMessage);
+				//	}
+				//	catch (TelegramApiException e)
+				//	{
+				//		e.printStackTrace();
+				//	}
+				//	break;
 				default:
 
-					if (player.getId() == message.getChatId())
+					if (player.getId() == id)
 					{
 						if (player.getState() == Player.State.awaitingNickname)
 						{
@@ -386,42 +328,49 @@ public class Bot extends TelegramLongPollingBot
 							{
 								player.setUsername(username);
 								player.setState(Player.State.awaitingCommands);
-								sendMsg(message, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
-								command_help(message);
+								playerDAO.update(player);
+								sendMsg(id, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
+								command_help(id);
 							}
 							else
 							{
 								//sendMsg(message, "Введите корректный ник: ");
-								sendMsg(message, "Введите ник: ");
-								//player.setState(Player.State.awaitingNickname);
+								sendMsg(id, "Введите ник: ");
+								//player.setState(main.Player.State.awaitingNickname);
 							}
 
 
 						}
 						else if (player.getState() == Player.State.awaitingSellArguments)
 						{
-
 							try
 							{
-								inv = players.get(message.getChatId()).getInventory();
+								Inventory inventory = player.getInventory();
 								String sellID = message.getText();
-								Integer.parseInt(sellID);
+								int sell_id = Integer.parseInt(sellID);
+								Item item = inventory.getItem(sell_id);
+								player.balance += item.getCost();
+								inventory.removeItem(sell_id);
+								inventoryDAO.delete(id, item.getId(), 1);
 
-								inv.sellItem(Integer.parseInt(sellID));
-								sendMsg(message, "✅ Предмет успешно продан");
 								player.setState(Player.State.awaitingCommands);
+								playerDAO.update(player);
+
+								sendMsg(id, "✅ Предмет успешно продан");
 							}
 							catch (NumberFormatException e)
 							{
 								e.printStackTrace();
-								sendMsg(message, "⚠\t Пожалуйста, введите целое число");
+								sendMsg(id, "⚠\t Пожалуйста, введите целое число");
 								player.setState(Player.State.awaitingCommands);
+								playerDAO.update(player);
 							}
 							catch (IndexOutOfBoundsException ee)
 							{
 								ee.printStackTrace();
-								sendMsg(message, "⚠\t Указан неверный ID");
+								sendMsg(id, "⚠\t Указан неверный ID");
 								player.setState(Player.State.awaitingCommands);
+								playerDAO.update(player);
 							}
 						}
 						else if (player.getState() == Player.State.awaitingCommands)
@@ -429,13 +378,9 @@ public class Bot extends TelegramLongPollingBot
 							String getText = message.getText();
 							//небольшая проверка /start и чтобы не писало Неизвестная команда
 							//FIX HERE
-							if (getText.equals("/start"))
+							if (!getText.equals("/start"))
 							{
-
-							}
-							else
-							{
-								sendMsg(message, "⚠\t Неизвестная команда");
+								sendMsg(id, "⚠\t Неизвестная команда");
 							}
 						}
 						else if (player.getState() == Player.State.awaitingChangeNickname)
@@ -444,14 +389,15 @@ public class Bot extends TelegramLongPollingBot
 							if (nickname.matches(usernameTemplate))
 							{
 								player.setUsername(nickname);
-								sendMsg(message, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
+								sendMsg(id, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
 								player.setState(Player.State.awaitingCommands);
-								playerDAO.update(player.getId(), player);
+								playerDAO.update(player);
 							}
 							else
 							{
-								sendMsg(message, "Пожалуйста, введите корректный ник");
+								sendMsg(id, "Пожалуйста, введите корректный ник");
 								player.setState(Player.State.awaitingChangeNickname);
+								playerDAO.update(player);
 							}
 
 						}
@@ -461,30 +407,30 @@ public class Bot extends TelegramLongPollingBot
 							{
 								String dash = message.getText();
 								int i_dash = Integer.parseInt(dash);
-								inv = player.getInventory();
 
-								if (i_dash > 0 && i_dash <= inv.getBalance())
+								if (i_dash > 0 && i_dash <= player.balance)
 								{
-									sendMsg(message, "\uD83C\uDFB0 Ваша ставка: " + "$" + i_dash);
+									sendMsg(id, "\uD83C\uDFB0 Ваша ставка: " + "$" + i_dash);
 
-									sendMsg(message, "Подбрасываем монетку...");
+									sendMsg(id, "Подбрасываем монетку...");
 
-									Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, message, i_dash, this));
+									Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, id, i_dash, this));
 									kd.startCooldown();
 
 
 								}
 								else
 								{
-									sendMsg(message, "⚠\t У вас нет такой суммы");
+									sendMsg(id, "⚠\t У вас нет такой суммы");
 
 								}
 							}
 							catch (NumberFormatException e)
 							{
-								sendMsg(message, "⚠\tВаша ставка должна быть целым числом");
+								sendMsg(id, "⚠\tВаша ставка должна быть целым числом");
 								e.printStackTrace();
 								player.setState(Player.State.awaitingCommands);
+								playerDAO.update(player);
 							}
 
 						}
@@ -495,16 +441,17 @@ public class Bot extends TelegramLongPollingBot
 				//Ну и самое сложное пока что, это возможность /find ить предметы раз в 20 минут например, проверять дату нужно и время
 
 			}
-		}
 
+			//playerDAO.update(player);
+		}
 	}
 
 	//кнопки
 
 	public void setButtons(SendMessage sendMessage)
 	{
-
-		Player player = players.get(sendMessage.getChatId());
+		long id = Long.parseLong(sendMessage.getChatId());
+		Player player = playerDAO.get(id);
 		//инициаллизация клавиатуры
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 		//установка разметки
@@ -521,10 +468,9 @@ public class Bot extends TelegramLongPollingBot
 		//добавили новую кнопку в первый ряд
 		//KeyboardButton startButton = new KeyboardButton("/start");
 
-		if (players.containsKey(player))
+		if (player == null)
 		{
 			keyboardFirstRow.add(new KeyboardButton("/start"));
-
 		}
 		else
 		{
@@ -538,17 +484,6 @@ public class Bot extends TelegramLongPollingBot
 
 	}
 
-	//чтение токена из файла
-	public static void readFile() throws FileNotFoundException
-	{
-		scanner = new Scanner(token);
-
-		while (scanner.hasNextLine())
-		{
-			tokBot = scanner.nextLine();
-		}
-	}
-
 	public String getBotUsername()
 	{
 		return "Needle";
@@ -556,7 +491,16 @@ public class Bot extends TelegramLongPollingBot
 
 	public String getBotToken()
 	{
-		return tokBot;
+		try
+		{
+			Scanner scanner = new Scanner(new File("token"));
+			return scanner.nextLine();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			throw new RuntimeException("No token", e);
+		}
 		//токен регается через бот самого тг BotFather, там же пишется описание, название и токен
 	}
 
@@ -564,14 +508,14 @@ public class Bot extends TelegramLongPollingBot
 	{
 		private final Player player;
 		private final int i_dash;
-		private final Message message;
+		private final Long chatId;
 		private final Bot botik;
 
-		CooldownForPlayer(Player player, Message message, int i_dash, Bot botik)
+		CooldownForPlayer(Player player, Long chatId, int i_dash, Bot botik)
 		{
 			this.player = player;
 			this.i_dash = i_dash;
-			this.message = message;
+			this.chatId = chatId;
 			this.botik = botik;
 		}
 
@@ -581,19 +525,17 @@ public class Bot extends TelegramLongPollingBot
 			CoinGame coinGame = new CoinGame(i_dash);
 			if (coinGame.roll())
 			{
-
-				botik.sendMsg(message, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
+				botik.sendMsg(chatId, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
 				player.getInventory().coinWin(i_dash);
-				botik.sendMsg(message, "Ваш баланс: " + player.getInventory().getBalance() + " \uD83D\uDCB2");
-				player.setState(Player.State.awaitingCommands);
 			}
 			else
 			{
-				botik.sendMsg(message, "❌ Вы проиграли " + "$" + i_dash);
+				botik.sendMsg(chatId, "❌ Вы проиграли " + "$" + i_dash);
 				player.getInventory().coinLose(i_dash);
-				botik.sendMsg(message, "Ваш баланс: " + player.getInventory().getBalance() + " \uD83D\uDCB2");
-				player.setState(Player.State.awaitingCommands);
 			}
+			botik.sendMsg(chatId, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
 		}
 	}
 }

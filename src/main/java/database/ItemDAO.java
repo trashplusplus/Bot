@@ -1,3 +1,8 @@
+package database;
+
+import main.Item;
+import main.ItemRarity;
+
 import java.sql.*;
 
 public class ItemDAO
