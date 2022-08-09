@@ -27,5 +27,6 @@ replay_pid*
 .idea/*
 token
 
-/data.db
-/sqlite3.exe
+data.db
+sqlite3.exe
+/target
