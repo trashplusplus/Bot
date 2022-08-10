@@ -4,6 +4,7 @@ import main.Inventory;
 import main.Player;
 
 import java.sql.*;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +23,12 @@ public class PlayerDAO
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, balance, state) values (?, ?, ?, ?);");
+			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, balance, state, lastfia) values (?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setString(2, player.getUsername());
 			ps.setInt(3, player.balance);
 			ps.setString(4, player.getState().name());
+			ps.setString(5, DatabaseDateMediator.ms_to_string(player.last_fia));
 			ps.execute();
 			inventoryDAO.put(player.getId(), player.getInventory());
 		}
@@ -125,11 +127,12 @@ public class PlayerDAO
 		long id = player.getId();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set name = ?, balance = ?, state = ? where id = ?;");
+			PreparedStatement ps = connection.prepareStatement("update players set name = ?, balance = ?, state = ?, lastfia = ? where id = ?;");
 			ps.setString(1, player.getUsername());
 			ps.setInt(2, player.balance);
 			ps.setString(3, player.getState().name());
-			ps.setLong(4, id);
+			ps.setString(4, DatabaseDateMediator.ms_to_string(player.last_fia));
+			ps.setLong(5, id);
 			ps.execute();
 			//inventoryDAO.put(id, player.getInventory());
 		}
@@ -161,8 +164,20 @@ public class PlayerDAO
 		String username = rs.getString(2);
 		int balance = rs.getInt(3);
 		Player.State state = Player.State.valueOf(rs.getString(4));
-		Inventory inventory = inventoryDAO.get(id);
+		String date_UTS_string = rs.getString(5);
+		long last_fia;
+		try
+		{
+			last_fia = DatabaseDateMediator.string_to_ms(date_UTS_string);
+		}
+		catch (ParseException e)
+		{
+			//throw new SQLException("Error while parsing last find item date from database", e);
+			last_fia = 0;
+			System.err.printf("Error while parsing last find item date from database, got:\n%s\n", date_UTS_string);
+		}
 
-		return new Player(id, username, balance, state, inventory);
+		Inventory inventory = inventoryDAO.get(id);
+		return new Player(id, username, balance, state, inventory, last_fia);
 	}
 }

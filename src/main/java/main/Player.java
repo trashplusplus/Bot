@@ -10,6 +10,7 @@ public class Player
 	public int balance;
 	private Inventory inventory;
 	private Ability<Item> findItemAbility;
+	public long last_fia;
 
 	public static enum State{
 		awaitingNickname,
@@ -20,12 +21,12 @@ public class Player
 	}
 	private State state;
 
-	public Player(long id, String username)
-	{
-		this(id, username, 0, State.awaitingNickname, new Inventory());
-	}
+	//public Player(long id, String username)
+	//{
+	//	this(id, username, 0, State.awaitingNickname, new Inventory());
+	//}
 
-	public Player(long id, String username, int balance, State state, Inventory inventory)
+	public Player(long id, String username, int balance, State state, Inventory inventory, long last_fia)
 	{
 		this.id = id;
 		this.username = username;
@@ -33,6 +34,7 @@ public class Player
 		this.state = state;
 		this.inventory = inventory;
 		findItemAbility = new Ability<>(new Cooldown(10L), new FindItemAction(this));
+		this.last_fia = last_fia;
 	}
 
 	public void setUsername(String username) {

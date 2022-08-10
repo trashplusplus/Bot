@@ -4,10 +4,7 @@ import database.InventoryDAO;
 import database.PlayerDAO;
 import database.SQLExecutor;
 import database.SQLSession;
-import main.Inventory;
-import main.Item;
-import main.Player;
-import main.PrettyDate;
+import main.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -124,6 +121,27 @@ public class Bot extends TelegramLongPollingBot
 	public void command_find(Long id)
 	{
 		Player player = playerDAO.get(id);
+		long now_ts = System.currentTimeMillis();
+		long used_ts = player.last_fia;
+		long cooldown_s = 30L;
+		long cooldowns_ms = cooldown_s * 1000L;
+		long left_ms = used_ts + cooldowns_ms - now_ts;
+
+		if (left_ms > 0)
+		{
+			sendMsg(id, String.format("\u231B Время ожидания: %s",
+				PrettyDate.prettify(left_ms, TimeUnit.MILLISECONDS)));
+		}
+		else
+		{
+			Item new_item = ItemFactory.getRandomItem();
+			inventoryDAO.putItem(id, new_item.getId());
+			sendMsg(id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
+			player.last_fia = now_ts;
+			playerDAO.update(player);
+		}
+
+		/*Player player = playerDAO.get(id);
 		Ability<Item> fia = player.getFindItemAbility();
 		if (fia.isUsable())
 		{
@@ -135,7 +153,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(id, String.format("\u231B Время ожидания: %s",
 					PrettyDate.prettify(fia.getCDTimer(), TimeUnit.SECONDS)));
-		}
+		}*/
 	}
 
 	public void command_balance(Long id)
@@ -242,7 +260,7 @@ public class Bot extends TelegramLongPollingBot
 						}
 						else
 						{
-							playerDAO.put(new Player(id, "player" + id, 0, Player.State.awaitingNickname, new Inventory()));
+							playerDAO.put(new Player(id, "player" + id, 0, Player.State.awaitingNickname, new Inventory(), 0L));
 							sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
 							sendMsg(id, "Введите ник: ");
 						}
