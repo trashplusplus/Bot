@@ -154,7 +154,7 @@ public class Bot extends TelegramLongPollingBot
 		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ игроков:\n");
 		players_list.append("========================");
 		players_list.append("\n");
-		for (Player player : playerDAO.getAll())
+		for (Player player : playerDAO.getTopN("balance", false, 5))
 		{
 			players_list.append(String.format("Игрок %s | $%d", player.getUsername(), player.balance));
 			players_list.append("\n");
