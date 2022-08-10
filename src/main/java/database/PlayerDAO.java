@@ -164,17 +164,30 @@ public class PlayerDAO
 		String username = rs.getString(2);
 		int balance = rs.getInt(3);
 		Player.State state = Player.State.valueOf(rs.getString(4));
-		String date_UTS_string = rs.getString(5);
+		String date_UTC_string = rs.getString(5);
 		long last_fia;
-		try
+		if (date_UTC_string != null)
 		{
-			last_fia = DatabaseDateMediator.string_to_ms(date_UTS_string);
+			try
+			{
+				last_fia = DatabaseDateMediator.string_to_ms(date_UTC_string);
+			}
+			catch (ParseException e)
+			{
+				//throw new SQLException("Error while parsing last find item date from database", e);
+				last_fia = 0;
+				System.err.printf("Error while parsing last find item date from database, got:\n%s\n", date_UTC_string);
+			}
+			catch (Exception ex)
+			{
+				last_fia = 0;
+				System.err.println("Unknown exception when reading database" + ex);
+				ex.printStackTrace();
+			}
 		}
-		catch (ParseException e)
+		else
 		{
-			//throw new SQLException("Error while parsing last find item date from database", e);
 			last_fia = 0;
-			System.err.printf("Error while parsing last find item date from database, got:\n%s\n", date_UTS_string);
 		}
 
 		Inventory inventory = inventoryDAO.get(id);
