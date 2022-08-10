@@ -1,6 +1,6 @@
 package database;
 
-import database.InventoryDAO;
+import main.Inventory;
 import main.Player;
 
 import java.sql.*;
@@ -40,22 +40,18 @@ public class PlayerDAO
 
 	public Player get(long id)
 	{
-		Player player = null;
 		try
 		{
 			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
+			Player player = null;
 			if (rs.next())
 			{
-				player = new Player(
-						rs.getLong("id"),
-						rs.getString("name"),
-						rs.getInt("balance"),
-						Player.State.valueOf(rs.getString("state")),
-						inventoryDAO.get(id)
-				);
+				player = form(rs);
 			}
+			rs.close();
+			return player;
 		}
 		catch (SQLException e)
 		{
@@ -63,7 +59,6 @@ public class PlayerDAO
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception");
 		}
-		return player;
 	}
 
 	public List<Player> getAll()
@@ -71,25 +66,41 @@ public class PlayerDAO
 		List<Player> result = new ArrayList<>();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("select * from players order by balance desc;");
+			PreparedStatement ps = connection.prepareStatement("select * from players;");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next())
 			{
-				long id = rs.getLong("id");
-				result.add(new Player(
-						id,
-						rs.getString("name"),
-						rs.getInt("balance"),
-						Player.State.valueOf(rs.getString("state")),
-						inventoryDAO.get(id)
-				));
+				result.add(form(rs));
 			}
+			return result;
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			throw new RuntimeException("SQL Exception", e);
 		}
-		return result;
+	}
+
+	public List<Player> getTopN(String field_name, boolean ascending, int limit)
+	{
+		try
+		{
+			List<Player> players = new ArrayList<>();
+			String query = String.format("select * from players order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, limit);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+			{
+				players.add(form(rs));
+			}
+			return players;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new RuntimeException("SQL Exception", e);
+		}
 	}
 
 	public int size()
@@ -142,5 +153,16 @@ public class PlayerDAO
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception");
 		}
+	}
+
+	private Player form(ResultSet rs) throws SQLException
+	{
+		long id = rs.getLong(1);
+		String username = rs.getString(2);
+		int balance = rs.getInt(3);
+		Player.State state = Player.State.valueOf(rs.getString(4));
+		Inventory inventory = inventoryDAO.get(id);
+
+		return new Player(id, username, balance, state, inventory);
 	}
 }
