@@ -23,12 +23,14 @@ public class PlayerDAO
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("insert into players (id, name, balance, state, lastfia) values (?, ?, ?, ?, ?);");
+			PreparedStatement ps = connection.prepareStatement("insert into players (id, xp, lvl, name, balance, state, lastfia) values (?, ?, ?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
-			ps.setString(2, player.getUsername());
-			ps.setInt(3, player.balance);
-			ps.setString(4, player.getState().name());
-			ps.setString(5, DatabaseDateMediator.ms_to_string(player.last_fia));
+			ps.setInt(2, player.getXp());
+			ps.setInt(3, player.getLevel());
+			ps.setString(4, player.getUsername());
+			ps.setInt(5, player.balance);
+			ps.setString(6, player.getState().name());
+			ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_fia));
 			ps.execute();
 			inventoryDAO.put(player.getId(), player.getInventory());
 		}
@@ -130,12 +132,15 @@ public class PlayerDAO
 		long id = player.getId();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set name = ?, balance = ?, state = ?, lastfia = ? where id = ?;");
-			ps.setString(1, player.getUsername());
-			ps.setInt(2, player.balance);
-			ps.setString(3, player.getState().name());
-			ps.setString(4, DatabaseDateMediator.ms_to_string(player.last_fia));
-			ps.setLong(5, id);
+			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, lvl = ?, name = ?, balance = ?, state = ?, lastfia = ? where id = ?;");
+			ps.setInt(1, player.getXp());
+			ps.setInt(2, player.getLevel());
+			ps.setString(3, player.getUsername());
+
+			ps.setInt(4, player.balance);
+			ps.setString(5, player.getState().name());
+			ps.setString(6, DatabaseDateMediator.ms_to_string(player.last_fia));
+			ps.setLong(7, id);
 			ps.execute();
 			//inventoryDAO.put(id, player.getInventory());
 		}
@@ -165,10 +170,12 @@ public class PlayerDAO
 	private Player form(ResultSet rs) throws SQLException
 	{
 		long id = rs.getLong(1);
-		String username = rs.getString(2);
-		int balance = rs.getInt(3);
-		Player.State state = Player.State.valueOf(rs.getString(4));
-		String date_UTC_string = rs.getString(5);
+		int xp = rs.getInt(2);
+		int level = rs.getInt(3);
+		String username = rs.getString(4);
+		int balance = rs.getInt(5);
+		Player.State state = Player.State.valueOf(rs.getString(6));
+		String date_UTC_string = rs.getString(7);
 		long last_fia;
 		if (date_UTC_string != null)
 		{
@@ -195,6 +202,6 @@ public class PlayerDAO
 		}
 
 		Inventory inventory = inventoryDAO.get(id);
-		return new Player(id, username, balance, state, inventory, last_fia);
+		return new Player(id, xp, level, username, balance, state, inventory, last_fia);
 	}
 }

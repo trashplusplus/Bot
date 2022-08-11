@@ -28,7 +28,7 @@ public class Player
 	//	this(id, username, 0, State.awaitingNickname, new Inventory());
 	//}
 
-	public Player(long id, String username, int balance, State state, Inventory inventory, long last_fia)
+	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia)
 	{
 		this.id = id;
 		this.username = username;
@@ -37,6 +37,8 @@ public class Player
 		this.inventory = inventory;
 		findItemAbility = new Ability<>(new Cooldown(10L), new FindItemAction(this));
 		this.last_fia = last_fia;
+		this.xp = xp;
+		this.level = level;
 	}
 
 	public void setUsername(String username) {
@@ -87,7 +89,15 @@ public class Player
 		}
 	}
 
-	public void plusXp(int xp){
+	public void addXp(int xp){
 		this.xp += xp;
+	}
+
+	public int getLevel(){
+		return level;
+	}
+
+	public int getXp(){
+		return xp;
 	}
 }

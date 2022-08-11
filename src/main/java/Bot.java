@@ -144,7 +144,8 @@ public class Bot extends TelegramLongPollingBot
 			inventoryDAO.putItem(id, new_item.getId());
 			sendMsg(id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 			player.last_fia = now_ts;
-
+			player.addXp(2);
+			player.levelUp();
 			playerDAO.update(player);
 		}
 
@@ -181,7 +182,7 @@ public class Bot extends TelegramLongPollingBot
 		players_list.append("\n");
 		for (Player player : playerDAO.getTopN("balance", false, 5))
 		{
-			players_list.append(String.format("Игрок %s | $%d", player.getUsername(), player.balance));
+			players_list.append(String.format("Игрок %s | $%d | %d LVL", "`" + player.getUsername() + "`", player.balance, player.getLevel()));
 			players_list.append("\n");
 			players_list.append("========================");
 			players_list.append("\n");
@@ -265,6 +266,7 @@ public class Bot extends TelegramLongPollingBot
 			if(playerDAO.get(id) == null){
 				switch (text)
 				{
+					case "⭐ Начать":
 					case "/start":
 						if (playerDAO.get(id) != null)
 						{
@@ -272,7 +274,7 @@ public class Bot extends TelegramLongPollingBot
 						}
 						else
 						{
-							playerDAO.put(new Player(id, "player" + id, 0, Player.State.awaitingNickname, new Inventory(), 0L));
+							playerDAO.put(new Player(id, 0, 1,"player" + id, 0, Player.State.awaitingNickname, new Inventory(), 0L));
 							sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
 							sendMsg(id, "Введите ник: ");
 						}
@@ -331,6 +333,8 @@ public class Bot extends TelegramLongPollingBot
 						case "/top":
 							command_top(id);
 							break;
+						case "\uD83C\uDF3A Помощь":
+							break;
 						case "/help":
 							command_help(id);
 							break;
@@ -370,22 +374,27 @@ public class Bot extends TelegramLongPollingBot
 							}
 
 							break;
+						case "⭐️ Персонаж":
 						case "/me":
-							StringBuilder sb = new StringBuilder("Информация о вашем персонаже\n");
+							StringBuilder sb = new StringBuilder("Информация о персонаже\n");
 							sb.append("\n");
-							sb.append("==============================\n");
+							//sb.append("==============================\n");
 
 							sb.append("⭐ Ваш ник: " + player.getUsername());
 							sb.append("\n");
-							sb.append("==============================\n");
+							//sb.append("==============================\n");
 
-							sb.append("\uD83D\uDCB0 Ваш баланс: " + player.getMoney());
+							sb.append("\uD83D\uDCB0 Ваш баланс: " + "$" + player.getMoney());
 							sb.append("\n");
-							sb.append("==============================\n");
+							//sb.append("==============================\n");
 
 							sb.append("\uD83C\uDF20 Ваш GameID: " + player.getId());
 							sb.append("\n");
-							sb.append("==============================\n");
+							//sb.append("==============================\n");
+
+							sb.append("\uD83C\uDFB2 Ваш уровень: " + player.getLevel() + " (" + player.getXp() + " XP" + ")");
+							sb.append("\n");
+							//sb.append("==============================\n");
 							
 							sendMsg(id, sb.toString());
 							break;
@@ -521,11 +530,12 @@ public class Bot extends TelegramLongPollingBot
 
 		if (player == null)
 		{
-			keyboardFirstRow.add(new KeyboardButton("/start"));
+			keyboardFirstRow.add(new KeyboardButton("⭐ Начать"));
 		}
 		else
 		{
-			keyboardFirstRow.add(new KeyboardButton("/help"));
+			keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
+			keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
 		}
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));
