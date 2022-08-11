@@ -65,7 +65,9 @@ public class PlayerDAO
 
 	public List<Player> getAll()
 	{
+
 		List<Player> result = new ArrayList<>();
+
 		try
 		{
 			PreparedStatement ps = connection.prepareStatement("select * from players;");
@@ -73,6 +75,7 @@ public class PlayerDAO
 			while (rs.next())
 			{
 				result.add(form(rs));
+
 			}
 			return result;
 		}
@@ -139,6 +142,7 @@ public class PlayerDAO
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			throw new RuntimeException("Username is already used");
 		}
 	}
 

@@ -1,7 +1,7 @@
 create table if not exists players
 (
     id integer primary key,
-    name text,
+    name text unique,
     balance integer default 0,
     state text not null,
     lastfia text default "NEVER"

@@ -11,6 +11,8 @@ public class Player
 	private Inventory inventory;
 	private Ability<Item> findItemAbility;
 	public long last_fia;
+	private int level;
+	private int xp;
 
 	public static enum State{
 		awaitingNickname,
@@ -76,5 +78,16 @@ public class Player
 	public int getMoney()
 	{
 		return balance;
+	}
+
+	public void levelUp(){
+		if(xp >= 10){
+			level++;
+			xp = 0;
+		}
+	}
+
+	public void plusXp(int xp){
+		this.xp += xp;
 	}
 }

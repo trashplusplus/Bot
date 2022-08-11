@@ -105,11 +105,17 @@ public class Bot extends TelegramLongPollingBot
 		Inventory inventory = inventoryDAO.get(id);
 		if (inventory.getInvSize() != 0)
 		{
-
-			sendMsg(id, "\uD83C\uDF81\t Ваш инвентарь: ");
+			StringBuilder sb = new StringBuilder("\uD83C\uDF81\t Ваш инвентарь: ");
+			sb.append("\n");
+			sb.append("========================\n");
+			for (int i = 0; i < inventory.getInvSize(); i++)
+			{
+				sb.append(String.format("Предмет #[%d] : %s\n", i, inventory.getItem(i).toString()));
+			}
+			sb.append("========================\n");
 			//sendMsg(message, "\u26BD");
-			sendMsg(id, "\n" + inventory.showInventory() + "\n");
-			sendMsg(id, "\uD83C\uDF81\t Всего предметов: " + inventory.getInvSize());
+			sb.append("\uD83C\uDF81\t Всего предметов: " + inventory.getInvSize());
+			sendMsg(id, sb.toString());
 		}
 		else
 		{
@@ -138,6 +144,7 @@ public class Bot extends TelegramLongPollingBot
 			inventoryDAO.putItem(id, new_item.getId());
 			sendMsg(id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 			player.last_fia = now_ts;
+
 			playerDAO.update(player);
 		}
 
@@ -202,11 +209,16 @@ public class Bot extends TelegramLongPollingBot
 		StringBuilder stringBuilder = new StringBuilder();
 		if (inventory.getInvSize() > 0)
 		{
-			stringBuilder.append("Предметы, доступные к продаже:\n");
+			stringBuilder.append("\uD83E\uDDF6 Предметы, доступные к продаже:\n");
+			stringBuilder.append("\n");
+			stringBuilder.append("============================\n");
 			for (int i = 0; i < inventory.getInvSize(); i++)
 			{
 				stringBuilder.append(String.format("Предмет #[%d] : %s\n", i, inventory.getItem(i).toString()));
 			}
+
+			stringBuilder.append("============================\n");
+			stringBuilder.append("\n");
 			stringBuilder.append("Введите номер предмета, который хотите продать:\n");
 			player.setState(Player.State.awaitingSellArguments);
 			playerDAO.update(player);
@@ -279,11 +291,18 @@ public class Bot extends TelegramLongPollingBot
 					String username = message.getText();
 					if (username.matches(usernameTemplate))
 					{
-						player.setUsername(username);
-						player.setState(Player.State.awaitingCommands);
-						playerDAO.update(player);
-						sendMsg(id, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
-						command_help(id);
+						try{
+							player.setUsername(username);
+							player.setState(Player.State.awaitingCommands);
+
+							playerDAO.update(player);
+							sendMsg(id, "Игрок " + "`" + player.getUsername() + "`" + " успешно создан");
+							command_help(id);
+						}catch(RuntimeException e){
+							e.printStackTrace();
+							sendMsg(id, "Игрок с таким ником уже существует");
+						}
+
 					}
 					else
 					{
@@ -345,8 +364,31 @@ public class Bot extends TelegramLongPollingBot
 							}
 							*/
 
-							break;
+							for(Player player1 : playerDAO.getAll()){
+								player1.last_fia = 0L;
+								playerDAO.update(player1);
+							}
 
+							break;
+						case "/me":
+							StringBuilder sb = new StringBuilder("Информация о вашем персонаже\n");
+							sb.append("\n");
+							sb.append("==============================\n");
+
+							sb.append("⭐ Ваш ник: " + player.getUsername());
+							sb.append("\n");
+							sb.append("==============================\n");
+
+							sb.append("\uD83D\uDCB0 Ваш баланс: " + player.getMoney());
+							sb.append("\n");
+							sb.append("==============================\n");
+
+							sb.append("\uD83C\uDF20 Ваш GameID: " + player.getId());
+							sb.append("\n");
+							sb.append("==============================\n");
+							
+							sendMsg(id, sb.toString());
+							break;
 						default:
 
 							String getText = message.getText();
@@ -373,8 +415,7 @@ public class Bot extends TelegramLongPollingBot
 
 							player.setState(Player.State.awaitingCommands);
 							playerDAO.update(player);
-
-							sendMsg(id, "✅ Предмет успешно продан");
+							sendMsg(id, "✅ Предмет продан | + " + "$" + item.getCost());
 						} catch (NumberFormatException e)	{
 
 							e.printStackTrace();
@@ -394,10 +435,16 @@ public class Bot extends TelegramLongPollingBot
 					String nickname = message.getText();
 					if (nickname.matches(usernameTemplate))
 					{
-						player.setUsername(nickname);
-						sendMsg(id, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
-						player.setState(Player.State.awaitingCommands);
-						playerDAO.update(player);
+						try{
+							player.setUsername(nickname);
+							player.setState(Player.State.awaitingCommands);
+							playerDAO.update(player);
+							sendMsg(id, "Ваш никнейм успешно изменен на " + "`" + player.getUsername() + "`");
+						}catch(RuntimeException e){
+							e.printStackTrace();
+							sendMsg(id, "Игрок с таким ником уже есть");
+						}
+
 					}
 					else
 					{
