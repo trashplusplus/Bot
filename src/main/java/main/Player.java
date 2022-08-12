@@ -19,7 +19,12 @@ public class Player
 		awaitingSellArguments,
 		awaitingCommands,
 		awaitingChangeNickname,
-		coinDash;
+		coinDash,
+		shopAwaitingTypeOfShop,
+		shopPlaceGood,
+		shopPlaceGood_awaitingCost,
+		shopBuyGood;
+
 	}
 	private State state;
 
@@ -83,10 +88,10 @@ public class Player
 	}
 
 	public void levelUp(){
-		if(xp >= 10){
+
 			level++;
 			xp = 0;
-		}
+
 	}
 
 	public void addXp(int xp){

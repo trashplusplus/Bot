@@ -1,9 +1,6 @@
 import ability.Ability;
 import ability.Cooldown;
-import database.InventoryDAO;
-import database.PlayerDAO;
-import database.SQLExecutor;
-import database.SQLSession;
+import database.*;
 import main.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -30,6 +27,7 @@ public class Bot extends TelegramLongPollingBot
 {
 	static PlayerDAO playerDAO = new PlayerDAO(SQLSession.sqlConnection);
 	static InventoryDAO inventoryDAO = new InventoryDAO(SQLSession.sqlConnection);
+	static ShopDAO shopDAO = new ShopDAO(SQLSession.sqlConnection);
 
 	public static void main(String[] args) throws IOException, SQLException
 	{
@@ -96,7 +94,8 @@ public class Bot extends TelegramLongPollingBot
 
 				"\n" +
 				"\uD83D\uDC80 /changenickname - сменить никнейм \n \n" +
-				"\uD83C\uDFB0 /coin - сыграть в Монетку"
+				"\uD83C\uDFB0 /coin - сыграть в Монетку \n\n" +
+				"⭐ /me - ифнормация о персонаже"
 		);
 	}
 
@@ -129,7 +128,7 @@ public class Bot extends TelegramLongPollingBot
 		Player player = playerDAO.get(id);
 		long now_ts = System.currentTimeMillis();
 		long used_ts = player.last_fia;
-		long cooldown_s = 30L;
+		long cooldown_s = 1L;
 		long cooldowns_ms = cooldown_s * 1000L;
 		long left_ms = used_ts + cooldowns_ms - now_ts;
 
@@ -145,7 +144,11 @@ public class Bot extends TelegramLongPollingBot
 			sendMsg(id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 			player.last_fia = now_ts;
 			player.addXp(2);
-			player.levelUp();
+			if(player.getXp() >= 10){
+				player.levelUp();
+				sendMsg(id, "\uD83D\uDC7E Вы перешли на "+ player.getLevel() + " уровень");
+			}
+
 			playerDAO.update(player);
 		}
 
@@ -350,13 +353,17 @@ public class Bot extends TelegramLongPollingBot
 							playerDAO.update(player);
 							break;
 						case "/coin":
-							if (player.balance > 0) {
-								sendMsg(id, "\uD83C\uDFB0 Введите ставку: ");
-								player.setState(Player.State.coinDash);
-								playerDAO.update(player);
-							} else {
-								sendMsg(id, "\uD83C\uDFB0 У вас недостаточно денег	");
-								player.setState(Player.State.awaitingCommands);
+							if (player.getLevel() >= 4) {
+								if (player.balance > 0) {
+									sendMsg(id, "\uD83C\uDFB0 Введите ставку: ");
+									player.setState(Player.State.coinDash);
+									playerDAO.update(player);
+								} else {
+									sendMsg(id, "\uD83C\uDFB0 У вас недостаточно денег	");
+									player.setState(Player.State.awaitingCommands);
+								}
+							}else{
+								sendMsg(id, "\uD83D\uDC7E Для игры в монетку нужен 4 уровень");
 							}
 							break;
 						case "/broadcast":
@@ -377,26 +384,29 @@ public class Bot extends TelegramLongPollingBot
 						case "⭐️ Персонаж":
 						case "/me":
 							StringBuilder sb = new StringBuilder("Информация о персонаже\n");
-							sb.append("\n");
 							//sb.append("==============================\n");
-
+							sb.append("\n");
 							sb.append("⭐ Ваш ник: " + player.getUsername());
 							sb.append("\n");
 							//sb.append("==============================\n");
-
+							sb.append("\n");
 							sb.append("\uD83D\uDCB0 Ваш баланс: " + "$" + player.getMoney());
 							sb.append("\n");
 							//sb.append("==============================\n");
-
+							sb.append("\n");
 							sb.append("\uD83C\uDF20 Ваш GameID: " + player.getId());
 							sb.append("\n");
 							//sb.append("==============================\n");
-
-							sb.append("\uD83C\uDFB2 Ваш уровень: " + player.getLevel() + " (" + player.getXp() + " XP" + ")");
+							sb.append("\n");
+							sb.append("\uD83D\uDC7E Ваш уровень: " + player.getLevel() + " (" + player.getXp() + " XP" + ")");
 							sb.append("\n");
 							//sb.append("==============================\n");
 							
 							sendMsg(id, sb.toString());
+							break;
+						case "/shop":
+							player.setState(Player.State.shopAwaitingTypeOfShop);
+							playerDAO.update(player);
 							break;
 						default:
 
@@ -411,7 +421,6 @@ public class Bot extends TelegramLongPollingBot
 					}
 					break;
 				case awaitingSellArguments:
-
 						try
 						{
 							Inventory inventory = player.getInventory();
@@ -493,6 +502,63 @@ public class Bot extends TelegramLongPollingBot
 						playerDAO.update(player);
 					}
 					break;
+				case shopAwaitingTypeOfShop:
+					sendMsg(id, "Веберите одно из двух: ");
+					switch (text){
+
+						case "Купить":
+							player.setState(Player.State.shopBuyGood);
+							playerDAO.update(player);
+							break;
+						case "Продать":
+							player.setState(Player.State.shopPlaceGood);
+							playerDAO.update(player);
+							break;
+
+					}
+
+					break;
+				case shopBuyGood:
+					sendMsg(id, "Все предметы в магазине:\n");
+					for(ShopItem i: shopDAO.getAll()){
+						sendMsg(id, String.format("Товар %s | Цена %d | Продавец %s", i.getItem().getTitle(), i.getCost(), i.getSeller()));
+					}
+					player.setState(Player.State.awaitingCommands);
+					playerDAO.update(player);
+					break;
+				case shopPlaceGood:
+					Inventory inventory = inventoryDAO.get(id);
+					String itemID = message.getText();
+					int cost = 0;
+
+					sendMsg(id, "Предметы, доступные для продажи \n");
+
+					for(Item i: inventory.getGiftItems()){
+
+							sendMsg(id, i.getTitle() + "\n");
+
+					}
+
+					try{
+						sendMsg(id, "Введите ID предмета, который хотите продать\n");
+						ShopItem shopItem = new ShopItem(inventory.getItem(Integer.parseInt(itemID)), 1, player.getUsername());
+						player.setState(Player.State.shopPlaceGood_awaitingCost);
+						playerDAO.update(player);
+					} catch (NumberFormatException e)	{
+
+						e.printStackTrace();
+						sendMsg(id, "⚠\t Пожалуйста, введите целое число");
+						player.setState(Player.State.awaitingCommands);
+						playerDAO.update(player);
+					}catch (IndexOutOfBoundsException ee){
+						ee.printStackTrace();
+						sendMsg(id, "⚠\t Указан неверный ID");
+						player.setState(Player.State.awaitingCommands);
+						playerDAO.update(player);
+					}
+
+				//TODO
+					break;
 			}
 
 
@@ -528,14 +594,18 @@ public class Bot extends TelegramLongPollingBot
 		//добавили новую кнопку в первый ряд
 		//KeyboardButton startButton = new KeyboardButton("/start");
 
-		if (player == null)
-		{
+		if (player == null) {
 			keyboardFirstRow.add(new KeyboardButton("⭐ Начать"));
-		}
-		else
-		{
-			keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
-			keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
+		}else{
+
+			if(player.getState() == Player.State.shopAwaitingTypeOfShop){
+				keyboardFirstRow.add(new KeyboardButton("Купить"));
+				keyboardFirstRow.add(new KeyboardButton("Продать"));
+			}else{
+				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
+				keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
+			}
+
 		}
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));

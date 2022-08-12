@@ -17,6 +17,14 @@ create table if not exists items
     cost integer
 );
 
+create table if not exists shop
+(
+    id integer primary key,
+    name text not null,
+    cost integer,
+    sellerName text not null
+);
+
 insert or ignore into items values
     (1,'Лопата','Common',200),
     (2,'Поисковый фонарь','Rare',7000),
