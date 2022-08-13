@@ -14,6 +14,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,33 +24,23 @@ import java.util.concurrent.TimeUnit;
 
 public class Bot extends TelegramLongPollingBot
 {
-	static PlayerDAO playerDAO = new PlayerDAO(SQLSession.sqlConnection);
-	static InventoryDAO inventoryDAO = new InventoryDAO(SQLSession.sqlConnection);
-	static ShopDAO shopDAO = new ShopDAO(SQLSession.sqlConnection);
+	private final Connection connection;
 
-	private static String token;
+	private final PlayerDAO playerDAO;
+	private final InventoryDAO inventoryDAO;
+	private final ShopDAO shopDAO;
 
-	public static void main(String[] args) throws SQLException, FileNotFoundException
+	private final String token;
+
+	public Bot(Connection connection) throws FileNotFoundException
 	{
-		initDB();
-		init_token();
-
-		try
-		{
-			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class); //создание объекта в API
-			telegramBotsApi.registerBot(new Bot());
-		}
-		catch (TelegramApiException e)
-		{
-			e.printStackTrace();
-		}
+		this.connection = connection;
+		playerDAO = new PlayerDAO(connection);
+		inventoryDAO = new InventoryDAO(connection);
+		shopDAO = new ShopDAO(connection);
+		token = init_token();
 	}
 
-	private static void initDB() throws SQLException, FileNotFoundException
-	{
-		SQLExecutor executor = new SQLExecutor(new File("src\\main\\java\\database\\init.sql"), SQLSession.sqlConnection);
-		executor.execute();
-	}
 
 	//что бот будет отвечать
 	public void sendMsg(Long chatId, String text)
@@ -650,10 +641,10 @@ public class Bot extends TelegramLongPollingBot
 		return "Needle";
 	}
 
-	private static void init_token() throws FileNotFoundException
+	private String init_token() throws FileNotFoundException
 	{
 		Scanner scanner = new Scanner(new File("token"));
-		token = scanner.nextLine();
+		return scanner.nextLine();
 	}
 
 	public String getBotToken()
@@ -694,7 +685,7 @@ public class Bot extends TelegramLongPollingBot
 
 			player.setState(Player.State.awaitingCommands);
 			botik.sendMsg(chatId, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
-			playerDAO.update(player);
+			botik.playerDAO.update(player);
 		}
 	}
 }

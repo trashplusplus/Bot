@@ -23,7 +23,7 @@ public class PlayerDAO
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("insert into players (id, xp, lvl, name, balance, state, lastfia) values (?, ?, ?, ?, ?, ?, ?);");
+			PreparedStatement ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance, state, lastfia) values (?, ?, ?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setInt(2, player.getXp());
 			ps.setInt(3, player.getLevel());
@@ -146,7 +146,7 @@ public class PlayerDAO
 		long id = player.getId();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, lvl = ?, name = ?, balance = ?, state = ?, lastfia = ? where id = ?;");
+			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, 'level' = ?, name = ?, balance = ?, state = ?, lastfia = ? where id = ?;");
 			ps.setInt(1, player.getXp());
 			ps.setInt(2, player.getLevel());
 			ps.setString(3, player.getUsername());
