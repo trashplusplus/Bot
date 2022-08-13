@@ -14,12 +14,22 @@ public class Player
 	private int level;
 	private int xp;
 
+	public Player(long id)
+	{
+		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L);
+	}
+
 	public static enum State{
 		awaitingNickname,
 		awaitingSellArguments,
 		awaitingCommands,
 		awaitingChangeNickname,
-		coinDash;
+		coinDash,
+		shopAwaitingTypeOfShop,
+		shopPlaceGood,
+		shopPlaceGood_awaitingCost,
+		shopBuyGood;
+
 	}
 	private State state;
 
@@ -83,10 +93,10 @@ public class Player
 	}
 
 	public void levelUp(){
-		if(xp >= 10){
+
 			level++;
 			xp = 0;
-		}
+
 	}
 
 	public void addXp(int xp){

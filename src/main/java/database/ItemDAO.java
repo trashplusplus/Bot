@@ -5,20 +5,16 @@ import main.ItemRarity;
 
 import java.sql.*;
 
-public class ItemDAO
-{
+public class ItemDAO {
 	private Connection connection;
 
-	public ItemDAO(Connection connection)
-	{
+	public ItemDAO(Connection connection) {
 		this.connection = connection;
 	}
 
-	public Item get(long id)
-	{
+	public Item get(long id) {
 		Item item = null;
-		try
-		{
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from items where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
@@ -28,27 +24,40 @@ public class ItemDAO
 					rs.getString("name"),
 					ItemRarity.valueOf(rs.getString("rarity")),
 					rs.getInt("cost"));
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return item;
 	}
 
-	public int size()
-	{
-		try
-		{
+	public int size() {
+		try {
 			String query = "select count(*) from items;";
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(query);
 			return rs.getInt(1);
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception", e);
 		}
+	}
+
+	public Item getByName(String name) {
+		Item item = null;
+		try {
+			PreparedStatement ps = connection.prepareStatement("select * from items where name = ?;");
+			ps.setString(1, name);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+
+			item = new Item(rs.getLong("id"),
+					rs.getString("title"),
+					ItemRarity.valueOf(rs.getString("rarity")),
+					rs.getInt("cost")
+			);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return item;
 	}
 }

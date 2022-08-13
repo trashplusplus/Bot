@@ -2,7 +2,7 @@ create table if not exists players
 (
     id integer primary key,
     xp integer default 0,
-    lvl integer default 0,
+    'level' integer default 0,
     name text unique,
     balance integer default 0,
     state text not null,
@@ -15,6 +15,14 @@ create table if not exists items
     name text not null,
     rarity text not null,
     cost integer
+);
+
+create table if not exists shop
+(
+    id integer primary key,
+    name text not null,
+    cost integer,
+    sellerName text not null
 );
 
 insert or ignore into items values
