@@ -10,8 +10,8 @@ import java.util.List;
 
 public class PlayerDAO
 {
-	private Connection connection;
-	private InventoryDAO inventoryDAO;
+	private final Connection connection;
+	private final InventoryDAO inventoryDAO;
 
 	public PlayerDAO(Connection connection)
 	{
@@ -42,7 +42,7 @@ public class PlayerDAO
 		}
 	}
 
-	public Player get(long id)
+	public Player get_by_id(long id)
 	{
 		try
 		{
@@ -63,6 +63,20 @@ public class PlayerDAO
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception");
 		}
+	}
+
+	public Player get_by_name(String name) throws SQLException
+	{
+		String query = "select * from players where name = ?;";
+		PreparedStatement ps = connection.prepareStatement(query);
+		ps.setString(1, name);
+		ResultSet rs = ps.executeQuery();
+		Player player = null;
+		if (rs.next())
+		{
+			player = form(rs);
+		}
+		return player;
 	}
 
 	public List<Player> getAll()
@@ -127,7 +141,7 @@ public class PlayerDAO
 		}
 	}
 
-	public void update(Player player)
+	public void update(Player player)  // TODO extract exception to signature
 	{
 		long id = player.getId();
 		try
