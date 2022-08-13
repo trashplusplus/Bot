@@ -14,6 +14,11 @@ public class Player
 	private int level;
 	private int xp;
 
+	public Player(long id)
+	{
+		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L);
+	}
+
 	public static enum State{
 		awaitingNickname,
 		awaitingSellArguments,
