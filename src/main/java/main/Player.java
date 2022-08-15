@@ -26,9 +26,10 @@ public class Player
 		awaitingChangeNickname,
 		coinDash,
 		shopAwaitingTypeOfShop,
-		shopPlaceGood,
+		shopPlaceGood_awaitingID,
 		shopPlaceGood_awaitingCost,
-		shopBuyGood;
+		payAwaitingNickname,
+		payAwaitingAmount;
 
 	}
 	private State state;

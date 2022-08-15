@@ -38,7 +38,6 @@ public class Item
 	@Override
 	public String toString()
 	{
-		//return "|" + title + "|" + rarity + "|" + cost + "$" + "|";
 		return String.format("|%s|%s|$%d|", title, rarity.toString(), cost);
 	}
 }
