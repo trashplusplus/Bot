@@ -18,43 +18,6 @@ public class Inventory
 	{
 		return new ArrayList<>(this.inventory);
 	}
-	public List<Item> getGiftItems() {
-
-		List<Item> giftItems = new ArrayList<>();
-
-		for(Item i: getItems()){
-			if(i.getRarity() == ItemRarity.Gift){
-				giftItems.add(i);
-
-			}
-		}
-		return giftItems;
-	}
-
-	public Item getGiftItem(int index){
-		List<Item> giftItems = new ArrayList<>();
-
-		for(Item i: getItems()){
-			if(i.getRarity() == ItemRarity.Gift){
-				giftItems.add(i);
-
-			}
-		}
-
-		return giftItems.get(index);
-	}
-
-	public void removeGiftItem(int index){
-		List<Item> giftItems = new ArrayList<>();
-
-		for(Item i: getItems()){
-			if(i.getRarity() == ItemRarity.Gift){
-				giftItems.add(i);
-			}
-		}
-
-		giftItems.remove(index);
-	}
 
 	public String showInventory()
 	{

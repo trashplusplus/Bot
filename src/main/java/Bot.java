@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,9 @@ public class Bot extends TelegramLongPollingBot
 	private final InventoryDAO inventoryDAO;
 	private final ShopDAO shopDAO;
 
-
+	//ОБЩИЕ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ БУДУТ БАГИ
 	private int shopItemID;
+	private String payNickname;
 
 	private final String token;
 
@@ -94,23 +96,17 @@ public class Bot extends TelegramLongPollingBot
 
 		if (player == null)
 		{
-			//keyboardFirstRow.add(new KeyboardButton("⭐ Начать"));
-			keyboardFirstRow.add(new KeyboardButton("/start"));
+			keyboardFirstRow.add(new KeyboardButton("⭐ Начать"));
+			//keyboardFirstRow.add(new KeyboardButton("/start"));
 		}
 		else
 		{
-			if (player.getState() == Player.State.shopAwaitingTypeOfShop)
-			{
-				keyboardFirstRow.add(new KeyboardButton("Купить"));
-				keyboardFirstRow.add(new KeyboardButton("Продать"));
-			}
-			else
-			{
-				//keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
-				keyboardFirstRow.add(new KeyboardButton("/help"));
-				//keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
-				keyboardFirstRow.add(new KeyboardButton("/me"));
-			}
+
+				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
+				//keyboardFirstRow.add(new KeyboardButton("/help"));
+				keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
+				//keyboardFirstRow.add(new KeyboardButton("/me"));
+
 
 		}
 
@@ -202,9 +198,7 @@ public class Bot extends TelegramLongPollingBot
 			playerDAO.update(player);
 			sendMsg(player_id, "✅ Предмет продан | + $" + item.getCost());
 		}
-		catch (NumberFormatException e)
-		{
-
+		catch (NumberFormatException e){
 			e.printStackTrace();
 			sendMsg(player_id, "⚠\t Пожалуйста, введите целое число");
 			player.setState(Player.State.awaitingCommands);
@@ -228,7 +222,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			sendMsg(player.getId(), "⚠\t Неизвестная команда.\nВведите /help для просмотра доступных команд");
+			sendMsg(player.getId(), "⚠\t Неизвестная команда.\n");
 		}
 	}
 
@@ -296,66 +290,84 @@ public class Bot extends TelegramLongPollingBot
 	void shopAwaitingTypeOfShop_processor(Player player, Message message)
 	{
 		long player_id = player.getId();
-		sendMsg(player_id, "Веберите одно из двух: ");
-		switch (message.getText())
-		{
-			case "Купить":
-				player.setState(Player.State.shopBuyGood);
-				playerDAO.update(player);
-				break;
-			case "Продать":
-				shopItemID = 0;
-				Inventory inventory = player.getInventory();
-
-				sendMsg(player_id, "Предметы, доступные для продажи \n");
-
-				for (int i = 0; i < inventory.getInvSize(); i++){
-					sendMsg(player_id, String.format("Предмет | %d |: ", i) + inventory.getItem(i) + "\n");
+		switch (message.getText()){
+			case "/shopshow":
+				if(shopDAO.getAll().isEmpty()){
+					sendMsg(player_id, "В магазине пока нет товаров\n");
+				}else{
+					StringBuilder sb = new StringBuilder("Все предметы в магазине:\n\n");
+					sb.append("=====================\n");
+					for (ShopItem i : shopDAO.getAll()){
+						sendMsg(player_id, String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` ", i.getItem().getTitle(), i.getCost(), i.getSeller()));
+					}
+					sb.append("=====================\n");
+					player.setState(Player.State.awaitingCommands);
+					playerDAO.update(player);
 				}
+				break;
+			case "/shopplace":
+				if(player.getInventory().getInvSize() == 0){
+					sendMsg(player_id, "Вы не можете ничего продать, так как Ваш инвентарь пуст");
+					player.setState(Player.State.awaitingCommands);
+					playerDAO.update(player);
+				}else{
+					Inventory inventory = player.getInventory();
 
-				sendMsg(player_id, "Введите ID предмета, который хотите продать\n");
-				player.setState(Player.State.shopPlaceGood);
-				playerDAO.update(player);
+					StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
+					sb.append("=====================\n");
+					for (int i = 0; i < inventory.getInvSize(); i++){
+
+						sb.append(String.format("Предмет | %d |: ", i) + inventory.getItem(i) + "\n");
+					}
+					sb.append("=====================\n");
+					sendMsg(player_id, sb.toString());
+					sendMsg(player_id, "Введите ID предмета, который хотите продать\n");
+
+					player.setState(Player.State.shopPlaceGood_awaitingID);
+					playerDAO.update(player);
+
+				}
+				break;
+			default:
+				sendMsg(player_id, " \uD83C\uDF02 Выберите тип магазина\n\n" +
+						"\uD83D\uDC5F /shopshow - посмотреть товары" +
+						"\n\n" +
+						"\uD83C\uDFA9 /shopplace - разместить товар");
 				break;
 		}
 	}
 
-	void shopPlaceGood_processor(Player player, Message message){
-
-		long player_id = player.getId();
-
-		try
-		{
-			int itemID = Integer.parseInt(message.getText());
-			shopItemID = shopItemID;
-
-		}
-		catch (NumberFormatException e)
-		{
-			e.printStackTrace();
-			sendMsg(player_id, "⚠\t Пожалуйста, введите целое число");
-			player.setState(Player.State.awaitingCommands);
-			playerDAO.update(player);
-		}
-
-		catch (IndexOutOfBoundsException ee)
-		{
-			ee.printStackTrace();
-			sendMsg(player_id, "⚠\t Указан неверный ID");
-			player.setState(Player.State.awaitingCommands);
-			playerDAO.update(player);
-		}
-		sendMsg(player_id, "Введите сумму товара: ");
-		player.setState(Player.State.shopPlaceGood_awaitingCost);
-		playerDAO.update(player);
-
-	}
-
-	void shopPlaceGood_awaitingCost_processor(Player player, Message message){
-		long player_id = player.getId();
-
+	void shopPlaceGood_awaitingID_processor(Player player, Message message){
+		shopItemID = 0;
 
 		try{
+
+				int itemID = Integer.parseInt(message.getText());
+				if(itemID >= player.getInventory().getInvSize()){
+					throw new IndexOutOfBoundsException();
+				}
+				shopItemID = itemID;
+				sendMsg(player.getId(), "Введите стоимость товара: ");
+				player.setState(Player.State.shopPlaceGood_awaitingCost);
+				playerDAO.update(player);
+
+			}catch(NumberFormatException e){
+				e.printStackTrace();
+				sendMsg(player.getId(), "Введите целое число");
+			}catch (IndexOutOfBoundsException ee){
+				ee.printStackTrace();
+				sendMsg(player.getId(), "Неверный ID");
+			}
+
+
+	}
+
+
+	void shopPlaceGood_awaitingCost_processor(Player player, Message message){
+
+		long player_id = player.getId();
+		try{
+
 			int cost = Integer.parseInt(message.getText());
 			if(cost > 0){
 				Inventory inventory = player.getInventory();
@@ -363,48 +375,70 @@ public class Bot extends TelegramLongPollingBot
 				shopDAO.put(shopItem);
 				sendMsg(player_id, String.format("Товар ` %s ` выставлен на продажу", inventory.getItem(shopItemID).getTitle()));
 				inventory.removeItem(shopItemID);
+				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);
+				//inventoryDAO.delete(player, , 1);
 				player.setState(Player.State.awaitingCommands);
-				inventoryDAO.delete(player_id, shopItemID, 1);
 				playerDAO.update(player);
 			}else{
 				sendMsg(player_id, "Сумма не может быть нулем");
 			}
 
-
 		}catch (NumberFormatException e)
 		{
 			e.printStackTrace();
 			sendMsg(player_id, "⚠\t Пожалуйста, введите целое число");
+			//костыль, чтобы выходить из стейтов
 			player.setState(Player.State.awaitingCommands);
 			playerDAO.update(player);
+
 		}
-		catch (IndexOutOfBoundsException ee)
-		{
-			ee.printStackTrace();
-			sendMsg(player_id, "⚠\t Указана некорректная сумма");
-			player.setState(Player.State.awaitingCommands);
-
-			playerDAO.update(player);
-		}
-
-
-
-
 
 	}
 
-	void shopBuyGood_processor(Player player, Message message)
-	{
+	public void payAwaitingNickname_processor(Player player, Message message){
+		payNickname = "";
 		long player_id = player.getId();
-		sendMsg(player_id, "Все предметы в магазине:\n");
+		String nickname = message.getText();
 
-		for (ShopItem i : shopDAO.getAll())
-		{
-			sendMsg(player_id, String.format("Товар %s | Цена %d | Продавец %s", i.getItem().getTitle(), i.getCost(), i.getSeller()));
-		}
-		player.setState(Player.State.awaitingCommands);
-		playerDAO.update(player);
+			try{
+					payNickname = nickname;
+					player.setState(Player.State.payAwaitingAmount);
+					playerDAO.update(player);
+					sendMsg(player_id, "Введите сумму: ");
+
+			}catch (RuntimeException e){
+				e.printStackTrace();
+				sendMsg(player_id, "Такого игрока не существует");
+				//sendMsg(player_id, "Игрок с таким ником уже есть");
+			}
+
+
 	}
+
+	public void payAwaitingAmount_processor(Player player, Message message){
+
+		try{
+			int cost = Integer.parseInt(message.getText());
+			if(cost > player.getMoney()){
+				sendMsg(player.getId(), "У Вас нет такой суммы");
+			}else{
+				Player receiver = playerDAO.get_by_name(payNickname);
+				player.balance -= cost;
+				sendMsg(receiver.getId(), String.format("\uD83D\uDCB3 Вам начислено $%d | Отправитель: `%s` ", cost, player.getUsername()));
+				sendMsg(player.getId(), "✅ Деньги отправлены");
+				receiver.balance += cost;
+				player.setState(Player.State.awaitingCommands);
+				playerDAO.update(receiver);
+				playerDAO.update(player);
+			}
+		}catch (NumberFormatException | SQLException e){
+				e.printStackTrace();
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}
+	}
+
+
 
 	public void command_help(Player player)
 	{
@@ -611,13 +645,28 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_shop(Player player)
 	{
+		long player_id = player.getId();
+		Message message = new Message();
+		String text = message.getText();
+
+		sendMsg(player_id, " \uD83C\uDF02 Выберите тип магазина\n\n" +
+				"\uD83D\uDC5F /shopshow - посмотреть товары" +
+				"\n\n" +
+				"\uD83C\uDFA9 /shopplace - разместить товар");
+
 		player.setState(Player.State.shopAwaitingTypeOfShop);
+		playerDAO.update(player);
+	}
+
+	public void command_pay(Player player){
+		sendMsg(player.getId(), "Введите ник игрока: ");
+		player.setState(Player.State.payAwaitingNickname);
 		playerDAO.update(player);
 	}
 
 	public void command_start_already_registered(Player player)
 	{
-		sendMsg(player.getId(), "Вы уже зарегистрированы.\nВведите команду /help для отображения доступных команд");
+		sendMsg(player.getId(), "Вы уже зарегистрированы.\n");
 	}
 
 	public String getBotUsername()
