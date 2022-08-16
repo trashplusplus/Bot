@@ -14,6 +14,7 @@ public class SQLSession
 		try
 		{
 			sqlConnection = DriverManager.getConnection(db_url);
+			System.out.println("Successfully connected to database");
 		}
 		catch (SQLException e)
 		{

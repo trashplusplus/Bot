@@ -30,3 +30,4 @@ token
 data.db
 sqlite3.exe
 target/
+/out/

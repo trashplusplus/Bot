@@ -15,10 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -128,9 +125,9 @@ public class Bot extends TelegramLongPollingBot
 			long id = message.getChatId();
 			String text = message.getText();
 
-			System.out.println("Текстик: " + message.getText());
-
 			Player player = playerDAO.get_by_id(id);
+
+			System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
 
 			if (player == null)
 			{
@@ -419,7 +416,7 @@ public class Bot extends TelegramLongPollingBot
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
 		long used_ts = player.last_fia;
-		long cooldown_s = 1L;
+		long cooldown_s = 10L;
 		long cooldowns_ms = cooldown_s * 1000L;
 		long left_ms = used_ts + cooldowns_ms - now_ts;
 
@@ -430,7 +427,8 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			Item new_item = ItemFactory.getRandomItem();
+			//Item new_item = ItemFactory.getRandomItem();
+			Item new_item = ItemFactory.getRandomWeighted();
 			inventoryDAO.putItem(player_id, new_item.getId());
 			sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 			player.last_fia = now_ts;

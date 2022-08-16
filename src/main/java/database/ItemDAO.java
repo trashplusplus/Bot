@@ -4,6 +4,8 @@ import main.Item;
 import main.ItemRarity;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemDAO {
 	private Connection connection;
@@ -59,5 +61,37 @@ public class ItemDAO {
 			e.printStackTrace();
 		}
 		return item;
+	}
+
+	public List<Item> getAll()
+	{
+		List<Item> res = new ArrayList<>();
+		try
+		{
+			String query = "select * from items;";
+			PreparedStatement ps = connection.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next())
+			{
+				res.add(form(rs));
+			}
+		}
+		catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		return res;
+	}
+
+	Item form(ResultSet rs) throws SQLException
+	{
+		long id = rs.getLong(1);
+		String title = rs.getString(2);
+		ItemRarity rarity = ItemRarity.valueOf(rs.getString(3));
+		int cost = rs.getInt(4);
+
+		return new Item(id, title, rarity, cost);
 	}
 }

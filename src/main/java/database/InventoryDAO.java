@@ -104,8 +104,7 @@ public class InventoryDAO
 			ps.setLong(1, player_id);
 			ps.setLong(2, item_id);
 			ps.setInt(3, count);
-			int res = ps.executeUpdate();
-			System.out.printf("InventoryDAO.delete() fired, res = %d\n", res);
+			ps.executeUpdate();
 		}
 		catch (SQLException e)
 		{
