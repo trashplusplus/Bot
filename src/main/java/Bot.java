@@ -219,7 +219,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			sendMsg(player.getId(), "⚠\t Неизвестная команда.\n");
+			sendMsg(player.getId(), "⚠\t Неизвестная команда\n");
 		}
 	}
 
@@ -290,14 +290,18 @@ public class Bot extends TelegramLongPollingBot
 		switch (message.getText()){
 			case "/shopshow":
 				if(shopDAO.getAll().isEmpty()){
-					sendMsg(player_id, "В магазине пока нет товаров\n");
+					sendMsg(player_id, "\uD83D\uDC40 В магазине пока нет товаров\n");
+					player.setState(Player.State.awaitingCommands);
+					playerDAO.update(player);
 				}else{
-					StringBuilder sb = new StringBuilder("Все предметы в магазине:\n\n");
-					sb.append("=====================\n");
+					StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
+					//sb.append("=====================\n");
 					for (ShopItem i : shopDAO.getAll()){
-						sendMsg(player_id, String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` ", i.getItem().getTitle(), i.getCost(), i.getSeller()));
+						//сделать привязку не по нику, а по playerID
+						sb.append(String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", i.getItem().getTitle(), i.getCost(), i.getSeller()));
 					}
-					sb.append("=====================\n");
+					//sb.append("=====================\n");
+					sendMsg(player_id, sb.toString());
 					player.setState(Player.State.awaitingCommands);
 					playerDAO.update(player);
 				}
@@ -669,9 +673,16 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	public void command_pay(Player player){
-		sendMsg(player.getId(), "Введите ник игрока: ");
-		player.setState(Player.State.payAwaitingNickname);
-		playerDAO.update(player);
+		if(player.getMoney() <= 0){
+			sendMsg(player.getId(), "У вас нет денег для перевода");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}else{
+			sendMsg(player.getId(), "Введите ник игрока: ");
+			player.setState(Player.State.payAwaitingNickname);
+			playerDAO.update(player);
+		}
+
 	}
 
 	public void command_start_already_registered(Player player)
