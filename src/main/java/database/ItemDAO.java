@@ -53,7 +53,7 @@ public class ItemDAO {
 			rs.next();
 
 			item = new Item(rs.getLong("id"),
-					rs.getString("title"),
+					rs.getString("name"),
 					ItemRarity.valueOf(rs.getString("rarity")),
 					rs.getInt("cost")
 			);

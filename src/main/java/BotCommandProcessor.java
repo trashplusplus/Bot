@@ -13,6 +13,8 @@ public class BotCommandProcessor
 		Map<String, Consumer<Player>> res = new HashMap<>();
 
 		res.put("/help", bot::command_help);
+		res.put("\uD83C\uDF3A Помощь", bot::command_help);
+
 		res.put("/inv", bot::command_inv);
 		res.put("/find", bot::command_find);
 		res.put("/balance", bot::command_balance);
@@ -22,9 +24,16 @@ public class BotCommandProcessor
 		res.put("/sell", bot::command_sell);
 		res.put("/changenickname", bot::command_changeNickname);
 		res.put("/coin", bot::command_coin);
+
 		res.put("/me", bot::command_me);
+		res.put("⭐️ Персонаж", bot::command_me);
+
 		res.put("/shop", bot::command_shop);
+		res.put("⭐ Начать", bot::command_shop);
+
 		res.put("/start", bot::command_start_already_registered);
+		res.put("/pay", bot::command_pay);
+
 
 		return res;
 	}

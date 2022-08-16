@@ -2,6 +2,7 @@ package database;
 
 import main.Inventory;
 import main.Item;
+import main.Player;
 
 import java.sql.*;
 
@@ -105,6 +106,23 @@ public class InventoryDAO
 			ps.setLong(2, item_id);
 			ps.setInt(3, count);
 			ps.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	public void delete(Player player, long item_id, int count)
+	{
+		String query = "delete from inventory where id in (select id from inventory where player_id = ? and item_id = ? limit ?);";
+		try
+		{
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setLong(1, player.getId());
+			ps.setLong(2, item_id);
+			ps.setInt(3, count);
+			int res = ps.executeUpdate();
+			System.out.printf("Предмет | %s | удален  из инвентаря", player.getInventory().getItem((int)item_id).getTitle());
 		}
 		catch (SQLException e)
 		{

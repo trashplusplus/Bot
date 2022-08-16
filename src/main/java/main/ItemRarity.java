@@ -2,10 +2,10 @@ package main;
 
 public enum ItemRarity
 {
+	Cheap,
 	Common,
 	Rare,
-	Gift,
-	Special;
+	Gift;
 
 	@Override
 	public String toString()
@@ -13,17 +13,17 @@ public enum ItemRarity
 		return super.toString();
 	}
 
-	int toWeight()
+	int toWeight()  // TODO remove from this class
 	{
 		switch (this)
 		{
-			case Common:
+			case Cheap:
 				return 10;
+			case Common:
+				return 8;
 			case Rare:
-				return 5;
+				return 3;
 			case Gift:
-				return 2;
-			case Special:
 				return 1;
 		}
 
