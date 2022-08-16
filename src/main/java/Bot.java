@@ -471,7 +471,8 @@ public class Bot extends TelegramLongPollingBot
 				"\n" +
 				"\uD83D\uDC80 /changenickname - сменить никнейм \n \n" +
 				"\uD83C\uDFB0 /coin - сыграть в Монетку \n\n" +
-				"⭐ /me - ифнормация о персонаже"
+				"⭐ /me - ифнормация о персонаже \n\n" +
+				"\uD83D\uDCB0 /pay - переслать деньги"
 		);
 	}
 
