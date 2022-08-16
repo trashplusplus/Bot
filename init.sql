@@ -52,9 +52,6 @@ insert or ignore into items values
     (24,'Стиральный порошок','Cheap',100),
     (25,'Цветная резинка для волос','Gift', 17000);
 
-
-
-
 create table if not exists inventory
 (
     id integer primary key,

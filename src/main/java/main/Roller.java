@@ -2,7 +2,7 @@ package main;
 
 import java.util.Random;
 
-public class Roller<T>
+public class 	Roller<T>
 {
 	T[] items;
 	int[] weights;

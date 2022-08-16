@@ -355,8 +355,6 @@ public class Bot extends TelegramLongPollingBot
 				ee.printStackTrace();
 				sendMsg(player.getId(), "Неверный ID");
 			}
-
-
 	}
 
 
@@ -391,34 +389,45 @@ public class Bot extends TelegramLongPollingBot
 		}
 
 	}
-
+	public String getNick(String name) throws SQLException {
+		return playerDAO.get_by_name(name).getUsername();
+	}
 	public void payAwaitingNickname_processor(Player player, Message message){
 		payNickname = "";
 		long player_id = player.getId();
 		String nickname = message.getText();
 
 			try{
-					payNickname = nickname;
-					player.setState(Player.State.payAwaitingAmount);
+				if(!nickname.equals(player.getUsername())){
+					if (getNick(nickname).equals(nickname)){
+						payNickname = nickname;
+						player.setState(Player.State.payAwaitingAmount);
+						playerDAO.update(player);
+						sendMsg(player_id, "\uD83D\uDCB3 Введите сумму: ");
+					}
+				}else{
+					sendMsg(player_id, String.format("\uD83C\uDF38 Игрок `%s` очень богат и не нуждается в Ваших копейках", player.getUsername()));
+					player.setState(Player.State.awaitingCommands);
 					playerDAO.update(player);
-					sendMsg(player_id, "Введите сумму: ");
+				}
 
-			}catch (RuntimeException e){
+			}catch (RuntimeException | SQLException e){
 				e.printStackTrace();
 				sendMsg(player_id, "Такого игрока не существует");
-				//sendMsg(player_id, "Игрок с таким ником уже есть");
+				player.setState(Player.State.awaitingCommands);
+				playerDAO.update(player);
 			}
 
 
 	}
 
 	public void payAwaitingAmount_processor(Player player, Message message){
-
 		try{
 			int cost = Integer.parseInt(message.getText());
-			if(cost > player.getMoney()){
-				sendMsg(player.getId(), "У Вас нет такой суммы");
-			}else{
+			if(cost > player.getMoney() || cost <= 0){
+				sendMsg(player.getId(), "⚠\t Некорректная сумма");
+			}
+			else{
 				Player receiver = playerDAO.get_by_name(payNickname);
 				player.balance -= cost;
 				sendMsg(receiver.getId(), String.format("\uD83D\uDCB3 Вам начислено $%d | Отправитель: `%s` ", cost, player.getUsername()));
@@ -430,8 +439,10 @@ public class Bot extends TelegramLongPollingBot
 			}
 		}catch (NumberFormatException | SQLException e){
 				e.printStackTrace();
+			sendMsg(player.getId(), "⚠\t Вы ввели некорректную сумму");
 			player.setState(Player.State.awaitingCommands);
 			playerDAO.update(player);
+
 		}
 	}
 
