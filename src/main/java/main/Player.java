@@ -15,6 +15,8 @@ public class Player
 	private int level;
 	private int xp;
 
+	public int to_place_item;
+
 	public Player(long id)
 	{
 		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L);
