@@ -39,6 +39,7 @@ public class BotCommandProcessor
 		res.put("/shopplace", bot::command_shopplace);
 
 
+
 		return res;
 	}
 }

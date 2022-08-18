@@ -642,6 +642,7 @@ public class Bot extends TelegramLongPollingBot
 		sendMsg(player.getId(), stringBuilder.toString());
 	}
 
+
 	public void command_changeNickname(Player player)
 	{
 		sendMsg(player.getId(), "Введите никнейм, на который вы хотите сменить: ");
