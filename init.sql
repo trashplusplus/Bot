@@ -6,7 +6,8 @@ create table if not exists players
     name text unique,
     balance integer default 0,
     state text not null,
-    lastfia text default "NEVER"
+    lastfia text default "NEVER",
+    lastpockets text default "NEVER"
 );
 
 create table if not exists items

@@ -497,9 +497,9 @@ public class Bot extends TelegramLongPollingBot
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
 		long used_ts = player.last_fia;
-		long cooldown_s = 30L;
-		long cooldowns_ms = cooldown_s * 1000L;
-		long left_ms = used_ts + cooldowns_ms - now_ts;
+		long cooldown_s = 60L * 60L * 6L;
+		long cooldown_ms = cooldown_s * 1000L;
+		long left_ms = used_ts + cooldown_ms - now_ts;
 
 		if (left_ms > 0L)
 		{
@@ -544,20 +544,36 @@ public class Bot extends TelegramLongPollingBot
 	public void command_pockets(Player player)
 	{
 		long player_id = player.getId();
-		int money = moneyRoller.roll();
-		if (money > 0)
+		long now_ts = System.currentTimeMillis();
+		long used_ts = player.last_pockets;
+		long cooldown_s = 30L;
+		long cooldown_ms = cooldown_s * 1000L;
+		long left_ms = used_ts + cooldown_ms - now_ts;
+
+		if (left_ms > 0L)
 		{
-			sendMsg(player_id, String.format("Вы пошарили в карманах и нашли $%d", money));
-			player.balance += money;
-			playerDAO.update(player);
-		}
-		else if (money == 0)
-		{
-			sendMsg(player.getId(), "Вы ничего не нашли в своих карманах");
+			sendMsg(player_id, String.format("\u231B Время ожидания: %s",
+					PrettyDate.prettify(left_ms, TimeUnit.MILLISECONDS)));
 		}
 		else
 		{
-			throw new RuntimeException("WTF?");
+			int money = moneyRoller.roll();
+			player.last_pockets = now_ts;
+			if (money > 0)
+			{
+				sendMsg(player_id, String.format("Вы пошарили в карманах и нашли $%d", money));
+				player.balance += money;
+				//playerDAO.update(player);
+			}
+			else if (money == 0)
+			{
+				sendMsg(player.getId(), "Вы ничего не нашли в своих карманах");
+			}
+			else
+			{
+				throw new RuntimeException("WTF?");
+			}
+			playerDAO.update(player);
 		}
 	}
 
