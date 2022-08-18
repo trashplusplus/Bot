@@ -18,6 +18,7 @@ public class BotCommandProcessor
 		res.put("/inv", bot::command_inv);
 		res.put("/find", bot::command_find);
 		res.put("/mud", bot::command_mud);
+		res.put("/pockets", bot::command_pockets);
 		res.put("/balance", bot::command_balance);
 		res.put("/stats", bot::command_stats);
 		res.put("/top", bot::command_top);
