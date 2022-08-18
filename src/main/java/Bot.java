@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -36,7 +35,6 @@ public class Bot extends TelegramLongPollingBot
 
 	//ОБЩИЕ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ БУДУТ БАГИ
 	//Пофиксить, чтобы Продавец хранился по ID, а не по нику
-	private int shopItemID;
 
 	private final String token;
 
@@ -295,15 +293,19 @@ public class Bot extends TelegramLongPollingBot
 		try
 		{
 			int userInput = Integer.parseInt(message.getText());
-			int itemCost = shopDAO.getByID(userInput).getCost();
-			long sellerID = playerDAO.get_by_name(shopDAO.getByID(userInput).getSeller()).getId();
+
+			ShopItem wanted_item = shopDAO.getByID(userInput);
+			Item item = wanted_item.getItem();
+			int itemCost = wanted_item.getCost();
+			Player seller = wanted_item.getSeller();
+
 			if (player.getMoney() >= itemCost)
 			{
 				player.balance -= itemCost;
-				inventoryDAO.putItem(player.getId(), shopDAO.getByID(userInput).getItem().getId());
-				sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", shopDAO.getByID(userInput).getItem().getTitle()));
-				sendMsg(sellerID, String.format("Ваш предмет `%s` купил игрок `%s` | + $%d", shopDAO.getByID(userInput).getItem().getTitle(), player.getUsername(), itemCost));
-				playerDAO.get_by_name(shopDAO.getByID(userInput).getSeller()).balance += itemCost;
+				inventoryDAO.putItem(player.getId(), item.getId());
+				sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", item));
+				sendMsg(seller.getId(), String.format("Ваш предмет `%s` купил игрок `%s` | + $%d", item.getTitle(), player.getUsername(), itemCost));
+				seller.balance += itemCost;
 				shopDAO.delete(userInput);
 				player.setState(Player.State.awaitingCommands);
 				playerDAO.update(player);
@@ -315,10 +317,10 @@ public class Bot extends TelegramLongPollingBot
 				playerDAO.update(player);
 			}
 		}
-		catch (NumberFormatException | SQLException e)
+		catch (NumberFormatException e)
 		{
 			e.printStackTrace();
-			sendMsg(player.getId(), "Введите целое число");
+			sendMsg(player.getId(), "Введите целое число");  // << звучит как приглашение, хотя стейт тут же меняется
 			player.setState(Player.State.awaitingCommands);
 			playerDAO.update(player);
 		}
@@ -334,8 +336,6 @@ public class Bot extends TelegramLongPollingBot
 
 	void shopPlaceGood_awaitingID_processor(Player player, Message message)
 	{
-		shopItemID = 0;
-
 		try
 		{
 			int itemID = Integer.parseInt(message.getText());
@@ -343,11 +343,10 @@ public class Bot extends TelegramLongPollingBot
 			{
 				throw new IndexOutOfBoundsException();
 			}
-			shopItemID = itemID;
+			player.to_place_item = itemID;
 			sendMsg(player.getId(), "Введите стоимость товара: ");
 			player.setState(Player.State.shopPlaceGood_awaitingCost);
 			playerDAO.update(player);
-
 		}
 		catch (NumberFormatException e)
 		{
@@ -364,19 +363,17 @@ public class Bot extends TelegramLongPollingBot
 
 	void shopPlaceGood_awaitingCost_processor(Player player, Message message)
 	{
-
 		long player_id = player.getId();
 		try
 		{
-
 			int cost = Integer.parseInt(message.getText());
 			if (cost > 0)
 			{
 				Inventory inventory = player.getInventory();
-				ShopItem shopItem = new ShopItem(inventory.getItem(shopItemID), cost, player.getUsername());
+				ShopItem shopItem = new ShopItem(inventory.getItem(player.to_place_item), cost, player);
 				shopDAO.put(shopItem);
-				sendMsg(player_id, String.format("Товар ` %s ` выставлен на продажу", inventory.getItem(shopItemID).getTitle()));
-				inventory.removeItem(shopItemID);
+				sendMsg(player_id, String.format("Товар ` %s ` выставлен на продажу", inventory.getItem(player.to_place_item).getTitle()));
+				inventory.removeItem(player.to_place_item);
 				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);
 				//inventoryDAO.delete(player, , 1);
 				player.setState(Player.State.awaitingCommands);
@@ -386,7 +383,6 @@ public class Bot extends TelegramLongPollingBot
 			{
 				sendMsg(player_id, "Сумма не может быть нулем");
 			}
-
 		}
 		catch (NumberFormatException e)
 		{
@@ -395,19 +391,11 @@ public class Bot extends TelegramLongPollingBot
 			//костыль, чтобы выходить из стейтов
 			player.setState(Player.State.awaitingCommands);
 			playerDAO.update(player);
-
 		}
-
-	}
-
-	public String getNick(String name) throws SQLException
-	{
-		return playerDAO.get_by_name(name).getUsername();
 	}
 
 	public void payAwaitingNickname_processor(Player player, Message message)
 	{
-		payNickname = "";
 		long player_id = player.getId();
 		String nickname = message.getText();
 
@@ -730,13 +718,9 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_shopbuy(Player player)
 	{
-
-
 		if (shopDAO.getAll().isEmpty())
 		{
 			sendMsg(player.getId(), "\uD83D\uDC40 В магазине пока нет товаров\n");
-			player.setState(Player.State.awaitingCommands);
-			playerDAO.update(player);
 		}
 		else
 		{
@@ -746,7 +730,6 @@ public class Bot extends TelegramLongPollingBot
 			{
 				//сделать привязку не по нику, а по playerID
 				sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %d$ | Продавец: `%s` \n", i.getId(), i.getItem().getTitle(), i.getCost(), i.getSeller()));
-
 			}
 			//sb.append("=====================\n");
 			sendMsg(player.getId(), sb.toString());
@@ -789,8 +772,6 @@ public class Bot extends TelegramLongPollingBot
 		if (player.getInventory().getInvSize() == 0)
 		{
 			sendMsg(player_id, "Вы не можете ничего продать, так как Ваш инвентарь пуст");
-			player.setState(Player.State.awaitingCommands);
-			playerDAO.update(player);
 		}
 		else
 		{

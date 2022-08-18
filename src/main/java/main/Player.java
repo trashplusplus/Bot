@@ -16,6 +16,7 @@ public class Player
 	private int xp;
 
 	public Player payment_acceptor = null;
+	public int to_place_item;
 
 	public Player(long id)
 	{
