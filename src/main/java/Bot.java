@@ -35,6 +35,7 @@ public class Bot extends TelegramLongPollingBot
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
 
 	//ОБЩИЕ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ БУДУТ БАГИ
+	//Пофиксить, чтобы Продавец хранился по ID, а не по нику
 	private int shopItemID;
 	private String payNickname;
 
