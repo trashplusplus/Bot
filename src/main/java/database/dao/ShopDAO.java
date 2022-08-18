@@ -1,8 +1,6 @@
-package database;
+package database.dao;
 
-import main.Item;
 import main.ShopItem;
-import org.sqlite.jdbc4.JDBC4PreparedStatement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

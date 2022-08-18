@@ -1,5 +1,6 @@
-package database;
+package database.dao;
 
+import database.DatabaseDateMediator;
 import main.Inventory;
 import main.Player;
 

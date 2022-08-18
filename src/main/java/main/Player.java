@@ -102,6 +102,11 @@ public class Player
 
 	public void addXp(int xp){
 		this.xp += xp;
+		if (this.xp > 10)
+		{
+			level++;
+			this.xp %= 10;
+		}
 	}
 
 	public int getLevel(){
