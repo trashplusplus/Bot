@@ -227,6 +227,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
+
 	void awaitingChangeNickname_processor(Player player, Message message)
 	{
 		long player_id = player.getId();
@@ -288,65 +289,43 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
-	void shopAwaitingTypeOfShop_processor(Player player, Message message)
-	{
-		long player_id = player.getId();
-		switch (message.getText()){
-			case "/shopshow":
-				if(shopDAO.getAll().isEmpty()){
-					sendMsg(player_id, "\uD83D\uDC40 В магазине пока нет товаров\n");
-					player.setState(Player.State.awaitingCommands);
-					playerDAO.update(player);
-				}else{
-					StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
-					//sb.append("=====================\n");
-					for (ShopItem i : shopDAO.getAll()){
-						//сделать привязку не по нику, а по playerID
-						sb.append(String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", i.getItem().getTitle(), i.getCost(), i.getSeller()));
-					}
-					//sb.append("=====================\n");
-					sendMsg(player_id, sb.toString());
-					player.setState(Player.State.awaitingCommands);
-					playerDAO.update(player);
-				}
-				break;
-			case "/shopplace":
-				if(player.getInventory().getInvSize() == 0){
-					sendMsg(player_id, "Вы не можете ничего продать, так как Ваш инвентарь пуст");
-					player.setState(Player.State.awaitingCommands);
-					playerDAO.update(player);
-				}else{
-					Inventory inventory = player.getInventory();
-
-					StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
-					sb.append("=====================\n");
-					for (int i = 0; i < inventory.getInvSize(); i++){
-
-						sb.append(String.format("Предмет | %d |: ", i) + inventory.getItem(i) + "\n");
-					}
-					sb.append("=====================\n");
-					sendMsg(player_id, sb.toString());
-					sendMsg(player_id, "Введите ID предмета, который хотите продать\n");
-
-					player.setState(Player.State.shopPlaceGood_awaitingID);
-					playerDAO.update(player);
-
-				}
-				break;
-			default:
-				sendMsg(player_id, " \uD83C\uDF02 Выберите тип магазина\n\n" +
-						"\uD83D\uDC5F /shopshow - посмотреть товары" +
-						"\n\n" +
-						"\uD83C\uDFA9 /shopplace - разместить товар");
-				break;
+	void shopBuy_processor(Player player, Message message){
+		try{
+			int userInput = Integer.parseInt(message.getText());
+			int itemCost = shopDAO.getByID(userInput).getCost();
+			long sellerID = playerDAO.get_by_name(shopDAO.getByID(userInput).getSeller()).getId();
+			if(player.getMoney() >= itemCost){
+				player.balance -= itemCost;
+				inventoryDAO.putItem(player.getId(), shopDAO.getByID(userInput).getItem().getId());
+				sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", shopDAO.getByID(userInput).getItem().getTitle()));
+				sendMsg(sellerID, String.format("Ваш предмет `%s` купил игрок `%s` | + $%d", shopDAO.getByID(userInput).getItem().getTitle(), player.getUsername(), itemCost));
+				playerDAO.get_by_name(shopDAO.getByID(userInput).getSeller()).balance += itemCost;
+				shopDAO.delete(userInput);
+				player.setState(Player.State.awaitingCommands);
+				playerDAO.update(player);
+			}else{
+				sendMsg(player.getId(), "нема стока деняк");
+				player.setState(Player.State.awaitingCommands);
+				playerDAO.update(player);
+			}
+		}catch(NumberFormatException | SQLException e){
+			e.printStackTrace();
+			sendMsg(player.getId(), "Введите целое число");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}catch (IndexOutOfBoundsException ee){
+			ee.printStackTrace();
+			sendMsg(player.getId(), "Неверный ID");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
 		}
 	}
+
 
 	void shopPlaceGood_awaitingID_processor(Player player, Message message){
 		shopItemID = 0;
 
 		try{
-
 				int itemID = Integer.parseInt(message.getText());
 				if(itemID >= player.getInventory().getInvSize()){
 					throw new IndexOutOfBoundsException();
@@ -541,6 +520,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
+
 	public void command_mud(Player player)
 	{
 		Item item = mudRoller.roll();
@@ -592,6 +572,8 @@ public class Bot extends TelegramLongPollingBot
 			playerDAO.update(player);
 		}
 	}
+
+
 
 	public void command_balance(Player player)
 	{
@@ -714,20 +696,75 @@ public class Bot extends TelegramLongPollingBot
 		sendMsg(player_id, sb.toString());
 	}
 
-	public void command_shop(Player player)
-	{
-		long player_id = player.getId();
-		Message message = new Message();
-		String text = message.getText();
+	public void command_shopbuy(Player player){
 
-		sendMsg(player_id, " \uD83C\uDF02 Выберите тип магазина\n\n" +
-				"\uD83D\uDC5F /shopshow - посмотреть товары" +
-				"\n\n" +
-				"\uD83C\uDFA9 /shopplace - разместить товар");
 
-		player.setState(Player.State.shopAwaitingTypeOfShop);
-		playerDAO.update(player);
+		if(shopDAO.getAll().isEmpty()) {
+			sendMsg(player.getId(), "\uD83D\uDC40 В магазине пока нет товаров\n");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}else {
+			StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
+			//sb.append("=====================\n");
+			for (ShopItem i : shopDAO.getAll()) {
+				//сделать привязку не по нику, а по playerID
+				sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %d$ | Продавец: `%s` \n", i.getId(), i.getItem().getTitle(), i.getCost(), i.getSeller()));
+
+			}
+			//sb.append("=====================\n");
+			sendMsg(player.getId(), sb.toString());
+			sendMsg(player.getId(), "Введите ID товара, который вы хотите купить: ");
+			player.setState(Player.State.shopBuy);
+			playerDAO.update(player);
+		}
 	}
+
+	public void command_shopshow(Player player){
+		long player_id = player.getId();
+
+		if(shopDAO.getAll().isEmpty()){
+			sendMsg(player_id, "\uD83D\uDC40 В магазине пока нет товаров\n");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}else{
+			StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
+			//sb.append("=====================\n");
+			for (ShopItem i : shopDAO.getAll()){
+				//сделать привязку не по нику, а по playerID
+				sb.append(String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", i.getItem().getTitle(), i.getCost(), i.getSeller()));
+			}
+			//sb.append("=====================\n");
+			sendMsg(player_id, sb.toString());
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}
+	}
+
+	public void command_shopplace(Player player){
+		long player_id = player.getId();
+
+		if(player.getInventory().getInvSize() == 0){
+			sendMsg(player_id, "Вы не можете ничего продать, так как Ваш инвентарь пуст");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
+		}else {
+			Inventory inventory = player.getInventory();
+
+			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
+			sb.append("=====================\n");
+			for (int i = 0; i < inventory.getInvSize(); i++) {
+
+				sb.append(String.format("Предмет | %d |: ", i) + inventory.getItem(i) + "\n");
+			}
+			sb.append("=====================\n");
+			sendMsg(player_id, sb.toString());
+			sendMsg(player_id, "Введите ID предмета, который хотите продать\n");
+
+			player.setState(Player.State.shopPlaceGood_awaitingID);
+			playerDAO.update(player);
+		}
+	}
+
 
 	public void command_pay(Player player){
 		if(player.getMoney() <= 0){

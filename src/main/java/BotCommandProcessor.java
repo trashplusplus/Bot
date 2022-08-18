@@ -30,11 +30,13 @@ public class BotCommandProcessor
 		res.put("/me", bot::command_me);
 		res.put("⭐️ Персонаж", bot::command_me);
 
-		res.put("/shop", bot::command_shop);
-		res.put("⭐ Начать", bot::command_shop);
+		//res.put("⭐ Начать", bot::command_shop);
 
 		res.put("/start", bot::command_start_already_registered);
 		res.put("/pay", bot::command_pay);
+		res.put("/shopbuy", bot::command_shopbuy);
+		res.put("/shopshow", bot::command_shopshow);
+		res.put("/shopplace", bot::command_shopplace);
 
 
 		return res;
