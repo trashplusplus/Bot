@@ -67,18 +67,26 @@ public class PlayerDAO
 		}
 	}
 
-	public Player get_by_name(String name) throws SQLException
+	public Player get_by_name(String name)
 	{
 		String query = "select * from players where name = ?;";
-		PreparedStatement ps = connection.prepareStatement(query);
-		ps.setString(1, name);
-		ResultSet rs = ps.executeQuery();
-		Player player = null;
-		if (rs.next())
+		try
 		{
-			player = form(rs);
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, name);
+			ResultSet rs = ps.executeQuery();
+			Player player = null;
+			if (rs.next())
+			{
+				player = form(rs);
+			}
+			return player;
 		}
-		return player;
+		catch (SQLException ex)
+		{
+			ex.printStackTrace();
+			throw new RuntimeException("SQL Exception", ex);
+		}
 	}
 
 	public List<Player> getAll()
