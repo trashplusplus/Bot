@@ -1,6 +1,6 @@
 package main;
 
-import database.ItemDAO;
+import database.dao.ItemDAO;
 import database.SQLSession;
 
 import java.util.Random;

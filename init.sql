@@ -6,7 +6,8 @@ create table if not exists players
     name text unique,
     balance integer default 0,
     state text not null,
-    lastfia text default "NEVER"
+    lastfia text default "NEVER",
+    lastpockets text default "NEVER"
 );
 
 create table if not exists items
@@ -26,7 +27,7 @@ create table if not exists shop
 );
 
 insert or ignore into items values
-    (1,'Лопата','',200),
+    (1,'Лопата','Cheap',200),
     (2,'Поисковый фонарь','Rare',7000),
     (3,'Подвеска ''Nosebleed''','Rare',12000),
     (4,'Струны','Cheap',500),

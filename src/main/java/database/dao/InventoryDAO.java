@@ -1,4 +1,4 @@
-package database;
+package database.dao;
 
 import main.Inventory;
 import main.Item;

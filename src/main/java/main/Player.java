@@ -11,12 +11,13 @@ public class Player
 	private Inventory inventory;
 	private Ability<Item> findItemAbility;
 	public long last_fia;
+	public long last_pockets;
 	private int level;
 	private int xp;
 
 	public Player(long id)
 	{
-		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L);
+		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L);
 	}
 
 	public static enum State{
@@ -34,12 +35,7 @@ public class Player
 	}
 	private State state;
 
-	//public Player(long id, String username)
-	//{
-	//	this(id, username, 0, State.awaitingNickname, new Inventory());
-	//}
-
-	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia)
+	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets)
 	{
 		this.id = id;
 		this.username = username;
@@ -48,6 +44,7 @@ public class Player
 		this.inventory = inventory;
 		findItemAbility = new Ability<>(new Cooldown(10L), new FindItemAction(this));
 		this.last_fia = last_fia;
+		this.last_pockets = last_pockets;
 		this.xp = xp;
 		this.level = level;
 	}
@@ -102,6 +99,11 @@ public class Player
 
 	public void addXp(int xp){
 		this.xp += xp;
+		if (this.xp > 10)
+		{
+			level++;
+			this.xp %= 10;
+		}
 	}
 
 	public int getLevel(){
