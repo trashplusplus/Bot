@@ -66,8 +66,23 @@ public class ShopDAO {
             }
     }
 
-    public void getSize(){
-
+    public ShopItem getByID(int index){
+        ShopItem s = null;
+        try{
+            PreparedStatement ps = connection.prepareStatement("select * from shop where id = ?");
+            ps.setInt(1, index);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                s = form(rs);
+            }else{
+                throw new IndexOutOfBoundsException();
+            }
+          
+        }catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException("SQL Exception in ShopDAO", e);
+        }
+        return s;
     }
     /*
     public void update(ShopItem shopItem){
@@ -105,6 +120,6 @@ public class ShopDAO {
         String name = rs.getString(2);
         int cost = rs.getInt(3);
         String sellerName = rs.getString(4);
-        return new ShopItem(item.getByName(name), cost, sellerName);
+        return new ShopItem(item.getByName(name), cost, sellerName, id);
     }
 }
