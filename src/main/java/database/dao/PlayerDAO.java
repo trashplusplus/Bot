@@ -156,7 +156,7 @@ public class PlayerDAO
 		long id = player.getId();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, 'level' = ?, name = ?, balance = ?, state = ?, lastfia = ?, lastpockets = ? where id = ?;");
+			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, 'level' = ?, name = ?, balance = ?, state = ?, lastfia = ?, lastpockets = ?, acceptor_id = ?, to_place_item = ? where id = ?;");
 			ps.setInt(1, player.getXp());
 			ps.setInt(2, player.getLevel());
 			ps.setString(3, player.getUsername());
@@ -165,7 +165,17 @@ public class PlayerDAO
 			ps.setString(5, player.getState().name());
 			ps.setString(6, DatabaseDateMediator.ms_to_string(player.last_fia));
 			ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_pockets));
-			ps.setLong(8, id);
+			//ps.setLong(8, player.payment_acceptor == null ? -1 : player.payment_acceptor.getId());
+			if (player.payment_acceptor == null)
+				ps.setNull(8, 0);
+			else
+				ps.setLong(8, player.payment_acceptor.getId());
+			//ps.setInt(9, player.to_place_item == null ? -1 : player.to_place_item);
+			if (player.to_place_item == null)
+				ps.setNull(9, 0);
+			else
+				ps.setInt(9, player.to_place_item);
+			ps.setLong(10, id);
 			ps.execute();
 			//inventoryDAO.put(id, player.getInventory());
 		}
@@ -232,6 +242,23 @@ public class PlayerDAO
 		}
 
 		Inventory inventory = inventoryDAO.get(id);
-		return new Player(id, xp, level, username, balance, state, inventory, timestamps[0], timestamps[1]);
+		Player player = new Player(id, xp, level, username, balance, state, inventory, timestamps[0], timestamps[1]);
+		try
+		{
+			player.payment_acceptor = get_by_id(rs.getLong("acceptor_id"));
+		}
+		catch (SQLException ignored)
+		{
+
+		}
+		try
+		{
+			player.to_place_item = rs.getInt("to_place_item");
+		}
+		catch (SQLException ignored)
+		{
+
+		}
+		return player;
 	}
 }

@@ -7,7 +7,9 @@ create table if not exists players
     balance integer default 0,
     state text not null,
     lastfia text default "NEVER",
-    lastpockets text default "NEVER"
+    lastpockets text default "NEVER",
+    acceptor_id integer,
+    to_place_item integer
 );
 
 create table if not exists items

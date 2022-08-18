@@ -377,6 +377,7 @@ public class Bot extends TelegramLongPollingBot
 				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);
 				//inventoryDAO.delete(player, , 1);
 				player.setState(Player.State.awaitingCommands);
+				player.to_place_item = null;
 				playerDAO.update(player);
 			}
 			else
@@ -441,6 +442,7 @@ public class Bot extends TelegramLongPollingBot
 				sendMsg(player.getId(), "✅ Деньги отправлены");
 				receiver.balance += cost;
 				player.setState(Player.State.awaitingCommands);
+				player.payment_acceptor = null;
 				playerDAO.update(receiver);
 				playerDAO.update(player);
 			}
