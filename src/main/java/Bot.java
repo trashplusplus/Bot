@@ -270,7 +270,7 @@ public class Bot extends TelegramLongPollingBot
 
 				sendMsg(player_id, "Подбрасываем монетку...");
 
-				Cooldown kd = new Cooldown(2, new CooldownForPlayer(player, player_id, i_dash, this));
+				Cooldown kd = new Cooldown(2, () -> coin_dash_callback(player, i_dash));
 				kd.startCooldown();
 			}
 			else
@@ -763,40 +763,24 @@ public class Bot extends TelegramLongPollingBot
 		return token;
 	}
 
-	private static class CooldownForPlayer implements Runnable
+	private void coin_dash_callback(Player player, int i_dash)
 	{
-		private final Player player;
-		private final int i_dash;
-		private final Long chatId;
-		private final Bot botik;
-
-		CooldownForPlayer(Player player, Long chatId, int i_dash, Bot botik)
+		long player_id = player.getId();
+		CoinGame coinGame = new CoinGame(i_dash);
+		if (coinGame.roll())
 		{
-			this.player = player;
-			this.i_dash = i_dash;
-			this.chatId = chatId;
-			this.botik = botik;
+			sendMsg(player_id, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
+			coinGame.coinWin(player, i_dash);
+		}
+		else
+		{
+			sendMsg(player_id, "❌ Вы проиграли " + "$" + i_dash);
+			coinGame.coinLose(player, i_dash);
 		}
 
-		@Override
-		public void run()
-		{
-			CoinGame coinGame = new CoinGame(i_dash);
-			if (coinGame.roll())
-			{
-				botik.sendMsg(chatId, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
-				coinGame.coinWin(player, i_dash);
-			}
-			else
-			{
-				botik.sendMsg(chatId, "❌ Вы проиграли " + "$" + i_dash);
-				coinGame.coinLose(player, i_dash);
-			}
-
-			player.setState(Player.State.awaitingCommands);
-			botik.sendMsg(chatId, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
-			botik.playerDAO.update(player);
-		}
+		player.setState(Player.State.awaitingCommands);
+		sendMsg(player_id, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
+		playerDAO.update(player);
 	}
 }
 
