@@ -23,7 +23,8 @@ public class Player
 		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L);
 	}
 
-	public static enum State{
+	public enum State
+	{
 		awaitingNickname,
 		awaitingSellArguments,
 		awaitingCommands,
@@ -33,9 +34,9 @@ public class Player
 		shopPlaceGood_awaitingCost,
 		payAwaitingNickname,
 		payAwaitingAmount,
-		shopBuy;
-
+		shopBuy
 	}
+
 	private State state;
 
 	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets)
@@ -52,19 +53,23 @@ public class Player
 		this.level = level;
 	}
 
-	public void setUsername(String username) {
+	public void setUsername(String username)
+	{
 		this.username = username;
 	}
 
-	public void setState(State state){
+	public void setState(State state)
+	{
 		this.state = state;
 	}
 
-	public State getState(){
+	public State getState()
+	{
 		return state;
 	}
 
-	public long getId(){
+	public long getId()
+	{
 		return id;
 	}
 
@@ -93,14 +98,16 @@ public class Player
 		return balance;
 	}
 
-	public void levelUp(){
+	public void levelUp()
+	{
 
-			level++;
-			xp = 0;
+		level++;
+		xp = 0;
 
 	}
 
-	public void addXp(int xp){
+	public void addXp(int xp)
+	{
 		this.xp += xp;
 		if (this.xp > 10)
 		{
@@ -109,11 +116,13 @@ public class Player
 		}
 	}
 
-	public int getLevel(){
+	public int getLevel()
+	{
 		return level;
 	}
 
-	public int getXp(){
+	public int getXp()
+	{
 		return xp;
 	}
 

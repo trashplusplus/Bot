@@ -24,13 +24,13 @@ public class PlayerDAO
 	{
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance, state, lastfia, lastpockets) values (?, ?, ?, ?, ?, ?, ?, ?);");
+			PreparedStatement ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance, registered, lastfia, lastpockets) values (?, ?, ?, ?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setInt(2, player.getXp());
 			ps.setInt(3, player.getLevel());
 			ps.setString(4, player.getUsername());
 			ps.setInt(5, player.balance);
-			ps.setString(6, player.getState().name());
+			ps.setInt(6, player.getState() == Player.State.awaitingNickname ? 0 : 1);
 			ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_fia));
 			ps.setString(8, DatabaseDateMediator.ms_to_string(player.last_pockets));
 			ps.execute();
@@ -117,7 +117,7 @@ public class PlayerDAO
 		try
 		{
 			List<Player> players = new ArrayList<>();
-			String query = String.format("select * from players order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
+			String query = String.format("select * from players where registered = 1 order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, limit);
 			ResultSet rs = ps.executeQuery();
@@ -156,28 +156,16 @@ public class PlayerDAO
 		long id = player.getId();
 		try
 		{
-			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, 'level' = ?, name = ?, balance = ?, state = ?, lastfia = ?, lastpockets = ?, acceptor_id = ?, to_place_item = ? where id = ?;");
+			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, 'level' = ?, name = ?, balance = ?, registered = ?, lastfia = ?, lastpockets = ? where id = ?;");
 			ps.setInt(1, player.getXp());
 			ps.setInt(2, player.getLevel());
 			ps.setString(3, player.getUsername());
-
 			ps.setInt(4, player.balance);
-			ps.setString(5, player.getState().name());
+			ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
 			ps.setString(6, DatabaseDateMediator.ms_to_string(player.last_fia));
 			ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_pockets));
-			//ps.setLong(8, player.payment_acceptor == null ? -1 : player.payment_acceptor.getId());
-			if (player.payment_acceptor == null)
-				ps.setNull(8, 0);
-			else
-				ps.setLong(8, player.payment_acceptor.getId());
-			//ps.setInt(9, player.to_place_item == null ? -1 : player.to_place_item);
-			if (player.to_place_item == null)
-				ps.setNull(9, 0);
-			else
-				ps.setInt(9, player.to_place_item);
-			ps.setLong(10, id);
+			ps.setLong(8, id);
 			ps.execute();
-			//inventoryDAO.put(id, player.getInventory());
 		}
 		catch (SQLException e)
 		{
@@ -204,61 +192,42 @@ public class PlayerDAO
 
 	private Player form(ResultSet rs) throws SQLException
 	{
-		long id = rs.getLong(1);
-		int xp = rs.getInt(2);
-		int level = rs.getInt(3);
-		String username = rs.getString(4);
-		int balance = rs.getInt(5);
-		Player.State state = Player.State.valueOf(rs.getString(6));
-		//long last_fia;
-		//long last_pockets;
-		long[] timestamps = new long[2];
-		for (int i = 0; i < 2; i++)
-		{
-			String date_UTC_string = rs.getString(7 + i);
-			if (date_UTC_string != null)
-			{
-				try
-				{
-					timestamps[i] = DatabaseDateMediator.string_to_ms(date_UTC_string);
-				}
-				catch (ParseException e)
-				{
-					//throw new SQLException("Error while parsing last find item date from database", e);
-					timestamps[i] = 0;
-					System.err.printf("Error while parsing last find item date from database, got:\n%s\n", date_UTC_string);
-				}
-				catch (Exception ex)
-				{
-					timestamps[i] = 0;
-					System.err.println("Unknown exception when reading database" + ex);
-					ex.printStackTrace();
-				}
-			}
-			else
-			{
-				timestamps[i] = 0;
-			}
-		}
+		long id = rs.getLong("id");
+		int xp = rs.getInt("xp");
+		int level = rs.getInt("level");
+		String username = rs.getString("name");
+		int balance = rs.getInt("balance");
+		Player.State state = rs.getInt("registered") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
+		long last_fia = read_ts(rs, "lastfia");
+		long last_pockets = read_ts(rs, "lastpockets");
 
 		Inventory inventory = inventoryDAO.get(id);
-		Player player = new Player(id, xp, level, username, balance, state, inventory, timestamps[0], timestamps[1]);
-		try
-		{
-			player.payment_acceptor = get_by_id(rs.getLong("acceptor_id"));
-		}
-		catch (SQLException ignored)
-		{
 
-		}
-		try
-		{
-			player.to_place_item = rs.getInt("to_place_item");
-		}
-		catch (SQLException ignored)
-		{
+		return new Player(id, xp, level, username, balance, state, inventory, last_fia, last_pockets);
+	}
 
+	private long read_ts(ResultSet rs, String column_name) throws SQLException
+	{
+		long result = 0;
+		String date_UTC_string = rs.getString(column_name);
+		if (date_UTC_string != null)
+		{
+			try
+			{
+				result = DatabaseDateMediator.string_to_ms(date_UTC_string);
+			}
+			catch (ParseException e)
+			{
+				//throw new SQLException("Error while parsing last find item date from database", e);
+				System.err.printf("Error while parsing last find item date from database, got:\n%s\n", date_UTC_string);
+			}
+			catch (Exception ex)
+			{
+				System.err.println("Unknown exception when reading database" + ex);
+				ex.printStackTrace();
+			}
 		}
-		return player;
+
+		return result;
 	}
 }

@@ -5,11 +5,9 @@ create table if not exists players
     'level' integer default 0,
     name text unique,
     balance integer default 0,
-    state text not null,
+    registered integer not null default 0,
     lastfia text default "NEVER",
-    lastpockets text default "NEVER",
-    acceptor_id integer,
-    to_place_item integer
+    lastpockets text default "NEVER"
 );
 
 create table if not exists items
