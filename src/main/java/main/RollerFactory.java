@@ -62,10 +62,10 @@ public class RollerFactory
 					weights[i] = 4;
 					break;
 				case Rare:
-					weights[i] = 8;
+					weights[i] = 5;
 					break;
 				case Gift:
-					weights[i] = 1;
+					weights[i] = 2;
 					break;
 				default:
 					throw new RuntimeException("WTF?");
