@@ -346,7 +346,7 @@ public class Bot extends TelegramLongPollingBot
 				inventoryDAO.putItem(player.getId(), shopDAO.getByID(userInput).getItem().getId());
 				//sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", shopDAO.getByID(userInput).getItem().getTitle()));
 				//sendMsg(sellerID, String.format("\uD83D\uDCCA Ваш предмет `%s` купил игрок `%s` | + $%d", shopDAO.getByID(userInput).getItem().getTitle(), player.getUsername(), itemCost));
-				playerDAO.get_by_name(shopDAO.getByID(userInput).getSeller()).balance += itemCost;
+				seller.balance = itemCost;
 
 				inventoryDAO.putItem(player.getId(), item.getId());
 				sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", item));
