@@ -5,7 +5,7 @@ create table if not exists players
     'level' integer default 0,
     name text unique,
     balance integer default 0,
-    state text not null,
+    registered integer not null default 0,
     lastfia text default "NEVER",
     lastpockets text default "NEVER"
 );
@@ -21,9 +21,12 @@ create table if not exists items
 create table if not exists shop
 (
     id integer primary key,
-    name text not null,
-    cost integer,
-    sellerName text not null
+    item_id,
+    cost integer not null,
+    seller_id,
+
+    foreign key (item_id) references items (id) on update cascade,
+    foreign key (seller_id) references players (id) on delete cascade
 );
 
 insert or ignore into items values
