@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ShopDAO
 {
-	private Connection connection;
+	private final Connection connection;
 	ItemDAO item;
     PlayerDAO playerDAO;
 

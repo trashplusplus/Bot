@@ -4,10 +4,10 @@ import java.util.Objects;
 
 public class Item
 {
-	private long id;
-	private int cost;
-	private ItemRarity rarity;
-	private String title;
+	private final long id;
+	private final int cost;
+	private final ItemRarity rarity;
+	private final String title;
 
 	public Item(long id, String title, ItemRarity rarity, int cost)
 	{

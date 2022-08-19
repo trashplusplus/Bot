@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ItemDAO
 {
-	private Connection connection;
+	private final Connection connection;
 
 	public ItemDAO(Connection connection)
 	{
