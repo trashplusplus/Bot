@@ -5,20 +5,26 @@ import database.dao.ShopDAO;
 import main.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
 
 
 public class Bot extends TelegramLongPollingBot
@@ -89,7 +95,9 @@ public class Bot extends TelegramLongPollingBot
 
 		List<KeyboardRow> keyboardRowList = new ArrayList<>();
 		KeyboardRow keyboardFirstRow = new KeyboardRow();
-
+		KeyboardRow keyboardSecondRow = new KeyboardRow();
+		KeyboardRow keyboardThirdRow = new KeyboardRow();
+		KeyboardRow keyboardFourthRow = new KeyboardRow();
 		//добавили новую кнопку в первый ряд
 		//KeyboardButton startButton = new KeyboardButton("/start");
 
@@ -101,17 +109,33 @@ public class Bot extends TelegramLongPollingBot
 		else
 		{
 
+				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
+				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
+				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
+				keyboardSecondRow.add(new KeyboardButton("\uD83E\uDDF6 Проверить карманы"));
+
 			keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
 			//keyboardFirstRow.add(new KeyboardButton("/help"));
 			keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
 			//keyboardFirstRow.add(new KeyboardButton("/me"));
 
 
+				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCB0 Монетка"));
+				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDED2 Магазин"));
+				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
+
+				keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
+
+				//keyboardFirstRow.add(new KeyboardButton("/me"));
+
 		}
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));
 		//добавили в спиок всех кнопок
 		keyboardRowList.add(keyboardFirstRow);
+		keyboardRowList.add(keyboardSecondRow);
+		keyboardRowList.add(keyboardThirdRow);
+		keyboardRowList.add(keyboardFourthRow);
 		replyKeyboardMarkup.setKeyboard(keyboardRowList);
 
 	}
@@ -311,10 +335,17 @@ public class Bot extends TelegramLongPollingBot
 			if (player.getMoney() >= itemCost)
 			{
 				player.balance -= itemCost;
+
+				inventoryDAO.putItem(player.getId(), shopDAO.getByID(userInput).getItem().getId());
+				//sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", shopDAO.getByID(userInput).getItem().getTitle()));
+				//sendMsg(sellerID, String.format("\uD83D\uDCCA Ваш предмет `%s` купил игрок `%s` | + $%d", shopDAO.getByID(userInput).getItem().getTitle(), player.getUsername(), itemCost));
+				seller.balance = itemCost;
+
 				inventoryDAO.putItem(player.getId(), item.getId());
 				sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", item));
 				sendMsg(seller.getId(), String.format("Ваш предмет `%s` купил игрок `%s` | + $%d", item.getTitle(), player.getUsername(), itemCost));
 				seller.balance += itemCost;
+
 				shopDAO.delete(userInput);
 				playerDAO.update(player);
 			}
@@ -375,8 +406,10 @@ public class Bot extends TelegramLongPollingBot
 				Inventory inventory = player.getInventory();
 				ShopItem shopItem = new ShopItem(inventory.getItem(player.to_place_item), cost, player);
 				shopDAO.put(shopItem);
+
 				sendMsg(player_id, String.format("Товар ` %s ` выставлен на продажу", inventory.getItem(player.to_place_item).getTitle()));
 				inventory.removeItem(player.to_place_item);
+
 				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);
 				player.setState(Player.State.awaitingCommands);
 				playerDAO.update(player);
@@ -454,28 +487,67 @@ public class Bot extends TelegramLongPollingBot
 	{
 		sendMsg(player.getId(), "\\[`Needle`] Бот содержит следующие команды: \n" +
 				"\n" +
-				"\uD83D\uDD0D /find - искать предметы \n" +
+				" \\[Команды поиска] \n" +
+				"\uD83D\uDD0D /find - искать редкие предметы \n" +
+				"\uD83D\uDD0D /pockets - проверить карманы \n" +
+				"\uD83D\uDD0D /mud - рыться в грязи \n" +
 				"\n" +
+				" \\[Команды магазина] \n" +
+				"\uD83D\uDD0D /shopshow - посмотреть магазин \n" +
+				"\uD83D\uDD0D /shopplace - продать предмет \n" +
+				"\uD83D\uDD0D /shopbuy - купить предмет \n" +
+				"\n" +
+				" \\[Команды игрока] \n" +
 				"\uD83D\uDCC3 /inv - открыть инвентарь \n" +
+				"\uD83D\uDCB0 /sell - продать скупщику\n" +
+				"\uD83D\uDCB3 /balance - проверить баланс  \n" +
+				"\uD83D\uDCB0 /pay - переслать деньги \n" +
+				"\uD83D\uDC80 /changenickname - сменить никнейм \n" +
+				"⭐ /me - ифнормация о персонаже \n" +
 				"\n" +
-				"\uD83C\uDF80 /top - посмотреть рейтинг всех игроков \n" +
-				"\n" +
+				" \\[Общие команы] \n" +
+				"\uD83D\uDCE9 /help - список всех команд \n" +
+				"ℹ /info - информация об игре \n" +
+				"\uD83C\uDF80 /top - посмотреть рейтинг игроков \n" +
 				"\uD83D\uDCB9 /stats - онлайн игроков \n" +
 				"\n" +
-				"\uD83D\uDCB3 /balance - проверить баланс  \n" +
+				" \\[Развлечения] \n" +
+				"\uD83C\uDFB0 /coin - сыграть в Монетку \n" +
 				"\n" +
-				"\uD83D\uDCB0 /sell - продать предмет скупщику\n" +
-				"\n" +
-				"\uD83D\uDCE9 /help - список всех команд \n" +
-				"\n" +
-				"ℹ /info - информация об игре \n" +
+				" \\[Локации] \n" +
+				"\uD83D\uDC80 /forest - посетить Лес \n"
 
-				"\n" +
-				"\uD83D\uDC80 /changenickname - сменить никнейм \n \n" +
-				"\uD83C\uDFB0 /coin - сыграть в Монетку \n\n" +
-				"⭐ /me - ифнормация о персонаже \n\n" +
-				"\uD83D\uDCB0 /pay - переслать деньги"
+
 		);
+	}
+
+	public void command_forest(Player player){
+			List<String> explore = new ArrayList<String>();
+			explore.add("`Петуния`");
+			explore.add("`Гардения`");
+			explore.add("`Ромашки`");
+			explore.add("`Лилии`");
+			explore.add("`Ландыши`");
+			explore.add("`Хризантемы`");
+
+			Random r = new Random();
+			int random = r.nextInt(explore.size());
+			try{
+			Item i = new Item(2, "Поисковый фонарь", ItemRarity.Rare, 7000);
+			if(player.getInventory().getItems().contains(i)){
+				//SendPhoto photo = new SendPhoto();
+				//photo.setPhoto(new InputFile(new File("C:\\Bot\\src\\main\\java\\1.jpg")));
+				 //photo.setChatId(player.getId());
+				//	photo.setCaption("вы нашли гея");
+				//this.execute(photo);
+				sendMsg(player.getId(), "В лесу вы нашли: " + explore.get(random));
+
+			}else {
+				sendMsg(player.getId(), String.format("Для похода в лес вам нужен предмет `%s` ", i.getTitle()));
+			}
+			}catch (RuntimeException e){
+				e.printStackTrace();
+			}
 	}
 
 	public void command_inv(Player player)
@@ -507,7 +579,8 @@ public class Bot extends TelegramLongPollingBot
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
 		long used_ts = player.last_fia;
-		long cooldown_s = 60L * 60L * 6L;
+		//long cooldown_s = 60L * 60L * 1L;
+		long cooldown_s = 160L;
 		long cooldown_ms = cooldown_s * 1000L;
 		long left_ms = used_ts + cooldown_ms - now_ts;
 
@@ -598,7 +671,7 @@ public class Bot extends TelegramLongPollingBot
 		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ игроков:\n");
 		players_list.append("========================");
 		players_list.append("\n");
-		for (Player pl : playerDAO.getTopN("balance", false, 5))
+		for (Player pl : playerDAO.getTopN("balance", false, 10))
 		{
 			players_list.append(String.format("Игрок %s | $%d | %d LVL", "`" + pl.getUsername() + "`", pl.balance, pl.getLevel()));
 			players_list.append("\n");
@@ -715,7 +788,8 @@ public class Bot extends TelegramLongPollingBot
 				//сделать привязку не по нику, а по playerID
 				sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %d$ | Продавец: `%s` \n", i.getId(), i.getItem().getTitle(), i.getCost(), i.getSeller()));
 			}
-			//sb.append("=====================\n");
+			sb.append("\n");
+			sb.append("\uD83D\uDCB3 Чтобы купить, введите /shopbuy \n");
 			sendMsg(player_id, sb.toString());
 			sendMsg(player_id, "Введите ID товара, который вы хотите купить: ");
 			player.setState(Player.State.shopBuy);
@@ -799,8 +873,7 @@ public class Bot extends TelegramLongPollingBot
 		return "Needle";
 	}
 
-	private String init_token() throws FileNotFoundException
-	{
+	private String init_token() throws FileNotFoundException {
 		Scanner scanner = new Scanner(new File("token"));
 		return scanner.nextLine();
 	}
