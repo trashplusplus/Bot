@@ -112,10 +112,6 @@ public class Bot extends TelegramLongPollingBot
 		else
 		{
 
-
-				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
-				//keyboardFirstRow.add(new KeyboardButton("/help"));
-				keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
 				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
 				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
 				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
