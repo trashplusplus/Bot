@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.util.*;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -37,8 +38,8 @@ public class Bot extends TelegramLongPollingBot
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
 	private static final Roller<Item> fishRoller = RollerFactory.getFishRoller(new Random());
 
-	//ОБЩИЕ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ БУДУТ БАГИ
-	//Пофиксить, чтобы Продавец хранился по ID, а не по нику
+	ScheduledFuture<?> sf_timers = STPE.stpe.scheduleAtFixedRate(this::update_database_timers, 0L, 5L, TimeUnit.SECONDS);
+	ScheduledFuture<?> sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 5L, 5L, TimeUnit.MINUTES);
 
 	private final String token;
 
@@ -945,7 +946,6 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_shopshow(Player player)
 	{
-
 		try{
 			SendPhoto photo = new SendPhoto();
 			photo.setPhoto(new InputFile(new File(".\\pics\\shop.jpg")));
@@ -1054,6 +1054,22 @@ public class Bot extends TelegramLongPollingBot
 	public void command_start_already_registered(Player player)
 	{
 		sendMsg(player.getId(), "Вы уже зарегистрированы.\n");
+	}
+
+	public void update_database_timers()
+	{}
+
+	public void dump_database()
+	{}
+
+	public void on_closing()
+	{
+		System.out.println("Exiting...");
+		sf_dump.cancel(false);
+		sf_timers.cancel(false);
+		STPE.stpe.shutdown();
+		dump_database();
+		System.out.println("Goodbye!");
 	}
 
 	public void level_up_notification(Player player)

@@ -19,7 +19,9 @@ public class AppRunner
 		{
 			initDB();
 			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class); //создание объекта в API
-			telegramBotsApi.registerBot(new Bot(SQLSession.sqlConnection));
+			Bot bot = new Bot(SQLSession.sqlConnection);
+			telegramBotsApi.registerBot(bot);
+			Runtime.getRuntime().addShutdownHook(new Thread(bot::on_closing));
 		}
 		catch (TelegramApiException ex)
 		{
