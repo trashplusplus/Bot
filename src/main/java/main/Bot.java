@@ -48,9 +48,9 @@ public class Bot extends TelegramLongPollingBot
 
 	public Bot(Connection connection) throws FileNotFoundException
 	{
-		playerDAO = new PlayerDAO(connection);
+		playerDAO = new PlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
-		shopDAO = new ShopDAO(connection);
+		shopDAO = new ShopDAO(connection, this);
 		token = init_token();
 		state_processor = BotStateProcessor.get_map(this);
 		command_processor = BotCommandProcessor.get_map(this);
@@ -166,7 +166,7 @@ public class Bot extends TelegramLongPollingBot
 			{
 				if (text.equals("/start"))
 				{
-					player = new Player(id);
+					player = new Player(id, this);
 					active_players.put(id, player);
 					playerDAO.put(player);
 					sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
@@ -878,6 +878,11 @@ public class Bot extends TelegramLongPollingBot
 	public void command_start_already_registered(Player player)
 	{
 		sendMsg(player.getId(), "Вы уже зарегистрированы.\n");
+	}
+
+	public void level_up_notification(Player player)
+	{
+		sendMsg(player.getId(), String.format("Поздравляем! Вы перешли на новый уровень (Уровень %d)", player.getLevel()));
 	}
 
 	public String getBotUsername()

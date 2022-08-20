@@ -12,18 +12,20 @@ public class Player
 	private int xp;
 	private State state;
 
+	Bot host;
+
 	// < commands args
 	public Player payment_acceptor = null;
 	public Integer to_place_item = null;
 	// > commands args
 
 
-	public Player(long id)
+	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L);
+		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L, host);
 	}
 
-	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets)
+	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets, Bot host)
 	{
 		this.id = id;
 		this.username = username;
@@ -34,6 +36,7 @@ public class Player
 		this.last_pockets = last_pockets;
 		this.xp = xp;
 		this.level = level;
+		this.host = host;
 	}
 
 	public State getState()
@@ -77,12 +80,13 @@ public class Player
 		xp %= 10;
 
 		// back-notify the owner
+		host.level_up_notification(this);
 	}
 
 	public void addXp(int xp)
 	{
 		this.xp += xp;
-		if (this.xp > 10)
+		if (this.xp >= 10)
 			levelUp();
 	}
 

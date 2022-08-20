@@ -1,6 +1,7 @@
 package database.dao;
 
 import database.DatabaseDateMediator;
+import main.Bot;
 import main.Inventory;
 import main.Player;
 
@@ -13,11 +14,13 @@ public class PlayerDAO
 {
 	private final Connection connection;
 	private final InventoryDAO inventoryDAO;
+	Bot host;
 
-	public PlayerDAO(Connection connection)
+	public PlayerDAO(Connection connection, Bot host)
 	{
 		this.connection = connection;
 		inventoryDAO = new InventoryDAO(connection);
+		this.host = host;
 	}
 
 	public void put(Player player)
@@ -203,7 +206,7 @@ public class PlayerDAO
 
 		Inventory inventory = inventoryDAO.get(id);
 
-		return new Player(id, xp, level, username, balance, state, inventory, last_fia, last_pockets);
+		return new Player(id, xp, level, username, balance, state, inventory, last_fia, last_pockets, host);
 	}
 
 	private long read_ts(ResultSet rs, String column_name) throws SQLException

@@ -1,5 +1,6 @@
 package database.dao;
 
+import main.Bot;
 import main.Item;
 import main.Player;
 import main.ShopItem;
@@ -17,11 +18,14 @@ public class ShopDAO
 	ItemDAO item;
     PlayerDAO playerDAO;
 
-	public ShopDAO(Connection connection)
+	Bot host;
+
+	public ShopDAO(Connection connection, Bot host)
 	{
 		this.connection = connection;
 		item = new ItemDAO(this.connection);
-        playerDAO = new PlayerDAO(connection);
+		this.host = host;
+        playerDAO = new PlayerDAO(connection, host);
 	}
 
 	public void put(ShopItem shopItem)
