@@ -33,12 +33,13 @@ public class RollerFactory
 
 	public static Roller<Integer> getMoneyRoller(Random random)
 	{
-		Integer[] money = new Integer[51];
-		int[] weights = new int[51];
+		int limit = 101;
+		Integer[] money = new Integer[limit];
+		int[] weights = new int[limit];
 
 		Arrays.fill(weights, 1);
 
-		for (int i = 0; i < 51; i++)
+		for (int i = 0; i < limit; i++)
 		{
 			money[i] = i;
 		}
