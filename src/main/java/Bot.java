@@ -338,21 +338,20 @@ public class Bot extends TelegramLongPollingBot
 				player.balance -= itemCost;
 
 				inventoryDAO.putItem(player.getId(), shopDAO.getByID(userInput).getItem().getId());
-				//sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", shopDAO.getByID(userInput).getItem().getTitle()));
-				//sendMsg(sellerID, String.format("\uD83D\uDCCA Ваш предмет `%s` купил игрок `%s` | + $%d", shopDAO.getByID(userInput).getItem().getTitle(), player.getUsername(), itemCost));
-				seller.balance = itemCost;
 
 				inventoryDAO.putItem(player.getId(), item.getId());
-				sendMsg(player.getId(), String.format("Предмет `%s` успешно куплен", item));
-				sendMsg(seller.getId(), String.format("Ваш предмет `%s` купил игрок `%s` | + $%d", item.getTitle(), player.getUsername(), itemCost));
-				seller.balance += itemCost;
+				sendMsg(player.getId(), String.format("\uD83C\uDF6D Предмет `%s` успешно куплен", item));
+				sendMsg(seller.getId(), String.format("\uD83D\uDCC8 Ваш предмет `%s` купил игрок `%s` | + $%d", item.getTitle(), player.getUsername(), itemCost));
+
+				seller.balance = seller.balance + itemCost;
 
 				shopDAO.delete(userInput);
 				playerDAO.update(player);
+				playerDAO.update(seller);
 			}
 			else
 			{
-				sendMsg(player.getId(), "нема стока деняк");
+				sendMsg(player.getId(), "Недостаточно средств");
 			}
 		}
 		catch (NumberFormatException e)
@@ -445,6 +444,7 @@ public class Bot extends TelegramLongPollingBot
 			else
 			{
 				sendMsg(player_id, "Такого игрока не существует");
+				player.setState(Player.State.awaitingCommands);
 			}
 		}
 		else
@@ -536,11 +536,7 @@ public class Bot extends TelegramLongPollingBot
 			try{
 			Item i = new Item(2, "Поисковый фонарь", ItemRarity.Rare, 7000);
 			if(player.getInventory().getItems().contains(i)){
-				//SendPhoto photo = new SendPhoto();
-				//photo.setPhoto(new InputFile(new File("C:\\Bot\\src\\main\\java\\1.jpg")));
-				 //photo.setChatId(player.getId());
-				//	photo.setCaption("вы нашли гея");
-				//this.execute(photo);
+
 				sendMsg(player.getId(), "В лесу вы нашли: " + explore.get(random));
 
 			}else {
@@ -739,6 +735,7 @@ public class Bot extends TelegramLongPollingBot
 			if (player.balance > 0)
 			{
 				active_players.put(player_id, player);
+				sendMsg(player_id, "\uD83D\uDCB0 Ваш баланс: $" + player.getMoney());
 				sendMsg(player_id, "\uD83C\uDFB0 Введите ставку: ");
 				player.setState(Player.State.coinDash);
 			}
@@ -787,10 +784,10 @@ public class Bot extends TelegramLongPollingBot
 			for (ShopItem i : shopDAO.getAll())
 			{
 				//сделать привязку не по нику, а по playerID
-				sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %d$ | Продавец: `%s` \n", i.getId(), i.getItem().getTitle(), i.getCost(), i.getSeller()));
+				sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %d$ | Продавец: `%s` \n", i.getId(), i.getItem().getTitle(), i.getCost(), i.getSeller().getUsername()));
 			}
 			sb.append("\n");
-			sb.append("\uD83D\uDCB3 Чтобы купить, введите /shopbuy \n");
+
 			sendMsg(player_id, sb.toString());
 			sendMsg(player_id, "Введите ID товара, который вы хотите купить: ");
 			player.setState(Player.State.shopBuy);
@@ -800,24 +797,39 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_shopshow(Player player)
 	{
-		long player_id = player.getId();
 
-		if (shopDAO.getAll().isEmpty())
-		{
-			sendMsg(player_id, "\uD83D\uDC40 В магазине пока нет товаров\n");
-		}
-		else
-		{
-			StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
-			//sb.append("=====================\n");
-			for (ShopItem i : shopDAO.getAll())
+		try{
+			SendPhoto photo = new SendPhoto();
+			photo.setPhoto(new InputFile(new File("C:\\Bot\\pics\\shop.jpg")));
+			photo.setChatId(player.getId());
+			
+			long player_id = player.getId();
+
+			if (shopDAO.getAll().isEmpty())
 			{
-				//сделать привязку не по нику, а по playerID
-				sb.append(String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", i.getItem().getTitle(), i.getCost(), i.getSeller().getUsername()));
+				sendMsg(player_id, "\uD83D\uDC40 В магазине пока нет товаров\n");
 			}
-			//sb.append("=====================\n");
-			sendMsg(player_id, sb.toString());
+			else
+			{
+				StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
+				//sb.append("=====================\n");
+				for (ShopItem i : shopDAO.getAll())
+				{
+					//сделать привязку не по нику, а по playerID
+					sb.append(String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", i.getItem().getTitle(), i.getCost(), i.getSeller().getUsername()));
+				}
+				sb.append("\n");
+				sb.append("\uD83D\uDCB3 Чтобы купить, введите /shopbuy \n");
+				//sb.append("=====================\n");
+
+				//photo.setCaption(sb.toString());
+				this.execute(photo);
+				sendMsg(player_id, sb.toString());
+			}
+		}catch (TelegramApiException e){
+			e.printStackTrace();
 		}
+
 	}
 
 	public void command_shopplace(Player player)
