@@ -406,7 +406,7 @@ public class Bot extends TelegramLongPollingBot
 				ShopItem shopItem = new ShopItem(inventory.getItem(player.to_place_item), cost, player);
 				shopDAO.put(shopItem);
 
-				sendMsg(player_id, String.format("Товар ` %s ` выставлен на продажу", inventory.getItem(player.to_place_item).getTitle()));
+				sendMsg(player_id, String.format("Товар `%s` выставлен на продажу", inventory.getItem(player.to_place_item).getTitle()));
 				inventory.removeItem(player.to_place_item);
 
 				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);
@@ -815,7 +815,7 @@ public class Bot extends TelegramLongPollingBot
 				for (ShopItem i : shopDAO.getAll())
 				{
 					//сделать привязку не по нику, а по playerID
-					sb.append(String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", i.getItem().getTitle(), i.getCost(), i.getSeller().getUsername()));
+					sb.append(i);
 				}
 				sb.append("\n");
 				sb.append("\uD83D\uDCB3 Чтобы купить, введите /shopbuy \n");

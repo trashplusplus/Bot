@@ -39,4 +39,9 @@ public class ShopItem
 	{
 		return id;
 	}
+
+	@Override
+	public String toString(){
+		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", item.getTitle(), cost, seller.getUsername());
+	}
 }
