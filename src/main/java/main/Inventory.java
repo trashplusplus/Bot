@@ -6,9 +6,7 @@ import java.util.Random;
 
 public class Inventory
 {
-	private List<Item> inventory = new ArrayList<>();
-	private static Random ran = new Random();
-
+	private final List<Item> inventory = new ArrayList<>();
 
 	public Inventory()
 	{

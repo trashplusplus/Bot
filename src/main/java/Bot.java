@@ -29,8 +29,6 @@ import java.util.function.Consumer;
 
 public class Bot extends TelegramLongPollingBot
 {
-	private final Connection connection;
-
 	private final PlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
 	private final ShopDAO shopDAO;
@@ -51,7 +49,6 @@ public class Bot extends TelegramLongPollingBot
 
 	public Bot(Connection connection) throws FileNotFoundException
 	{
-		this.connection = connection;
 		playerDAO = new PlayerDAO(connection);
 		inventoryDAO = new InventoryDAO(connection);
 		shopDAO = new ShopDAO(connection);
@@ -594,18 +591,11 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			//Item new_item = ItemFactory.getRandomItem();
-			//Item new_item = ItemFactory.getRandomWeighted();
 			Item new_item = findRoller.roll();
 			inventoryDAO.putItem(player_id, new_item.getId());
 			sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 			player.last_fia = now_ts;
 			player.addXp(2);
-			//if (player.getXp() >= 10)
-			//{
-			//	player.levelUp();
-			//	sendMsg(player_id, "\uD83D\uDC7E Вы перешли на " + player.getLevel() + " уровень");
-			//}
 
 			playerDAO.update(player);
 		}
@@ -765,26 +755,20 @@ public class Bot extends TelegramLongPollingBot
 	public void command_me(Player player)
 	{
 		long player_id = player.getId();
-		StringBuilder sb = new StringBuilder("Информация о персонаже\n");
-		//sb.append("==============================\n");
-		sb.append("\n");
-		sb.append("⭐ Ваш ник: ").append(player.getUsername());
-		sb.append("\n");
-		//sb.append("==============================\n");
-		sb.append("\n");
-		sb.append("\uD83D\uDCB0 Ваш баланс: $").append(player.getMoney());
-		sb.append("\n");
-		//sb.append("==============================\n");
-		sb.append("\n");
-		sb.append("\uD83C\uDF20 Ваш GameID: ").append(player_id);
-		sb.append("\n");
-		//sb.append("==============================\n");
-		sb.append("\n");
-		sb.append(String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP)", player.getLevel(), player.getXp()));
-		sb.append("\n");
-		//sb.append("==============================\n");
+		String me = "Информация о персонаже\n" + "\n" +
+				"⭐ Ваш ник: " + player.getUsername() +
+				"\n" +
+				"\n" +
+				"\uD83D\uDCB0 Ваш баланс: $" + player.getMoney() +
+				"\n" +
+				"\n" +
+				"\uD83C\uDF20 Ваш GameID: " + player_id +
+				"\n" +
+				"\n" +
+				String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP)", player.getLevel(), player.getXp()) +
+				"\n";
 
-		sendMsg(player_id, sb.toString());
+		sendMsg(player_id, me);
 	}
 
 	public void command_shopbuy(Player player)
@@ -853,7 +837,7 @@ public class Bot extends TelegramLongPollingBot
 			for (int i = 0; i < inventory.getInvSize(); i++)
 			{
 
-				sb.append(String.format("Предмет | %d |: ", i) + inventory.getItem(i) + "\n");
+				sb.append(String.format("Предмет | %d |: ", i)).append(inventory.getItem(i)).append("\n");
 			}
 			sb.append("=====================\n");
 			sendMsg(player_id, sb.toString());
