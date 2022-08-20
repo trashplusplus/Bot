@@ -1,9 +1,7 @@
-import main.Player;
-import org.telegram.telegrambots.meta.api.objects.Message;
+package main;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BotCommandProcessor

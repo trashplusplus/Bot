@@ -1,3 +1,5 @@
+package main;
+
 import main.Player;
 
 import java.util.Random;

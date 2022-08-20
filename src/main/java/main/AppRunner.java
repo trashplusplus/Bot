@@ -1,3 +1,5 @@
+package main;
+
 import database.SQLExecutor;
 import database.SQLSession;
 import org.telegram.telegrambots.meta.TelegramBotsApi;

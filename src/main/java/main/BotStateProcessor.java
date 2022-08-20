@@ -1,4 +1,5 @@
-import main.Player;
+package main;
+
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.HashMap;
