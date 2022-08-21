@@ -87,3 +87,16 @@ create table if not exists inventory
     foreign key (player_id) references players (id) on delete cascade,
     foreign key (item_id) references items (id) on update cascade on delete cascade
 );
+
+create table if not exists stats
+(
+    player_id,
+    bonus integer not null default 0,
+    coinWins integer,
+    coinLosses integer,
+    coffee integer default 0,
+    tea integer default 0,
+
+    foreign key (player_id) references players (id) on update cascade
+
+);

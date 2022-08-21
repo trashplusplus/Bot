@@ -4,6 +4,7 @@ import ability.Cooldown;
 import database.dao.InventoryDAO;
 import database.dao.PlayerDAO;
 import database.dao.ShopDAO;
+import database.dao.StatsDAO;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -31,6 +32,7 @@ public class Bot extends TelegramLongPollingBot
 	private final PlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
 	private final ShopDAO shopDAO;
+	private final StatsDAO statsDAO;
 
 	private static final Roller<Item> mudRoller = RollerFactory.getMudRoller(new Random());
 	private static final Roller<Integer> moneyRoller = RollerFactory.getMoneyRoller(new Random());
@@ -51,10 +53,12 @@ public class Bot extends TelegramLongPollingBot
 		playerDAO = new PlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
 		shopDAO = new ShopDAO(connection, this);
+		statsDAO = new StatsDAO(connection);
 		token = init_token();
 		state_processor = BotStateProcessor.get_map(this);
 		command_processor = BotCommandProcessor.get_map(this);
 		active_players = new HashMap<>();
+
 	}
 
 	public void sendMsg(Long chatId, String text)
@@ -108,7 +112,7 @@ public class Bot extends TelegramLongPollingBot
 		else
 		{
 
-			
+
 				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
 				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
 				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
@@ -168,7 +172,9 @@ public class Bot extends TelegramLongPollingBot
 				{
 					player = new Player(id, this);
 					active_players.put(id, player);
+					statsDAO.put(player.getStats(), player.getId());
 					playerDAO.put(player);
+
 					sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
 					sendMsg(id, "Введите ник: ");
 				}
@@ -335,9 +341,6 @@ public class Bot extends TelegramLongPollingBot
 			if (player.getMoney() >= itemCost)
 			{
 				player.balance -= itemCost;
-
-				inventoryDAO.putItem(player.getId(), shopDAO.getByID(userInput).getItem().getId());
-
 				inventoryDAO.putItem(player.getId(), item.getId());
 				sendMsg(player.getId(), String.format("\uD83C\uDF6D Предмет `%s` успешно куплен", item));
 				sendMsg(seller.getId(), String.format("\uD83D\uDCC8 Ваш предмет `%s` купил игрок `%s` | + $%d", item.getTitle(), player.getUsername(), itemCost));
@@ -485,6 +488,10 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_help(Player player)
 	{
+
+
+		//playerDAO.update(player);
+
 		sendMsg(player.getId(), "\\[`Needle`] Бот содержит следующие команды: \n" +
 				"\n" +
 				" \\[Команды поиска] \n" +
@@ -729,7 +736,7 @@ public class Bot extends TelegramLongPollingBot
 	public void command_coin(Player player)
 	{
 		long player_id = player.getId();
-		if (player.getLevel() >= 4)
+		if (player.getLevel() >= 1)
 		{
 			if (player.balance > 0)
 			{
@@ -763,6 +770,12 @@ public class Bot extends TelegramLongPollingBot
 				"\n" +
 				"\n" +
 				String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP)", player.getLevel(), player.getXp()) +
+				"\n" +
+				"\n" +
+				"\uD83C\uDF20 Побед в Coin: " + player.stats.coinWins +
+				"\n" +
+				"\n" +
+				"\uD83C\uDF20 Проигрышей в Coin: "+ player.stats.coinLosses +
 				"\n";
 
 		sendMsg(player_id, me);
@@ -801,7 +814,7 @@ public class Bot extends TelegramLongPollingBot
 			SendPhoto photo = new SendPhoto();
 			photo.setPhoto(new InputFile(new File("C:\\Bot\\pics\\shop.jpg")));
 			photo.setChatId(player.getId());
-			
+
 			long player_id = player.getId();
 
 			if (shopDAO.getAll().isEmpty())
@@ -908,16 +921,28 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(player_id, "\uD83D\uDCB0 Вы выиграли " + "$" + i_dash);
 			coinGame.coinWin(player, i_dash);
+			player.stats.coinWins++;
+
+
 		}
 		else
 		{
 			sendMsg(player_id, "❌ Вы проиграли " + "$" + i_dash);
 			coinGame.coinLose(player, i_dash);
+
+			player.stats.coinLosses++;
+
 		}
 
 		player.setState(Player.State.awaitingCommands);
 		sendMsg(player_id, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
+
+		statsDAO.update(player.getStats(), player.getId());
 		playerDAO.update(player);
+
+
+
+
 	}
 }
 

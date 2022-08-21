@@ -8,6 +8,7 @@ public class CoinGame {
 
     private int dash;
     private Random randomCoin;
+
     //true = орел
     //false = решка
 
@@ -26,11 +27,13 @@ public class CoinGame {
     public void coinWin(Player player, int money)
     {
         player.balance += money;
+
     }
 
     public void coinLose(Player player, int money)
     {
        player.balance -= money;
+
     }
 
 }

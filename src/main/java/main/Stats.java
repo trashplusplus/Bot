@@ -1,13 +1,30 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Stats {
-    public boolean bonus = false;
-    public int cupsOfCoffee = 0;
-    public int cupsOfTee = 0;
 
-    public List<String> plants = new ArrayList<String>();
+    public int bonus = 0;
+
+    public int coffee = 0;
+    public int tea = 0;
+
+    public int coinWins;
+    public int coinLosses;
+
+    public Stats(){
+
+    }
+
+    public Stats(int bonus, int coinWins, int coinLosses, int coffee, int tea){
+        this.coinWins = coinWins;
+        this.coinLosses = coinLosses;
+        this.coffee = coffee;
+        this.tea = tea;
+        this.bonus = bonus;
+    }
+
+
+
 
 }

@@ -12,6 +12,11 @@ public class Player
 	private int xp;
 	private State state;
 
+	public Stats stats;
+
+
+
+
 	Bot host;
 
 	// < commands args
@@ -22,15 +27,17 @@ public class Player
 
 	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L, host);
+		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L, new Stats(), host);
+
 	}
 
-	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets, Bot host)
+	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets, Stats stats, Bot host)
 	{
 		this.id = id;
 		this.username = username;
 		this.balance = balance;
 		this.state = state;
+		this.stats = stats;
 		this.inventory = inventory;
 		this.last_fia = last_fia;
 		this.last_pockets = last_pockets;
@@ -72,6 +79,10 @@ public class Player
 	public int getMoney()
 	{
 		return balance;
+	}
+
+	public Stats getStats(){
+		return stats;
 	}
 
 	public void levelUp()
