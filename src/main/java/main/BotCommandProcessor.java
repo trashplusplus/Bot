@@ -45,6 +45,7 @@ public class BotCommandProcessor
 		//res.put("⭐ Начать", bot::command_shop);
 
 		res.put("/start", bot::command_start_already_registered);
+		res.put("⭐ Начать", bot::command_start_already_registered);
 		res.put("/pay", bot::command_pay);
 		res.put("/shopbuy", bot::command_shopbuy);
 		res.put("/shopshow", bot::command_shopshow);

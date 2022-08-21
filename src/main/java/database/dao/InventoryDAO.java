@@ -97,7 +97,6 @@ public class InventoryDAO
 	}
 
 
-
 	public void delete(long player_id, long item_id, int count)
 	{
 		String query = "delete from inventory where id in (select id from inventory where player_id = ? and item_id = ? limit ?);";
