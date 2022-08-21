@@ -52,6 +52,9 @@ public class BotCommandProcessor
 		res.put("\uD83D\uDED2 Магазин", bot::command_shopshow);
 		res.put("/shopplace", bot::command_shopplace);
 
+		res.put("/tea", bot::command_tea);
+		res.put("/coffee", bot::command_coffee);
+
 		res.put("/forest", bot::command_forest);
 
 

@@ -485,10 +485,70 @@ public class Bot extends TelegramLongPollingBot
 		active_players.remove(player.getId());
 	}
 
+	public void awaitingCoffee_processor(Player player, Message message){
+		long player_id = player.getId();
+		String nickname = message.getText();
+
+		if (!nickname.equals(player.getUsername()))
+		{
+			Player acceptor = playerDAO.get_by_name(nickname);
+			if (acceptor != null)
+			{
+				player.balance -= 100;
+				acceptor.stats.coffee++;
+				statsDAO.update(acceptor.getStats(), acceptor.getId());
+				sendMsg(player_id, "☕ Кофе отправлено");
+				sendMsg(acceptor.getId(), String.format("☕ Игрок `%s` угостил вас кружечкой кофе", player.getUsername()));
+				statsDAO.update(acceptor.getStats(), acceptor.getId());
+				playerDAO.update(player);
+				player.setState(Player.State.awaitingCommands);
+			}
+			else
+			{
+				sendMsg(player_id, "Такого игрока не существует");
+				player.setState(Player.State.awaitingCommands);
+			}
+		}
+		else
+		{
+			sendMsg(player_id, "\uD83C\uDF38 Кофе можно отправлять только другим игрокам");
+		}
+		active_players.remove(player_id);
+	}
+
+	public void awaitingTea_processor(Player player, Message message){
+		long player_id = player.getId();
+		String nickname = message.getText();
+
+		if (!nickname.equals(player.getUsername()))
+		{
+			Player acceptor = playerDAO.get_by_name(nickname);
+			if (acceptor != null)
+			{
+				player.balance -= 100;
+				acceptor.stats.tea++;
+				sendMsg(player_id, "\uD83C\uDF3F Чай отправлен");
+				sendMsg(acceptor.getId(), String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая", player.getUsername()));
+				player.setState(Player.State.awaitingCommands);
+				statsDAO.update(acceptor.getStats(), acceptor.getId());
+				playerDAO.update(player);
+			}
+			else
+			{
+				sendMsg(player_id, "Такого игрока не существует");
+				player.setState(Player.State.awaitingCommands);
+			}
+		}
+		else
+		{
+			sendMsg(player_id, "\uD83C\uDF38 Чай можно отправлять только другим игрокам");
+		}
+		active_players.remove(player_id);
+	}
+
 
 	public void command_help(Player player)
 	{
-
 
 		//playerDAO.update(player);
 
@@ -520,6 +580,8 @@ public class Bot extends TelegramLongPollingBot
 				"\n" +
 				" \\[Развлечения] \n" +
 				"\uD83C\uDFB0 /coin - сыграть в Монетку \n" +
+				"\uD83C\uDFB0 /tea - отправить чай \n" +
+				"\uD83C\uDFB0 /coffee - отправить кофе \n" +
 				"\n" +
 				" \\[Локации] \n" +
 				"\uD83D\uDC80 /forest - посетить Лес \n"
@@ -546,7 +608,7 @@ public class Bot extends TelegramLongPollingBot
 				sendMsg(player.getId(), "В лесу вы нашли: " + explore.get(random));
 
 			}else {
-				sendMsg(player.getId(), String.format("Для похода в лес вам нужен предмет `%s` ", i.getTitle()));
+				sendMsg(player.getId(), String.format("Для похода в лес вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине", i.getTitle()));
 			}
 			}catch (RuntimeException e){
 				e.printStackTrace();
@@ -771,11 +833,15 @@ public class Bot extends TelegramLongPollingBot
 				"\n" +
 				String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP)", player.getLevel(), player.getXp()) +
 				"\n" +
+
+				"\uD83C\uDF3F Выпито кружек чая: "+ player.stats.tea +
 				"\n" +
-				"\uD83C\uDF20 Побед в Coin: " + player.stats.coinWins +
+				"☕️ Выпито кружек кофе: "+ player.stats.coffee +
 				"\n" +
+				"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins +
 				"\n" +
-				"\uD83C\uDF20 Проигрышей в Coin: "+ player.stats.coinLosses +
+
+				"\uD83D\uDCC9 Проигрыши в монетке: "+ player.stats.coinLosses +
 				"\n";
 
 		sendMsg(player_id, me);
@@ -888,6 +954,32 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
+	public void command_coffee(Player player){
+		if (player.getMoney() <= 0)
+		{
+			sendMsg(player.getId(), "☕ Не хватает деняк на кофе :'(");
+		}
+		else
+		{
+			active_players.put(player.getId(), player);
+			sendMsg(player.getId(), "☕($100) Введите ник игрока: ");
+			player.setState(Player.State.awaitingCoffee);
+		}
+	}
+
+	public void command_tea(Player player){
+		if (player.getMoney() <= 0)
+		{
+			sendMsg(player.getId(), "\uD83C\uDF3F Не хватает деняк на чай :'(");
+		}
+		else
+		{
+			active_players.put(player.getId(), player);
+			sendMsg(player.getId(), "\uD83C\uDF3F($100) Введите ник игрока: ");
+			player.setState(Player.State.awaitingTea);
+		}
+	}
+
 	public void command_start_already_registered(Player player)
 	{
 		sendMsg(player.getId(), "Вы уже зарегистрированы.\n");
@@ -895,7 +987,7 @@ public class Bot extends TelegramLongPollingBot
 
 	public void level_up_notification(Player player)
 	{
-		sendMsg(player.getId(), String.format("Поздравляем! Вы перешли на новый уровень (Уровень %d)", player.getLevel()));
+		sendMsg(player.getId(), String.format("\uD83C\uDF88 Поздравляем! Вы перешли на новый уровень (Уровень %d)", player.getLevel()));
 	}
 
 	public String getBotUsername()
