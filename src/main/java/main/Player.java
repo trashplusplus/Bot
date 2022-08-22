@@ -122,6 +122,8 @@ public class Player
 		shopPlaceGood_awaitingCost,
 		payAwaitingNickname,
 		payAwaitingAmount,
-		shopBuy
+		shopBuy,
+		awaitingCoffee,
+		awaitingTea
 	}
 }

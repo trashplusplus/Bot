@@ -123,11 +123,13 @@ public class InventoryDAO
 			ps.setLong(2, item_id);
 			ps.setInt(3, count);
 			int res = ps.executeUpdate();
-			System.out.printf("Предмет | %s | удален  из инвентаря", player.getInventory().getItem((int)item_id).getTitle());
+			//System.out.printf("Предмет | %s | удален  из инвентаря", player.getInventory().getItem((int)item_id).getTitle());
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
 	}
+
+
 }
