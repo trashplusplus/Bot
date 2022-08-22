@@ -1,5 +1,6 @@
 package main;
 
+import com.google.common.collect.Lists;
 import database.dao.ItemDAO;
 import database.SQLSession;
 
@@ -74,5 +75,56 @@ public class RollerFactory
 		}
 
 		return new Roller<>(items, weights, random);
+	}
+
+	public static Roller<Item> getFishRoller(Random random)
+	{
+		List<Item> item_list = new ArrayList<>();
+		int rares = 0;
+		int cheaps = 0;
+		for (Item item : itemDAO.getAll())
+		{
+			if (item.getRarity() == ItemRarity.Rare)
+			{
+				item_list.add(item);
+				rares++;
+			}
+			if (item.getRarity() == ItemRarity.Cheap)
+			{
+				item_list.add(item);
+				cheaps++;
+			}
+			//if (item.is_fish())
+			//{
+			//	item_list.add(item);
+			//}
+		}
+
+		item_list.add(null);
+
+		Item[] items = item_list.toArray(new Item[0]);
+		int[] weights = new int[items.length + 1];
+
+		for (int i = 0; i < weights.length + 1; i++)
+		{
+			//if (items[i].is_fish())
+			//{
+			//	weights[i] = rares * cheaps * 10;
+			//}
+			if (items[i].getRarity() == ItemRarity.Cheap)
+			{
+				weights[i] = rares * 30;
+			}
+			if (items[i] == null)
+			{
+				weights[i] = 39 * cheaps * rares;
+			}
+			if (items[i].getRarity() == ItemRarity.Rare)
+			{
+				weights[i] = cheaps;
+			}
+		}
+
+		return new Roller<>(items, weights, new Random());
 	}
 }
