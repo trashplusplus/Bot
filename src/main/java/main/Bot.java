@@ -585,7 +585,7 @@ public class Bot extends TelegramLongPollingBot
 				"\uD83C\uDFB0 /coffee - отправить кофе \n" +
 				"\n" +
 				" \\[Локации] \n" +
-				"\uD83D\uDC80 /forest - посетить Лес \n"
+				"\uD83D\uDC80 /forest - посетить Лес \n" +
 				"\uD83D\uDC21 /fish - пойти на рыбалку \n"
 
 
@@ -658,13 +658,26 @@ public class Bot extends TelegramLongPollingBot
 		}
 
 		if(fee > 0){
-			sendMsg(id, String.format("Вы продали все дешевые вещи за $%d", fee));
+			sendMsg(id, String.format("\uD83D\uDCB3 Вы продали все дешевые вещи за $%d", fee));
 			player.balance += fee;
 			playerDAO.update(player);
 		}else{
 			sendMsg(id, "У вас нет дешевых вещей");
 		}
 
+	}
+	//SUPER SECRET BONUS
+	public void command_bonus(Player player){
+		long id = player.getId();
+		if (player.getStats().bonus == 0){
+			sendMsg(id, "\uD83C\uDF3A Вы получили бонус | + $15000");
+			player.balance += 15000;
+			player.stats.bonus++;
+			playerDAO.update(player);
+			statsDAO.update(player.getStats(), player.getId());
+		}else{
+			sendMsg(id, "Вы уже получили свой бонус");
+		}
 	}
 
 	public void command_inv(Player player)
@@ -785,7 +798,7 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_top(Player player)
 	{
-		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ игроков:\n");
+		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ 10 игроков:\n");
 		players_list.append("========================");
 		players_list.append("\n");
 		for (Player pl : playerDAO.getTopN("balance", false, 10))
