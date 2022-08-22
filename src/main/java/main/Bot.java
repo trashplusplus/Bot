@@ -131,6 +131,8 @@ public class Bot extends TelegramLongPollingBot
 				keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
 				keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
 
+				keyboardFourthRow.add(new KeyboardButton("🐡 Рыбачить"));
+
 				//keyboardFirstRow.add(new KeyboardButton("/me"));
 
 		}
