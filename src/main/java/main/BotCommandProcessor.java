@@ -45,13 +45,21 @@ public class BotCommandProcessor
 		//res.put("⭐ Начать", bot::command_shop);
 
 		res.put("/start", bot::command_start_already_registered);
+		res.put("⭐ Начать", bot::command_start_already_registered);
 		res.put("/pay", bot::command_pay);
 		res.put("/shopbuy", bot::command_shopbuy);
 		res.put("/shopshow", bot::command_shopshow);
 		res.put("\uD83D\uDED2 Магазин", bot::command_shopshow);
 		res.put("/shopplace", bot::command_shopplace);
 
+		res.put("/tea", bot::command_tea);
+		res.put("/coffee", bot::command_coffee);
+
 		res.put("/forest", bot::command_forest);
+		res.put("/fish", bot::command_fish);
+		res.put("/drop", bot::command_drop);
+		res.put("\uD83D\uDEE0 Продать Cheap", bot::command_drop);
+
 
 
 		return res;

@@ -4,6 +4,7 @@ import database.DatabaseDateMediator;
 import main.Bot;
 import main.Inventory;
 import main.Player;
+import main.Stats;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -14,12 +15,14 @@ public class PlayerDAO
 {
 	private final Connection connection;
 	private final InventoryDAO inventoryDAO;
+	private final StatsDAO statsDAO;
 	Bot host;
 
 	public PlayerDAO(Connection connection, Bot host)
 	{
 		this.connection = connection;
 		inventoryDAO = new InventoryDAO(connection);
+		statsDAO = new StatsDAO(connection);
 		this.host = host;
 	}
 
@@ -38,6 +41,7 @@ public class PlayerDAO
 			ps.setString(8, DatabaseDateMediator.ms_to_string(player.last_pockets));
 			ps.execute();
 			inventoryDAO.put(player.getId(), player.getInventory());
+			statsDAO.put(player.getStats(), player.getId());
 		}
 		catch (SQLException e)
 		{
@@ -156,6 +160,7 @@ public class PlayerDAO
 
 	public void update(Player player)  // TODO extract exception to signature
 	{
+
 		long id = player.getId();
 		try
 		{
@@ -169,6 +174,8 @@ public class PlayerDAO
 			ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_pockets));
 			ps.setLong(8, id);
 			ps.execute();
+
+
 		}
 		catch (SQLException e)
 		{
@@ -195,6 +202,7 @@ public class PlayerDAO
 
 	private Player form(ResultSet rs) throws SQLException
 	{
+
 		long id = rs.getLong("id");
 		int xp = rs.getInt("xp");
 		int level = rs.getInt("level");
@@ -205,8 +213,10 @@ public class PlayerDAO
 		long last_pockets = read_ts(rs, "lastpockets");
 
 		Inventory inventory = inventoryDAO.get(id);
+		Stats stats = statsDAO.get(id);
+		 Player player = new Player(id, xp, level, username, balance, state, inventory, last_fia, last_pockets, stats, host);
+		 return player;
 
-		return new Player(id, xp, level, username, balance, state, inventory, last_fia, last_pockets, host);
 	}
 
 	private long read_ts(ResultSet rs, String column_name) throws SQLException
