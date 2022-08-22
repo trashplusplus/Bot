@@ -129,6 +129,7 @@ public class Bot extends TelegramLongPollingBot
 				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
 
 				keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
+				keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
 
 				//keyboardFirstRow.add(new KeyboardButton("/me"));
 
@@ -497,7 +498,7 @@ public class Bot extends TelegramLongPollingBot
 				player.balance -= 100;
 				acceptor.stats.coffee++;
 				statsDAO.update(acceptor.getStats(), acceptor.getId());
-				sendMsg(player_id, "☕ Кофе отправлено");
+				sendMsg(player_id, "☕ Кофе отправлен");
 				sendMsg(acceptor.getId(), String.format("☕ Игрок `%s` угостил вас кружечкой кофе", player.getUsername()));
 				statsDAO.update(acceptor.getStats(), acceptor.getId());
 				playerDAO.update(player);
@@ -585,6 +586,7 @@ public class Bot extends TelegramLongPollingBot
 				"\n" +
 				" \\[Локации] \n" +
 				"\uD83D\uDC80 /forest - посетить Лес \n"
+				"\uD83D\uDC21 /fish - пойти на рыбалку \n"
 
 
 		);
@@ -613,6 +615,56 @@ public class Bot extends TelegramLongPollingBot
 			}catch (RuntimeException e){
 				e.printStackTrace();
 			}
+	}
+
+	public void command_fish(Player player){
+		Item i = new Item(46, "Удочка", ItemRarity.Rare, 5000);
+		if(player.getLevel() >= 5){
+
+
+		if(player.getInventory().getItems().contains(i)){
+
+			Item item = mudRoller.roll();
+			if (item != null)
+			{
+				player.addXp(1);
+				inventoryDAO.putItem(player.getId(), item.getId());
+				playerDAO.update(player);
+				sendMsg(player.getId(), String.format("Вы поймали %s", item));
+			}
+			else
+			{
+				sendMsg(player.getId(), "Не клюет");
+			}
+
+		}else {
+			sendMsg(player.getId(), String.format("Для похода на рыбалку вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getTitle()));
+		}
+		}else{
+			sendMsg(player.getId(), "\uD83D\uDC7E Для похода на рыбалку вам нужен 5 уровень");
+		}
+	}
+
+	public void command_drop(Player player){
+		long id = player.getId();
+		int fee = 0;
+
+		for(int i =0; i < player.getInventory().getItems().size(); i++){
+			Item cheapItem = player.getInventory().getItem(i);
+			if(cheapItem.getRarity() == ItemRarity.Cheap){
+				fee+= cheapItem.getCost();
+				inventoryDAO.delete(player, cheapItem.getId(), 1);
+			}
+		}
+
+		if(fee > 0){
+			sendMsg(id, String.format("Вы продали все дешевые вещи за $%d", fee));
+			player.balance += fee;
+			playerDAO.update(player);
+		}else{
+			sendMsg(id, "У вас нет дешевых вещей");
+		}
+
 	}
 
 	public void command_inv(Player player)
@@ -798,7 +850,7 @@ public class Bot extends TelegramLongPollingBot
 	public void command_coin(Player player)
 	{
 		long player_id = player.getId();
-		if (player.getLevel() >= 1)
+		if (player.getLevel() >= 4)
 		{
 			if (player.balance > 0)
 			{
@@ -814,7 +866,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			sendMsg(player_id, "\uD83D\uDC7E Для игры в монетку нужен 4 уровень");
+			sendMsg(player_id, "\uD83D\uDC7E Для игры в монетку нужен 4 уровень \n⚡ Повысить уровень можно за поиск предметов(команды /find и /mud)");
 		}
 	}
 
@@ -898,6 +950,7 @@ public class Bot extends TelegramLongPollingBot
 				}
 				sb.append("\n");
 				sb.append("\uD83D\uDCB3 Чтобы купить, введите /shopbuy \n");
+				sb.append("\uD83D\uDED2 Чтобы разместить свой товар, введите /shopplace \n");
 				//sb.append("=====================\n");
 
 				//photo.setCaption(sb.toString());
@@ -955,7 +1008,7 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	public void command_coffee(Player player){
-		if (player.getMoney() <= 0)
+		if (player.getMoney() < 100)
 		{
 			sendMsg(player.getId(), "☕ Не хватает деняк на кофе :'(");
 		}
@@ -968,7 +1021,7 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	public void command_tea(Player player){
-		if (player.getMoney() <= 0)
+		if (player.getMoney() < 100)
 		{
 			sendMsg(player.getId(), "\uD83C\uDF3F Не хватает деняк на чай :'(");
 		}
@@ -987,7 +1040,11 @@ public class Bot extends TelegramLongPollingBot
 
 	public void level_up_notification(Player player)
 	{
-		sendMsg(player.getId(), String.format("\uD83C\uDF88 Поздравляем! Вы перешли на новый уровень (Уровень %d)", player.getLevel()));
+		int fee = 350 * player.getLevel();
+		sendMsg(player.getId(), String.format("\uD83C\uDF88 Поздравляем! Вы перешли на новый уровень (Уровень %d)\n\uD83C\uDF81 Бонус за переход на новый уровень +$%d",
+				player.getLevel(), fee));
+		player.balance += fee;
+		playerDAO.update(player);
 	}
 
 	public String getBotUsername()
