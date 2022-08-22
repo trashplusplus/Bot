@@ -57,6 +57,8 @@ public class BotCommandProcessor
 
 		res.put("/forest", bot::command_forest);
 		res.put("/fish", bot::command_fish);
+		res.put("/sellfish", bot::command_sellfish);
+		res.put("\uD83E\uDD88 Сдать рыбу", bot::command_sellfish);
 		res.put("🐡 Рыбачить", bot::command_fish);
 		res.put("/drop", bot::command_drop);
 		res.put("\uD83D\uDEE0 Продать Cheap", bot::command_drop);
