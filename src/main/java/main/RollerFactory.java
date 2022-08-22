@@ -1,7 +1,7 @@
 package main;
 
-import database.dao.ItemDAO;
 import database.SQLSession;
+import database.dao.ItemDAO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,5 +74,73 @@ public class RollerFactory
 		}
 
 		return new Roller<>(items, weights, random);
+	}
+
+	public static Roller<Item> getFishRoller(Random random)
+	{
+		List<Item> item_list = new ArrayList<>();
+		int rares = 0;
+		int cheaps = 0;
+		for (Item item : itemDAO.getAll())
+		{
+			if (item.getRarity() == ItemRarity.Rare)
+			{
+				item_list.add(item);
+				rares++;
+			}
+			if (item.getRarity() == ItemRarity.Cheap)
+			{
+				item_list.add(item);
+				cheaps++;
+			}
+			if (is_fish(item))
+			{
+				item_list.add(item);
+			}
+		}
+
+		item_list.add(null);
+
+		Item[] items = item_list.toArray(new Item[0]);
+		int[] weights = new int[items.length + 1];
+
+		for (int i = 0; i < weights.length + 1; i++)
+		{
+			Item item = items[i];
+			if (item == null)
+			{
+				weights[i] = 39 * cheaps * rares;
+			}
+			else
+			{
+				if (is_fish(item))
+				{
+					weights[i] = rares * cheaps * 10;
+				}
+				if (item.getRarity() == ItemRarity.Cheap)
+				{
+					weights[i] = rares * 30;
+				}
+				if (item.getRarity() == ItemRarity.Rare)
+				{
+					weights[i] = cheaps;
+				}
+			}
+		}
+
+		return new Roller<>(items, weights, random);
+	}
+
+	private static boolean is_fish(Item item)
+	{
+		switch (item.getTitle())
+		{
+			case "Бычок":
+			case "Карась":
+			case "Горбуша":
+				return true;
+			default:
+				return false;
+		}
 	}
 }

@@ -37,6 +37,7 @@ public class Bot extends TelegramLongPollingBot
 	private static final Roller<Item> mudRoller = RollerFactory.getMudRoller(new Random());
 	private static final Roller<Integer> moneyRoller = RollerFactory.getMoneyRoller(new Random());
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
+	private static final Roller<Item> fishRoller = RollerFactory.getFishRoller(new Random());
 
 	//ОБЩИЕ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ БУДУТ БАГИ
 	//Пофиксить, чтобы Продавец хранился по ID, а не по нику
@@ -724,10 +725,10 @@ public class Bot extends TelegramLongPollingBot
 		Item item = mudRoller.roll();
 		if (item != null)
 		{
-			player.addXp(1);
 			inventoryDAO.putItem(player.getId(), item.getId());
 			playerDAO.update(player);
 			sendMsg(player.getId(), String.format("Вы нашли в грязи %s", item));
+			player.addXp(1);
 		}
 		else
 		{
@@ -930,7 +931,7 @@ public class Bot extends TelegramLongPollingBot
 
 		try{
 			SendPhoto photo = new SendPhoto();
-			photo.setPhoto(new InputFile(new File("C:\\Bot\\pics\\shop.jpg")));
+			photo.setPhoto(new InputFile(new File(".\\pics\\shop.jpg")));
 			photo.setChatId(player.getId());
 
 			long player_id = player.getId();
