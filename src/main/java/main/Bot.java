@@ -586,7 +586,7 @@ public class Bot extends TelegramLongPollingBot
 				"\uD83C\uDFB0 /coffee - отправить кофе \n" +
 				"\n" +
 				" \\[Локации] \n" +
-				"\uD83D\uDC80 /forest - посетить Лес \n"
+				"\uD83D\uDC80 /forest - посетить Лес \n"+
 				"\uD83D\uDC21 /fish - пойти на рыбалку \n"
 
 
