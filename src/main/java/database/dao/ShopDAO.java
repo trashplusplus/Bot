@@ -1,5 +1,6 @@
 package database.dao;
 
+import database.DatabaseDateMediator;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -12,101 +13,78 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopDAO
-{
+public class ShopDAO {
 	private final Connection connection;
 	ItemDAO item;
-    PlayerDAO playerDAO;
+	PlayerDAO playerDAO;
 
 	Bot host;
 
-	public ShopDAO(Connection connection, Bot host)
-	{
+	public ShopDAO(Connection connection, Bot host) {
 		this.connection = connection;
 		item = new ItemDAO(this.connection);
 		this.host = host;
-        playerDAO = new PlayerDAO(connection, host);
+		playerDAO = new PlayerDAO(connection, host);
 	}
 
-	public void put(ShopItem shopItem)
-	{
-		try
-		{
+	public void put(ShopItem shopItem) {
+		try {
 			PreparedStatement ps = connection.prepareStatement("insert into shop(item_id, cost, seller_id) values (?, ?, ?);");
 			ps.setLong(1, shopItem.getItem().getId());
 			ps.setInt(2, shopItem.getCost());
 			ps.setLong(3, shopItem.getSeller().getId());
 			ps.execute();
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			System.err.println(e.getErrorCode());
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception in ShopDAO");
 		}
 	}
 
-	public List<ShopItem> getBySellerName(String sellerName)
-	{
+	public List<ShopItem> getBySellerName(String sellerName) {
 		List<ShopItem> result = new ArrayList<>();
-		try
-		{
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from shop where sellerName = ?;");
 			ps.setString(1, sellerName);
 			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-			{
+			while (rs.next()) {
 				result.add(form(rs));
 			}
 			return result;
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception in ShopDAO", e);
 		}
 	}
 
-	public List<ShopItem> getAll()
-	{
+	public List<ShopItem> getAll() {
 		List<ShopItem> result = new ArrayList<>();
-		try
-		{
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from shop");
 			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-			{
+			while (rs.next()) {
 				result.add(form(rs));
 			}
 			return result;
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception in ShopDAO", e);
 		}
 	}
 
-	public ShopItem getByID(int index)
-	{
+	public ShopItem getByID(int index) {
 		ShopItem s = null;
-		try
-		{
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from shop where id = ?");
 			ps.setInt(1, index);
 			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-			{
+			if (rs.next()) {
 				s = form(rs);
-			}
-			else
-			{
+			} else {
 				throw new IndexOutOfBoundsException();
 			}
 
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception in ShopDAO", e);
 		}
@@ -128,28 +106,52 @@ public class ShopDAO
 	}
 
 	*/
-	public void delete(int id)
-	{
-		try
-		{
+	public void delete(int id) {
+		try {
 			PreparedStatement ps = connection.prepareStatement("delete from shop where id = ?;");
 			ps.setInt(1, id);
 			ps.execute();
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			System.err.println(e.getErrorCode());
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception in ShopDAO");
 		}
 	}
 
-	private ShopItem form(ResultSet rs) throws SQLException
-	{
+	public List<ShopItem> expire() {
+		long now_t = System.currentTimeMillis();
+		String now_ts = DatabaseDateMediator.ms_to_string(now_t);
+		List<ShopItem> shopItems = new ArrayList<>();
+		try {
+			connection.createStatement().executeQuery("begin transaction;");
+
+			PreparedStatement ps = connection.prepareStatement("select * from shop where exp_date < ?;");
+			ps.setString(1, now_ts);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				shopItems.add(form(rs));
+			}
+
+			//rs.close();
+			//ps.close();
+
+			ps = connection.prepareStatement("delete from shop where exp_date < ?;");
+			ps.setString(1, now_ts);
+			int deleted = ps.executeUpdate();
+
+			assert (deleted == shopItems.size());
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+
+		return shopItems;
+	}
+
+	private ShopItem form(ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
-        Item item = this.item.get(rs.getLong("item_id"));
+		Item item = this.item.get(rs.getLong("item_id"));
 		int cost = rs.getInt("cost");
-        Player seller = playerDAO.get_by_id(rs.getLong("seller_id"));
+		Player seller = playerDAO.get_by_id(rs.getLong("seller_id"));
 		return new ShopItem(id, item, cost, seller);
 	}
 }
