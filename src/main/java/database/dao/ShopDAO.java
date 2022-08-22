@@ -20,6 +20,8 @@ public class ShopDAO {
 
 	Bot host;
 
+	private static final long shopItemDuration = 24L * 60L * 60L * 1000L;
+
 	public ShopDAO(Connection connection, Bot host) {
 		this.connection = connection;
 		item = new ItemDAO(this.connection);
@@ -29,11 +31,20 @@ public class ShopDAO {
 
 	public void put(ShopItem shopItem) {
 		try {
+			connection.createStatement().execute("begin transaction;");
+
 			PreparedStatement ps = connection.prepareStatement("insert into shop(item_id, cost, seller_id) values (?, ?, ?);");
 			ps.setLong(1, shopItem.getItem().getId());
 			ps.setInt(2, shopItem.getCost());
 			ps.setLong(3, shopItem.getSeller().getId());
 			ps.execute();
+
+			ps = connection.prepareStatement("insert into shop_expiration (shop_id, exp_date) values (last_insert_rowid(), ?);");
+			//ps.setInt(1, shopItem.getId());
+			ps.setString(1, DatabaseDateMediator.ms_to_string(System.currentTimeMillis() + shopItemDuration));
+			ps.execute();
+
+			connection.createStatement().execute("commit transaction;");
 		} catch (SQLException e) {
 			System.err.println(e.getErrorCode());
 			e.printStackTrace();
@@ -118,14 +129,14 @@ public class ShopDAO {
 		}
 	}
 
-	public List<ShopItem> expire() {
+	synchronized public List<ShopItem> expire() {
 		long now_t = System.currentTimeMillis();
 		String now_ts = DatabaseDateMediator.ms_to_string(now_t);
 		List<ShopItem> shopItems = new ArrayList<>();
 		try {
-			connection.createStatement().executeQuery("begin transaction;");
+			connection.createStatement().execute("begin transaction;");
 
-			PreparedStatement ps = connection.prepareStatement("select * from shop where exp_date < ?;");
+			PreparedStatement ps = connection.prepareStatement("select * from shop where id in (select shop_id from shop_expiration where exp_date < ?);");
 			ps.setString(1, now_ts);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -135,9 +146,15 @@ public class ShopDAO {
 			//rs.close();
 			//ps.close();
 
-			ps = connection.prepareStatement("delete from shop where exp_date < ?;");
+			ps = connection.prepareStatement("delete from shop where id in (select shop_id from shop_expiration where exp_date < ?);");
 			ps.setString(1, now_ts);
 			int deleted = ps.executeUpdate();
+
+			ps = connection.prepareStatement("delete from shop_expiration where exp_date < ?;");
+			ps.setString(1, now_ts);
+			ps.execute();
+
+			connection.createStatement().execute("commit transaction;");
 
 			assert (deleted == shopItems.size());
 		} catch (SQLException ex) {

@@ -29,6 +29,14 @@ create table if not exists shop
     foreign key (seller_id) references players (id) on delete cascade
 );
 
+create table if not exists shop_expiration
+(
+    shop_id integer references shop (id) on delete cascade on update cascade,
+    exp_date text
+);
+
+create index if not exists exp_index on shop_expiration (exp_date);
+
 insert or ignore into items values
     (1,'Лопата','Cheap',200),
     (2,'Поисковый фонарь','Rare',7000),

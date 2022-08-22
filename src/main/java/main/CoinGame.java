@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class CoinGame {
 
-    private int dash;
+    private final int dash;
     private Random randomCoin;
 
 
