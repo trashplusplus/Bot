@@ -1,6 +1,6 @@
 public class Cost {
 
-    private int cost;
+    private final int cost;
 
     Cost(){
         cost = 0;
