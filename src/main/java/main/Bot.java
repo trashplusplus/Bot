@@ -1,10 +1,7 @@
 package main;
 
 import ability.Cooldown;
-import database.dao.InventoryDAO;
-import database.dao.PlayerDAO;
-import database.dao.ShopDAO;
-import database.dao.StatsDAO;
+import database.dao.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -31,6 +28,7 @@ public class Bot extends TelegramLongPollingBot
 {
 	private final PlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
+	private final ItemDAO itemDAO;
 	private final ShopDAO shopDAO;
 	private final StatsDAO statsDAO;
 
@@ -53,6 +51,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 		playerDAO = new PlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
+		itemDAO = new ItemDAO(connection);
 		shopDAO = new ShopDAO(connection, this);
 		statsDAO = new StatsDAO(connection);
 		token = init_token();
@@ -586,7 +585,7 @@ public class Bot extends TelegramLongPollingBot
 				"\uD83C\uDFB0 /coffee - отправить кофе \n" +
 				"\n" +
 				" \\[Локации] \n" +
-				"\uD83D\uDC80 /forest - посетить Лес \n"
+				"\uD83D\uDC80 /forest - посетить Лес \n" +
 				"\uD83D\uDC21 /fish - пойти на рыбалку \n"
 
 
@@ -619,19 +618,20 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	public void command_fish(Player player){
-		Item i = new Item(46, "Удочка", ItemRarity.Rare, 5000);
+		//Item i = new Item(46, "Удочка", ItemRarity.Rare, 5000);
+		Item i = itemDAO.getByName("Удочка");
 		if(player.getLevel() >= 5){
 
 
 		if(player.getInventory().getItems().contains(i)){
 
-			Item item = mudRoller.roll();
+			Item item = fishRoller.roll();
 			if (item != null)
 			{
-				player.addXp(1);
 				inventoryDAO.putItem(player.getId(), item.getId());
 				playerDAO.update(player);
 				sendMsg(player.getId(), String.format("Вы поймали %s", item));
+				player.addXp(1);
 			}
 			else
 			{

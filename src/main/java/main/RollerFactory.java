@@ -102,9 +102,9 @@ public class RollerFactory
 		item_list.add(null);
 
 		Item[] items = item_list.toArray(new Item[0]);
-		int[] weights = new int[items.length + 1];
+		int[] weights = new int[items.length];
 
-		for (int i = 0; i < weights.length + 1; i++)
+		for (int i = 0; i < weights.length; i++)
 		{
 			Item item = items[i];
 			if (item == null)
