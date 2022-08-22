@@ -412,6 +412,11 @@ public class Bot extends TelegramLongPollingBot {
 		if (!nickname.equals(player.getUsername())) {
 			Player acceptor = playerDAO.get_by_name(nickname);
 			if (acceptor != null) {
+				player.coffee_acceptor = acceptor;
+				sendMsg(player_id, "Введите сообщение для игрока (48 символов): ");
+				player.setState(Player.State.awaitingCoffeeNote);
+
+				/*
 				player.balance -= 100;
 				acceptor.stats.coffee++;
 				statsDAO.update(acceptor.getStats(), acceptor.getId());
@@ -420,6 +425,7 @@ public class Bot extends TelegramLongPollingBot {
 				statsDAO.update(acceptor.getStats(), acceptor.getId());
 				playerDAO.update(player);
 				player.setState(Player.State.awaitingCommands);
+				 */
 			} else {
 				sendMsg(player_id, "Такого игрока не существует");
 				player.setState(Player.State.awaitingCommands);
@@ -427,7 +433,33 @@ public class Bot extends TelegramLongPollingBot {
 		} else {
 			sendMsg(player_id, "\uD83C\uDF38 Кофе можно отправлять только другим игрокам");
 		}
-		active_players.remove(player_id);
+
+	}
+
+
+
+	public void awaitingCoffeeNote_processor(Player player, Message message){
+		try {
+			String note = message.getText();
+			if(note.length() < 48){
+				Player receiver = player.coffee_acceptor;
+				player.balance -= 500;
+				receiver.stats.coffee++;
+				statsDAO.update(receiver.getStats(), receiver.getId());
+				sendMsg(player.getId(), "☕ Кофе отправлен");
+				sendMsg(receiver.getId(), String.format("☕ Игрок `%s` угостил вас кружечкой кофе с сообщением: `%s`", player.getUsername(), note));
+				statsDAO.update(receiver.getStats(), receiver.getId());
+				playerDAO.update(player);
+				player.setState(Player.State.awaitingCommands);
+			}else{
+				sendMsg(player.getId(), "Сообщение больше, чем 48 символов");
+			}
+
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			sendMsg(player.getId(), "⚠\t Некорректное сообщение");
+		}
+		active_players.remove(player.getId());
 	}
 
 	public void awaitingTea_processor(Player player, Message message) {
@@ -437,13 +469,9 @@ public class Bot extends TelegramLongPollingBot {
 		if (!nickname.equals(player.getUsername())) {
 			Player acceptor = playerDAO.get_by_name(nickname);
 			if (acceptor != null) {
-				player.balance -= 100;
-				acceptor.stats.tea++;
-				sendMsg(player_id, "\uD83C\uDF3F Чай отправлен");
-				sendMsg(acceptor.getId(), String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая", player.getUsername()));
-				player.setState(Player.State.awaitingCommands);
-				statsDAO.update(acceptor.getStats(), acceptor.getId());
-				playerDAO.update(player);
+				player.tea_acceptor = acceptor;
+				sendMsg(player_id, "Введите сообщение для игрока (48 символов): ");
+				player.setState(Player.State.awaitingTeaNote);
 			} else {
 				sendMsg(player_id, "Такого игрока не существует");
 				player.setState(Player.State.awaitingCommands);
@@ -451,7 +479,31 @@ public class Bot extends TelegramLongPollingBot {
 		} else {
 			sendMsg(player_id, "\uD83C\uDF38 Чай можно отправлять только другим игрокам");
 		}
-		active_players.remove(player_id);
+
+	}
+
+	public void awaitingTeaNote_processor(Player player, Message message){
+		try {
+			String note = message.getText();
+			if(note.length() < 48){
+				Player receiver = player.tea_acceptor;
+				player.balance -= 500;
+				receiver.stats.tea++;
+				statsDAO.update(receiver.getStats(), receiver.getId());
+				sendMsg(player.getId(), "\uD83C\uDF3F Чай отправлен");
+				sendMsg(receiver.getId(), String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая с сообщением: `%s`", player.getUsername(), note));
+				statsDAO.update(receiver.getStats(), receiver.getId());
+				playerDAO.update(player);
+				player.setState(Player.State.awaitingCommands);
+			}else{
+				sendMsg(player.getId(), "Сообщение больше, чем 48 символов");
+			}
+
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			sendMsg(player.getId(), "⚠\t Некорректное сообщение");
+		}
+		active_players.remove(player.getId());
 	}
 
 
@@ -656,7 +708,7 @@ public class Bot extends TelegramLongPollingBot {
 
 			long now_ts = System.currentTimeMillis();
 			long used_ts = player.last_fia;
-			long cooldown_s = 60L * 60L * 1L;
+			long cooldown_s = 60L * 20L * 1L;
 			//long cooldown_s = 160L;
 			long cooldown_ms = cooldown_s * 1000L;
 			long left_ms = used_ts + cooldown_ms - now_ts;
@@ -766,6 +818,7 @@ public class Bot extends TelegramLongPollingBot {
 				"сокращая время ожидания для поиска. Предметы вы можете искать раз в 6 часов. Среди них есть обычные, редкие, коллекционные " +
 				"и подарочные. Последняя категория не имеет цены, а это значит, что она может быть продана среди игроков за установленную " +
 				"цену. Покупать и выставлять предметы можно на аукционе. Удачи и приятной игры. ");
+
 	}
 
 	public void command_sell(Player player) {
@@ -943,21 +996,21 @@ public class Bot extends TelegramLongPollingBot {
 	}
 
 	public void command_coffee(Player player) {
-		if (player.getMoney() < 100) {
+		if (player.getMoney() < 500) {
 			sendMsg(player.getId(), "☕ Не хватает деняк на кофе :'(");
 		} else {
 			active_players.put(player.getId(), player);
-			sendMsg(player.getId(), "☕($100) Введите ник игрока: ");
+			sendMsg(player.getId(), "☕($500) Введите ник игрока: ");
 			player.setState(Player.State.awaitingCoffee);
 		}
 	}
 
 	public void command_tea(Player player) {
-		if (player.getMoney() < 100) {
+		if (player.getMoney() < 500) {
 			sendMsg(player.getId(), "\uD83C\uDF3F Не хватает деняк на чай :'(");
 		} else {
 			active_players.put(player.getId(), player);
-			sendMsg(player.getId(), "\uD83C\uDF3F($100) Введите ник игрока: ");
+			sendMsg(player.getId(), "\uD83C\uDF3F($500) Введите ник игрока: ");
 			player.setState(Player.State.awaitingTea);
 		}
 	}

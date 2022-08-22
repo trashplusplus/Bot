@@ -23,7 +23,10 @@ public class BotStateProcessor
 		res.put(Player.State.payAwaitingAmount, bot::payAwaitingAmount_processor);
 		res.put(Player.State.shopBuy, bot::shopBuy_processor);
 		res.put(Player.State.awaitingTea, bot::awaitingTea_processor);
+		res.put(Player.State.awaitingTeaNote, bot::awaitingTeaNote_processor);
 		res.put(Player.State.awaitingCoffee, bot::awaitingCoffee_processor);
+		res.put(Player.State.awaitingCoffeeNote, bot::awaitingCoffeeNote_processor);
+
 		return res;
 	}
 }

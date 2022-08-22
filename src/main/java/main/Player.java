@@ -22,6 +22,8 @@ public class Player
 	// < commands args
 	public Player payment_acceptor = null;
 	public Integer to_place_item = null;
+	public Player coffee_acceptor = null;
+	public Player tea_acceptor = null;
 	// > commands args
 
 
@@ -124,6 +126,9 @@ public class Player
 		payAwaitingAmount,
 		shopBuy,
 		awaitingCoffee,
-		awaitingTea
+		awaitingCoffeeNote,
+		awaitingTea,
+		awaitingTeaNote
+
 	}
 }
