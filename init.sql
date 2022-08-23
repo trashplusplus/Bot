@@ -13,7 +13,7 @@ create table if not exists players
 create table if not exists items
 (
     id integer primary key,
-    name text not null,
+    name text unique not null,
     rarity text not null,
     cost integer
 );
@@ -41,7 +41,7 @@ create index if not exists exp_index on shop_expiration (exp_date);
 
 insert or ignore into items (name, rarity, cost) values
     ('Лопата','Cheap',200),
-    ('Поисковый фонарь','Rare',7000),
+    ('🔦 Поисковый фонарь','Rare',7000),
     ('Подвеска ''Nosebleed''','Rare',12000),
     ('Струны','Cheap',500),
     ('Футболка ''Drain''','Cheap',500),
@@ -91,7 +91,8 @@ insert or ignore into items (name, rarity, cost) values
     ('Горбуша', 'Common', 100),
     ('Журнал Евангелион', 'Rare', 6700),
     ('Бычок', 'Common', 100),
-    ('Бутылка', 'Cheap', 5);
+    ('Бутылка', 'Cheap', 5),
+    ('📝 Тег', 'Rare', 5000);
 
 
 
