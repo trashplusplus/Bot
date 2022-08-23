@@ -134,27 +134,30 @@ public class ShopDAO {
 		String now_ts = DatabaseDateMediator.ms_to_string(now_t);
 		List<ShopItem> shopItems = new ArrayList<>();
 		try {
-			connection.createStatement().execute("begin transaction;");
+			int deleted = -1;
+			synchronized (connection) {
+				connection.createStatement().execute("begin transaction;");
 
-			PreparedStatement ps = connection.prepareStatement("select * from shop where id in (select shop_id from shop_expiration where exp_date < ?);");
-			ps.setString(1, now_ts);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				shopItems.add(form(rs));
+				PreparedStatement ps = connection.prepareStatement("select * from shop where id in (select shop_id from shop_expiration where exp_date < ?);");
+				ps.setString(1, now_ts);
+				ResultSet rs = ps.executeQuery();
+				while (rs.next()) {
+					shopItems.add(form(rs));
+				}
+
+				//rs.close();
+				//ps.close();
+
+				ps = connection.prepareStatement("delete from shop where id in (select shop_id from shop_expiration where exp_date < ?);");
+				ps.setString(1, now_ts);
+				deleted = ps.executeUpdate();
+
+				ps = connection.prepareStatement("delete from shop_expiration where exp_date < ?;");
+				ps.setString(1, now_ts);
+				ps.execute();
+
+				connection.createStatement().execute("commit transaction;");
 			}
-
-			//rs.close();
-			//ps.close();
-
-			ps = connection.prepareStatement("delete from shop where id in (select shop_id from shop_expiration where exp_date < ?);");
-			ps.setString(1, now_ts);
-			int deleted = ps.executeUpdate();
-
-			ps = connection.prepareStatement("delete from shop_expiration where exp_date < ?;");
-			ps.setString(1, now_ts);
-			ps.execute();
-
-			connection.createStatement().execute("commit transaction;");
 
 			assert (deleted == shopItems.size());
 		} catch (SQLException ex) {
