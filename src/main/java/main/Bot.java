@@ -38,11 +38,12 @@ public class Bot extends TelegramLongPollingBot {
 
 	ScheduledFuture<?> sf_timers;
 	ScheduledFuture<?> sf_find;
-	private long expStepMs = 5L * 1000L;
+	private final long expStepS = 5L;
 	ScheduledFuture<?> sf_pockets;
 	ScheduledFuture<?> sf_dump;
 
-	private long findCooldown = 30L * 1000L;
+	public final long findCooldown = 20L * 60L * 1000L;
+	public final long pocketsCooldown = 30L * 1000L;
 
 	private final String token;
 
@@ -63,8 +64,8 @@ public class Bot extends TelegramLongPollingBot {
 		command_processor = BotCommandProcessor.get_map(this);
 		active_players = new HashMap<>();
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
-		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepMs, TimeUnit.MILLISECONDS);
-		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, 3L, TimeUnit.SECONDS);  // remove this shit
+		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
+		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
 	}
 
@@ -646,10 +647,9 @@ public class Bot extends TelegramLongPollingBot {
 
 	public void command_find(Player player) {
 		long player_id = player.getId();
+		long now_ts = System.currentTimeMillis();
 		long cooldownMs = findCooldown;
 		if (player.getInventory().getInvSize() < 20) {
-			long now_ts = System.currentTimeMillis();
-
 			if (player.findExpiration != null && player.findExpiration > now_ts) {
 				sendMsg(player_id, String.format("\u231B Время ожидания: %s",
 						PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
@@ -690,8 +690,7 @@ public class Bot extends TelegramLongPollingBot {
 	public void command_pockets(Player player) {
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
-		long cooldownMs = 30L * 1000L;
-
+		long cooldownMs = pocketsCooldown;
 		if (player.pocketsExpiration != null && player.pocketsExpiration > now_ts) {
 			sendMsg(player_id, String.format("\u231B Время ожидания: %s",
 					PrettyDate.prettify(player.pocketsExpiration - now_ts, TimeUnit.MILLISECONDS)));
