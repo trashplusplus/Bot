@@ -181,6 +181,7 @@ public class Bot extends TelegramLongPollingBot {
 	void awaitingNickname_processor(Player player, Message message) {
 		long player_id = player.getId();
 		String username = message.getText();
+		Item tag = itemDAO.getByName("\uD83D\uDCDD Тег");
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 		if (username.matches(usernameTemplate)) {
@@ -190,6 +191,7 @@ public class Bot extends TelegramLongPollingBot {
 					player.setUsername(username);
 					player.setState(Player.State.awaitingCommands);
 					playerDAO.update(player);
+					inventoryDAO.delete(player.getId(), tag.getId(), 1);
 					active_players.remove(player_id);
 					sendMsg(player_id, "Игрок `" + player.getUsername() + "` успешно создан");
 					command_help(player);
@@ -564,7 +566,7 @@ public class Bot extends TelegramLongPollingBot {
 		Random r = new Random();
 		int random = r.nextInt(explore.size());
 		try {
-			Item i = new Item(2, "Поисковый фонарь", ItemRarity.Rare, 7000);
+			Item i = itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь");
 			if (player.getInventory().getItems().contains(i)) {
 
 				sendMsg(player.getId(), "В лесу вы нашли: " + explore.get(random));
@@ -577,10 +579,27 @@ public class Bot extends TelegramLongPollingBot {
 		}
 	}
 
+	public void command_achievements(Player player){
+		long id = player.getId();
+		StringBuilder sb = new StringBuilder("Ваши достижения: \n\n");
+
+		if(player.stats.coffee < 30){
+			sb.append("❌ Выпить 30 кружек кофе\n");
+		}else{
+			sb.append("✅ Выпить 30 кружек кофе\n");
+		}
+
+		if(player.stats.tea < 30){
+			sb.append("❌ Выпить 30 кружек чая\n");
+		}else{
+			sb.append("✅ Выпить 30 кружек кофе\n");
+		}
+
+		sendMsg(id, sb.toString());
+
+	}
 
 	public void command_fish(Player player){
-
-
 
 		//Item i = new Item(46, "Удочка", ItemRarity.Rare, 5000);
 		Item i = itemDAO.getByName("\uD83D\uDC1FУдочка");
@@ -606,7 +625,7 @@ public class Bot extends TelegramLongPollingBot {
 						sendMsg(player.getId(), "Не клюет");
 					}
 			}else{
-				sendMsg(player.getId(), "В вашем инвентаре нет места");
+				sendMsg(player.getId(), "⚠ В вашем инвентаре нет места");
 			}
 
 
@@ -729,7 +748,7 @@ public class Bot extends TelegramLongPollingBot {
 
 			}
 		}else{
-			sendMsg(player_id, "В вашем инвентаре нет места");
+			sendMsg(player_id, "⚠ В вашем инвентаре нет места");
 		}
 	}
 
@@ -741,11 +760,10 @@ public class Bot extends TelegramLongPollingBot {
 		Item item = mudRoller.roll();
 		if (item != null)
 		{
-
 				inventoryDAO.putItem(player.getId(), item.getId());
-				playerDAO.update(player);
 				sendMsg(player.getId(), String.format("Вы нашли в грязи %s", item));
 				player.addXp(1);
+				playerDAO.update(player);
 			}else{
 				sendMsg(player.getId(), "Вы ничего не нашли");
 			}
@@ -753,7 +771,7 @@ public class Bot extends TelegramLongPollingBot {
 		else
 		{
 
-			sendMsg(player.getId(), "В вашем инвентаре нет места");
+			sendMsg(player.getId(), "⚠ В вашем инвентаре нет места");
 		}
 	}
 
@@ -811,13 +829,42 @@ public class Bot extends TelegramLongPollingBot {
 	}
 
 	public void command_info(Player player) {
-		sendMsg(player.getId(), "Needle - это многопользовательская телеграм игра, нацеленная на коллекционирование " +
-				"предметов. Вам как игроку предстоит собирать их, открывать ачивки и соревноваться с другими " +
-				"игроками. Предметы Вы можете продавать, тем самым увеличивая свой игровой баланс. Внутриигровую валюту " +
-				"вы можете тратить на покупку предметов у других игроков, на внутриигровое казино, а также на поиск предметов " +
-				"сокращая время ожидания для поиска. Предметы вы можете искать раз в 6 часов. Среди них есть обычные, редкие, коллекционные " +
-				"и подарочные. Последняя категория не имеет цены, а это значит, что она может быть продана среди игроков за установленную " +
-				"цену. Покупать и выставлять предметы можно на аукционе. Удачи и приятной игры. ");
+		long id = player.getId();
+
+		StringBuilder sb = new StringBuilder("*Информация об игре*\n\n");
+		sb.append("\uD83C\uDF38 Needle - многопользовательская телеграм игра, где можно весело проводить время с друзьями и другими игроками \n\n");
+		sb.append("*Предметы делятся на 4 категории:*\n\n");
+		sb.append("`Cheap` - их можно найти практически везде, не несут почти никакой ценности, их можно смело продавать \uD83D\uDCDE Скупщику\n\n");
+		sb.append("`Common` - более ценные, чем Cheap. Могут быть проданы дороже, если их сдавать, например Рыба. Ее можно продать в 10 раз дороже");
+		sb.append(" если дождаться ярмарки и сдать ее там\n\n");
+		sb.append("`Rare` - редкие можно найти при \uD83D\uDC8E Поиске редких предметов, а также в Грязи и на Рыбалке, но с очень маленьким шансом, ");
+		sb.append("среди редких предметов много тех, которые нужны для каких-то локаций или функция, как например `\uD83D\uDCDD Тег`, который можно использовать ");
+		sb.append("для смены ника \n\n");
+		sb.append("`Gift` - самая ценная категория предметов в игре, среди них либо дорогие предметы, либо важные внутриигровые, например `\uD83D\uDC1F Удочка` ");
+		sb.append("такие предметы либо дают бонусы, либо нужны для каких-то функций\n\n");
+		sb.append("Предметы, помеченные определенным значком перед названием, либо нужны для игры, либо просто являются редким экземпялром в коллекции игрока\n\n");
+		sb.append("*☕️Кофе и чай*\n");
+		sb.append("Кофе и чай выполняют функцию сообщений. Заказывать кофе или чай для игрока - означает написать ему сообщение в размере 48 символов\n");
+		sb.append("услуга стоит $500, но некоторые предметы, например `\uD83C\uDF75 Кружка 'Египет'` могут опускать цену до $100 за раз\n\n");
+		sb.append("*\uD83D\uDED2 Магазин*\n");
+		sb.append("Магазин - это место, где игроки могут размещать свои предметы и устанавливать на них свою стоимость, а другие игроки могут купить их.\n");
+		sb.append("В случае если предмет никто не покупает в течение 24 часов, он автоматически возвращается в инвентарь продавца\n\n");
+		sb.append("*\uD83C\uDFB0 Монетка*\n");
+		sb.append("В монетке игроки могут испытать удачу, поставив ставку и она либо удвоится, либо...\n\n");
+		sb.append("*\uD83D\uDD26 Поиск предметов и уровни*\n");
+		sb.append("За поиск предметов игрок получает опыт и прокачивает уровень. Система уровней позволяет игрокам открывать новые возможности в игре. ");
+		sb.append("\uD83D\uDC8E Поиск редких предметов имеет задержку в 20 минут, в то время как \uD83D\uDD26 Рыться в грязи можно ежесекундно \n\n");
+		sb.append("*\uD83C\uDF80 Топ 10*\n");
+		sb.append("Топ-10 - это список самых настойчивых и верных игроков, которые приложили усилия, чтобы оказаться среди самых лучших\n\n");
+		sb.append("*\uD83C\uDF3A Помощь*\n");
+		sb.append("Для того, чтобы получить полный список команд, существует команда /help также игрок может воспользоваться нижней кнопочной панелью ");
+		sb.append("для более быстрой и удобной навигации\n\n");
+		sb.append("⚡ Ссылка на официальный телеграм канал Needle, где можно узнавать о новых обновлениях первыми: https://t.me/needlechat\n\n");
+		sb.append("Удачной игры!\n");
+
+
+		sendMsg(id, sb.toString());
+
 
 	}
 
@@ -847,9 +894,17 @@ public class Bot extends TelegramLongPollingBot {
 
 
 	public void command_changeNickname(Player player) {
-		active_players.put(player.getId(), player);
-		sendMsg(player.getId(), "Введите никнейм, на который вы хотите сменить: ");
-		player.setState(Player.State.awaitingChangeNickname);
+		long id = player.getId();
+		Item i = itemDAO.getByName("\uD83D\uDCDD Тег");
+		if(player.getInventory().getItems().contains(i)) {
+			active_players.put(player.getId(), player);
+
+			sendMsg(player.getId(), "Введите никнейм, на который вы хотите сменить: ");
+
+			player.setState(Player.State.awaitingChangeNickname);
+		}else{
+			sendMsg(id, String.format("Для смены ника нужен предмет `%s`\n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getTitle()));
+		}
 	}
 
 	public void command_coin(Player player) {
@@ -924,7 +979,7 @@ public class Bot extends TelegramLongPollingBot {
 		}
 
 		}else{
-			sendMsg(player.getId(), "В вашем инвентаре нет места");
+			sendMsg(player.getId(), "⚠ В вашем инвентаре нет места");
 		}
 	}
 
