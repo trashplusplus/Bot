@@ -176,7 +176,7 @@ public class PlayerDAO {
 		Inventory inventory = inventoryDAO.get(id);
 		Stats stats = statsDAO.get(id);
 		Player player = new Player(id, xp, level, username, balance, state, inventory, stats, host);
-		long[] expirations = abilityDAO.get(id);
+		Long[] expirations = abilityDAO.get(id);
 		player.findExpiration = expirations[0];
 		player.pocketsExpiration = expirations[1];
 		return player;

@@ -30,13 +30,13 @@ public class AbilityDAO {
 		}
 	}
 
-	public long[] get(long player_id) {
+	public Long[] get(long player_id) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("select * from ability_cooldowns where player_id = ?;");
 			ps.setLong(1, player_id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				return new long[]{read_ts(rs, "find_expiration"), read_ts(rs, "pockets_expiration")};
+				return new Long[]{read_ts(rs, "find_expiration"), read_ts(rs, "pockets_expiration")};
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -44,17 +44,27 @@ public class AbilityDAO {
 		return null;
 	}
 
-	public List<Long> expireFind(long expStepMs) {
+	public List<Long> expireFind() {
 		List<Long> expires = new ArrayList<>();
 		long nowTs = System.currentTimeMillis();
-		String query = "select player_id from ability_cooldowns where find_expiration between ? and ?;";
+		String select_query = "select player_id from ability_cooldowns where find_expiration < ?;";
+		String update_query = "update ability_cooldowns set find_expiration = null where find_expiration < ?;";
 		try {
-			PreparedStatement ps = connection.prepareStatement(query);
-			ps.setString(1, DatabaseDateMediator.ms_to_string(nowTs - expStepMs));
-			ps.setString(2, DatabaseDateMediator.ms_to_string(nowTs));
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				expires.add(rs.getLong("player_id"));
+			synchronized (connection) {
+				connection.createStatement().execute("begin transaction;");
+
+				PreparedStatement ps = connection.prepareStatement(select_query);
+				ps.setString(1, DatabaseDateMediator.ms_to_string(nowTs));
+				ResultSet rs = ps.executeQuery();
+				while (rs.next()) {
+					expires.add(rs.getLong("player_id"));
+				}
+
+				ps = connection.prepareStatement(update_query);
+				ps.setString(1, DatabaseDateMediator.ms_to_string(nowTs));
+				ps.execute();
+
+				connection.createStatement().execute("commit transaction;");
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -73,6 +83,20 @@ public class AbilityDAO {
 		}
 	}
 
+	public List<Long> expirePockets() {
+		List<Long> expires = new ArrayList<>();
+		long nowTs = System.currentTimeMillis();
+		String update_query = "update ability_cooldowns set pockets_expiration = null where pockets_expiration < ?;";
+		try {
+			PreparedStatement ps = connection.prepareStatement(update_query);
+			ps.setString(1, DatabaseDateMediator.ms_to_string(nowTs));
+			ps.execute();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return expires;
+	}
+
 	public void updatePockets(long player_id, long expiration_ts) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("update ability_cooldowns set pockets_expiration = ? where player_id = ?;");
@@ -84,8 +108,8 @@ public class AbilityDAO {
 		}
 	}
 
-	private long read_ts(ResultSet rs, String column_name) throws SQLException {
-		long result = 0;
+	private Long read_ts(ResultSet rs, String column_name) throws SQLException {
+		Long result = null;
 		String date_UTC_string = rs.getString(column_name);
 		if (date_UTC_string != null) {
 			try {

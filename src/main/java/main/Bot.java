@@ -39,9 +39,10 @@ public class Bot extends TelegramLongPollingBot {
 	ScheduledFuture<?> sf_timers;
 	ScheduledFuture<?> sf_find;
 	private long expStepMs = 5L * 1000L;
+	ScheduledFuture<?> sf_pockets;
 	ScheduledFuture<?> sf_dump;
 
-	private long findCooldown = 20L * 1000L;
+	private long findCooldown = 30L * 1000L;
 
 	private final String token;
 
@@ -63,6 +64,7 @@ public class Bot extends TelegramLongPollingBot {
 		active_players = new HashMap<>();
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepMs, TimeUnit.MILLISECONDS);
+		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, 3L, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
 	}
 
@@ -647,16 +649,16 @@ public class Bot extends TelegramLongPollingBot {
 		long cooldownMs = findCooldown;
 		if (player.getInventory().getInvSize() < 20) {
 			long now_ts = System.currentTimeMillis();
-			long left_ms = player.findExpiration - now_ts;
 
-			if (left_ms > 0L) {
+			if (player.findExpiration != null && player.findExpiration > now_ts) {
 				sendMsg(player_id, String.format("\u231B Время ожидания: %s",
-						PrettyDate.prettify(left_ms, TimeUnit.MILLISECONDS)));
+						PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
 			} else {
 				Item new_item = findRoller.roll();
 				inventoryDAO.putItem(player_id, new_item.getId());
 				sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 				player.addXp(2);
+				player.findExpiration = now_ts + cooldownMs;
 
 				playerDAO.update(player);
 				abilityDAO.updateFind(player_id, now_ts + cooldownMs);
@@ -689,11 +691,10 @@ public class Bot extends TelegramLongPollingBot {
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
 		long cooldownMs = 30L * 1000L;
-		long left_ms = player.pocketsExpiration - now_ts;
 
-		if (left_ms > 0L) {
+		if (player.pocketsExpiration != null && player.pocketsExpiration > now_ts) {
 			sendMsg(player_id, String.format("\u231B Время ожидания: %s",
-					PrettyDate.prettify(left_ms, TimeUnit.MILLISECONDS)));
+					PrettyDate.prettify(player.pocketsExpiration - now_ts, TimeUnit.MILLISECONDS)));
 		} else {
 			int money = moneyRoller.roll();
 			if (money > 0) {
@@ -705,6 +706,7 @@ public class Bot extends TelegramLongPollingBot {
 			} else {
 				throw new RuntimeException("WTF?");
 			}
+			player.pocketsExpiration = now_ts + cooldownMs;
 			abilityDAO.updatePockets(player_id, now_ts + cooldownMs);
 			playerDAO.update(player);
 		}
@@ -952,7 +954,7 @@ public class Bot extends TelegramLongPollingBot {
 	}
 
 	void sendFindCooldownNotification() {
-		List<Long> expires = abilityDAO.expireFind(expStepMs);
+		List<Long> expires = abilityDAO.expireFind();
 		for (long id : expires) {
 			sendMsg(id, "Вы снова можете искать редкие предметы!");
 		}

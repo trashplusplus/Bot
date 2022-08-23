@@ -9,8 +9,8 @@ public class Player
 	private int level;
 	private int xp;
 	private State state;
-	public long findExpiration;
-	public long pocketsExpiration;
+	public Long findExpiration = null;
+	public Long pocketsExpiration = null;
 
 	public Stats stats;
 
