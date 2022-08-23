@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Date;
+
 public class Player
 {
 	private final long id;
@@ -25,6 +27,8 @@ public class Player
 	public Player coffee_acceptor = null;
 	public Player tea_acceptor = null;
 	// > commands args
+
+	public Date sellfish = null;
 
 
 	public Player(long id, Bot host)

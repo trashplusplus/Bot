@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -191,7 +192,6 @@ public class Bot extends TelegramLongPollingBot {
 					player.setUsername(username);
 					player.setState(Player.State.awaitingCommands);
 					playerDAO.update(player);
-					inventoryDAO.delete(player.getId(), tag.getId(), 1);
 					active_players.remove(player_id);
 					sendMsg(player_id, "Игрок `" + player.getUsername() + "` успешно создан");
 					command_help(player);
@@ -244,12 +244,14 @@ public class Bot extends TelegramLongPollingBot {
 	void awaitingChangeNickname_processor(Player player, Message message) {
 		long player_id = player.getId();
 		String nickname = message.getText();
+		Item tag = itemDAO.getByName("\uD83D\uDCDD Тег");
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 		if (nickname.matches(usernameTemplate)) {
 			try {
 				player.setUsername(nickname);
 				playerDAO.update(player);
+                inventoryDAO.delete(player.getId(), tag.getId(), 1);
 				sendMsg(player_id, "Ваш никнейм успешно изменен на `" + player.getUsername() + "`");
 			} catch (RuntimeException e) {
 				e.printStackTrace();
@@ -639,28 +641,42 @@ public class Bot extends TelegramLongPollingBot {
 
 
 	public void command_sellfish(Player player){
-		long id = player.getId();
-		List<String> fish_titles = new ArrayList<String>();
-		fish_titles.add("Горбуша");
-		fish_titles.add("Бычок");
-		fish_titles.add("Карась");
 
-		int fee = 0;
+        long id = player.getId();
 
-		for(int i = 0; i<player.getInventory().getItems().size(); i++){
-			Item fish = player.getInventory().getItem(i);
-			if(fish_titles.contains(fish.getTitle())){
-				fee += fish.getCost() * 10;
-				inventoryDAO.delete(player, fish.getId(), 1);
+
+		LocalTime open = LocalTime.of(10, 00);
+		LocalTime close = LocalTime.of(15, 00);
+
+		LocalTime currentTime = LocalTime.now();
+
+		if(currentTime.isBefore(open) || currentTime.isAfter(close)){
+			sendMsg(id, "\uD83E\uDD88 Рыбная лавка работает с 10:00 до 15:00\n\nСдавая рыбу в лавке, Вы можете получить " +
+					"в несколько раз больше, чем если бы сдавали ее \uD83D\uDCDE Скупщику");
+		}else{
+			List<String> fish_titles = new ArrayList<String>();
+			fish_titles.add("Горбуша");
+			fish_titles.add("Бычок");
+			fish_titles.add("Карась");
+			int fee = 0;
+			for (int i = 0; i < player.getInventory().getItems().size(); i++) {
+				Item fish = player.getInventory().getItem(i);
+				if (fish_titles.contains(fish.getTitle())) {
+					fee += fish.getCost() * 7;
+					inventoryDAO.delete(player, fish.getId(), 1);
+				}
+			}
+			if (fee > 0) {
+				sendMsg(id, String.format("\uD83E\uDD88 Покупатель выложил за всю рыбу $%d", fee));
+				player.balance += fee;
+				playerDAO.update(player);
+
+			} else {
+				sendMsg(id, "\uD83E\uDD88У вас нет рыбы\nЧтобы ловить рыбу, введите /fish");
 			}
 		}
-		if(fee > 0){
-			sendMsg(id, String.format("\uD83E\uDD88 Покупатель выложил за всю рыбу $%d", fee));
-			player.balance += fee;
-			playerDAO.update(player);
-		}else{
-			sendMsg(id, "\uD83E\uDD88У вас нет рыбы\nℹЧтобы ловить рыбу, введите /fish");
-		}
+
+
 	}
 
 
@@ -862,7 +878,6 @@ public class Bot extends TelegramLongPollingBot {
 		sb.append("⚡ Ссылка на официальный телеграм канал Needle, где можно узнавать о новых обновлениях первыми: https://t.me/needlechat\n\n");
 		sb.append("Удачной игры!\n");
 
-
 		sendMsg(id, sb.toString());
 
 
@@ -891,7 +906,6 @@ public class Bot extends TelegramLongPollingBot {
 
 		sendMsg(player.getId(), stringBuilder.toString());
 	}
-
 
 	public void command_changeNickname(Player player) {
 		long id = player.getId();
@@ -1080,7 +1094,7 @@ public class Bot extends TelegramLongPollingBot {
 			Player seller = shopItem.getSeller();
 			long seller_id = seller.getId();
 			inventoryDAO.putItem(seller_id, shopItem.getItem().getId());
-			sendMsg(seller_id, String.format("Ваш товар %s был снят с продажи, предмет добавлен в ваш инвентарь", shopItem));
+			sendMsg(seller_id, String.format("Ваш товар %sбыл снят с продажи, предмет добавлен в ваш инвентарь", shopItem));
 		}
 	}
 
