@@ -37,7 +37,11 @@ public class Bot extends TelegramLongPollingBot {
 	private static final Roller<Item> fishRoller = RollerFactory.getFishRoller(new Random());
 
 	ScheduledFuture<?> sf_timers;
+	ScheduledFuture<?> sf_find;
+	private long expStepMs = 5L * 1000L;
 	ScheduledFuture<?> sf_dump;
+
+	private long findCooldown = 20L * 1000L;
 
 	private final String token;
 
@@ -57,7 +61,8 @@ public class Bot extends TelegramLongPollingBot {
 		state_processor = BotStateProcessor.get_map(this);
 		command_processor = BotCommandProcessor.get_map(this);
 		active_players = new HashMap<>();
-		sf_timers = STPE.stpe.scheduleAtFixedRate(this::update_database_timers, 0L, 5L, TimeUnit.SECONDS);
+		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
+		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepMs, TimeUnit.MILLISECONDS);
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
 	}
 
@@ -639,7 +644,7 @@ public class Bot extends TelegramLongPollingBot {
 
 	public void command_find(Player player) {
 		long player_id = player.getId();
-		long cooldownMs = 20L * 60L * 1000L;
+		long cooldownMs = findCooldown;
 		if (player.getInventory().getInvSize() < 20) {
 			long now_ts = System.currentTimeMillis();
 			long left_ms = player.findExpiration - now_ts;
@@ -936,13 +941,20 @@ public class Bot extends TelegramLongPollingBot {
 		sendMsg(player.getId(), "Вы уже зарегистрированы.\n");
 	}
 
-	public void update_database_timers() {
+	public void cleanShopFromExpired() {
 		List<ShopItem> shopItems = shopDAO.expire();
 		for (ShopItem shopItem : shopItems) {
 			Player seller = shopItem.getSeller();
 			long seller_id = seller.getId();
 			inventoryDAO.putItem(seller_id, shopItem.getItem().getId());
 			sendMsg(seller_id, String.format("Ваш товар %s был снят с продажи, предмет добавлен в ваш инвентарь", shopItem));
+		}
+	}
+
+	void sendFindCooldownNotification() {
+		List<Long> expires = abilityDAO.expireFind(expStepMs);
+		for (long id : expires) {
+			sendMsg(id, "Вы снова можете искать редкие предметы!");
 		}
 	}
 
@@ -953,6 +965,7 @@ public class Bot extends TelegramLongPollingBot {
 	public void on_closing() {
 		System.out.println("Exiting...");
 		sf_dump.cancel(false);
+		sf_find.cancel(false);
 		sf_timers.cancel(false);
 		STPE.stpe.shutdown();
 		dump_database();

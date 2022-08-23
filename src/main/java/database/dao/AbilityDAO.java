@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AbilityDAO {
 	private final Connection connection;
@@ -18,10 +20,8 @@ public class AbilityDAO {
 		this.host = host;
 	}
 
-	public void put(long player_id)
-	{
-		try
-		{
+	public void put(long player_id) {
+		try {
 			PreparedStatement ps = connection.prepareStatement("insert into ability_cooldowns values (?, null, null);");
 			ps.setLong(1, player_id);
 			ps.execute();
@@ -30,21 +30,36 @@ public class AbilityDAO {
 		}
 	}
 
-	public long[] get(long player_id)
-	{
-		try
-		{
+	public long[] get(long player_id) {
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from ability_cooldowns where player_id = ?;");
 			ps.setLong(1, player_id);
 			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-			{
-				return new long[] {read_ts(rs, "find_expiration"), read_ts(rs, "pockets_expiration")};
+			if (rs.next()) {
+				return new long[]{read_ts(rs, "find_expiration"), read_ts(rs, "pockets_expiration")};
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 		return null;
+	}
+
+	public List<Long> expireFind(long expStepMs) {
+		List<Long> expires = new ArrayList<>();
+		long nowTs = System.currentTimeMillis();
+		String query = "select player_id from ability_cooldowns where find_expiration between ? and ?;";
+		try {
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, DatabaseDateMediator.ms_to_string(nowTs - expStepMs));
+			ps.setString(2, DatabaseDateMediator.ms_to_string(nowTs));
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				expires.add(rs.getLong("player_id"));
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return expires;
 	}
 
 	public void updateFind(long player_id, long expiration_ts) {
