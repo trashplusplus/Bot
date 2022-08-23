@@ -5,12 +5,12 @@ public class Player
 	private final long id;
 	private final Inventory inventory;
 	public int balance;
-	public long last_fia;
-	public long last_pockets;
 	private String username;
 	private int level;
 	private int xp;
 	private State state;
+	public long findExpiration;
+	public long pocketsExpiration;
 
 	public Stats stats;
 
@@ -27,11 +27,11 @@ public class Player
 
 	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), 0L, 0L, new Stats(), host);
+		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), new Stats(), host);
 
 	}
 
-	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, long last_fia, long last_pockets, Stats stats, Bot host)
+	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, Stats stats, Bot host)
 	{
 		this.id = id;
 		this.username = username;
@@ -39,8 +39,6 @@ public class Player
 		this.state = state;
 		this.stats = stats;
 		this.inventory = inventory;
-		this.last_fia = last_fia;
-		this.last_pockets = last_pockets;
 		this.xp = xp;
 		this.level = level;
 		this.host = host;

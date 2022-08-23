@@ -5,15 +5,23 @@ create table if not exists players
     'level' integer default 0,
     name text unique,
     balance integer default 0,
-    registered integer not null default 0,
-    lastfia text default "NEVER",
-    lastpockets text default "NEVER"
+    registered integer not null default 0
 );
+
+create table if not exists ability_cooldowns
+(
+    player_id integer references players (id),
+    find_expiration text default null,
+    pockets_expiration text default null
+);
+
+create index if not exists find_ex_id on ability_cooldowns (find_expiration);
+create index if not exists pockets_ex_id on ability_cooldowns (pockets_expiration);
 
 create table if not exists items
 (
     id integer primary key,
-    name text not null,
+    name text unique not null,
     rarity text not null,
     cost integer
 );
