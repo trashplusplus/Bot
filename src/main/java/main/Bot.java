@@ -341,18 +341,26 @@ public class Bot extends TelegramLongPollingBot {
 
 			long id = player.getId();
 			int itemID = Integer.parseInt(message.getText());
-			if (itemID >= player.getInventory().getInvSize()) {
-				throw new IndexOutOfBoundsException();
-			}else if(player.getInventory().getInvSize() > 20){
-				throw new BackpackException(itemID);
-			}
+				if (itemID >= player.getInventory().getInvSize()) {
+					throw new IndexOutOfBoundsException();
+				}else if(player.getInventory().getInvSize() > 20){
+					throw new BackpackException(itemID);
+				}
+			player.to_place_item = itemID;
+			sendMsg(player.getId(), "Введите стоимость товара: ");
+			player.setState(Player.State.shopPlaceGood_awaitingCost);
+
 			//playerDAO.update(player);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			sendMsg(player.getId(), "Введите целое число");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
 		} catch (IndexOutOfBoundsException ee) {
 			ee.printStackTrace();
 			sendMsg(player.getId(), "Неверный ID");
+			player.setState(Player.State.awaitingCommands);
+			playerDAO.update(player);
 		} catch (BackpackException e){
 			long id = player.getId();
 			Item ii = player.getInventory().getItem(e.backpackID);
@@ -471,11 +479,15 @@ public class Bot extends TelegramLongPollingBot {
 
 
 	public void awaitingCoffeeNote_processor(Player player, Message message) {
+		int goal;
+		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
+		if(player.getInventory().getItems().contains(cup)){ goal = 200;}else{ goal = 500;}
+
 		try {
 			String note = message.getText();
 			if (note.length() < 48) {
 				Player receiver = player.coffee_acceptor;
-				player.balance -= 500;
+				player.balance -= goal;
 				receiver.stats.coffee++;
 				statsDAO.update(receiver.getStats(), receiver.getId());
 				sendMsg(player.getId(), "☕ Кофе отправлен");
@@ -515,11 +527,15 @@ public class Bot extends TelegramLongPollingBot {
 	}
 
 	public void awaitingTeaNote_processor(Player player, Message message) {
+		int goal;
+		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
+		if(player.getInventory().getItems().contains(cup)){ goal = 200;}else{ goal = 500;}
+
 		try {
 			String note = message.getText();
 			if (note.length() < 48) {
 				Player receiver = player.tea_acceptor;
-				player.balance -= 500;
+				player.balance -= goal;
 				receiver.stats.tea++;
 				statsDAO.update(receiver.getStats(), receiver.getId());
 				sendMsg(player.getId(), "\uD83C\uDF3F Чай отправлен");
@@ -1106,21 +1122,30 @@ public class Bot extends TelegramLongPollingBot {
 	}
 
 	public void command_coffee(Player player) {
-		if (player.getMoney() < 500) {
+		int goal;
+		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
+		if(player.getInventory().getItems().contains(cup)){ goal = 200;}else{ goal = 500;}
+
+
+		if (player.getMoney() < goal) {
 			sendMsg(player.getId(), "☕ Не хватает деняк на кофе :'(");
 		} else {
 			active_players.put(player.getId(), player);
-			sendMsg(player.getId(), "☕($500) Введите ник игрока: ");
+			sendMsg(player.getId(), String.format("☕($%d) Введите ник игрока: ", goal));
 			player.setState(Player.State.awaitingCoffee);
 		}
 	}
 
 	public void command_tea(Player player) {
-		if (player.getMoney() < 500) {
+		int goal;
+		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
+		if(player.getInventory().getItems().contains(cup)){ goal = 200;}else{ goal = 500;}
+
+		if (player.getMoney() < goal) {
 			sendMsg(player.getId(), "\uD83C\uDF3F Не хватает деняк на чай :'(");
 		} else {
 			active_players.put(player.getId(), player);
-			sendMsg(player.getId(), "\uD83C\uDF3F($500) Введите ник игрока: ");
+			sendMsg(player.getId(), String.format("\uD83C\uDF3F($%d) Введите ник игрока: ", goal));
 			player.setState(Player.State.awaitingTea);
 		}
 	}
