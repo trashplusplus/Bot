@@ -35,7 +35,7 @@ public class ShopDAO {
 
 			PreparedStatement ps = connection.prepareStatement("insert into shop(item_id, cost, seller_id) values (?, ?, ?);");
 			ps.setLong(1, shopItem.getItem().getId());
-			ps.setInt(2, shopItem.getCost());
+			ps.setLong(2, shopItem.getCost().value);
 			ps.setLong(3, shopItem.getSeller().getId());
 			ps.execute();
 
@@ -170,7 +170,7 @@ public class ShopDAO {
 	private ShopItem form(ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		Item item = this.item.get(rs.getLong("item_id"));
-		int cost = rs.getInt("cost");
+		long cost = rs.getLong("cost");
 		Player seller = playerDAO.get_by_id(rs.getLong("seller_id"));
 		return new ShopItem(id, item, cost, seller);
 	}

@@ -36,7 +36,7 @@ public class PlayerDAO {
 			ps.setInt(2, player.getXp());
 			ps.setInt(3, player.getLevel());
 			ps.setString(4, player.getUsername());
-			ps.setInt(5, player.balance);
+			ps.setLong(5, player.balance.value);
 			ps.setInt(6, player.getState() == Player.State.awaitingNickname ? 0 : 1);
 			ps.execute();
 			inventoryDAO.put(player.getId(), player.getInventory());
@@ -84,15 +84,12 @@ public class PlayerDAO {
 	}
 
 	public List<Player> getAll() {
-
 		List<Player> result = new ArrayList<>();
-
 		try {
 			PreparedStatement ps = connection.prepareStatement("select * from players;");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				result.add(form(rs));
-
 			}
 			return result;
 		} catch (SQLException e) {
@@ -141,7 +138,7 @@ public class PlayerDAO {
 			ps.setInt(1, player.getXp());
 			ps.setInt(2, player.getLevel());
 			ps.setString(3, player.getUsername());
-			ps.setInt(4, player.balance);
+			ps.setLong(4, player.balance.value);
 			ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
 			//ps.setString(6, DatabaseDateMediator.ms_to_string(player.last_fia));
 			//ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_pockets));
@@ -170,7 +167,7 @@ public class PlayerDAO {
 		int xp = rs.getInt("xp");
 		int level = rs.getInt("level");
 		String username = rs.getString("name");
-		int balance = rs.getInt("balance");
+		long balance = rs.getLong("balance");
 		Player.State state = rs.getInt("registered") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
 
 		Inventory inventory = inventoryDAO.get(id);

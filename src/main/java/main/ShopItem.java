@@ -4,14 +4,14 @@ public class ShopItem
 {
 	int id;
 	Item item;
-	int cost;
+	Money cost;
 	Player seller;
 
-	public ShopItem(int id, Item item, int cost, Player seller)
+	public ShopItem(int id, Item item, long cost, Player seller)
 	{
 		this.id = id;
 		this.item = item;
-		this.cost = cost;
+		this.cost = new Money(cost);
 		this.seller = seller;
 	}
 
@@ -20,7 +20,7 @@ public class ShopItem
 		this(-1, item, cost, seller);
 	}
 
-	public int getCost()
+	public Money getCost()
 	{
 		return cost;
 	}
@@ -42,6 +42,6 @@ public class ShopItem
 
 	@Override
 	public String toString(){
-		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %d$ | Продавец: `%s` \n", item.getTitle(), cost, seller.getUsername());
+		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %s | Продавец: `%s` \n", item.getTitle(), cost, seller.getUsername());
 	}
 }
