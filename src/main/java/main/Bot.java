@@ -1167,7 +1167,7 @@ public class Bot extends TelegramLongPollingBot {
 		if(player.getInventory().getItems().contains(cup)){ goal = 200;}else{ goal = 500;}
 
 
-		if (player.getMoney() < goal) {
+		if (player.getMoney().value < goal) {
 
 			sendMsg(player.getId(), "☕ Не хватает деняк на кофе :'(");
 		} else {
@@ -1183,8 +1183,7 @@ public class Bot extends TelegramLongPollingBot {
 		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
 		if(player.getInventory().getItems().contains(cup)){ goal = 200;}else{ goal = 500;}
 
-		if (player.getMoney() < goal) {
-
+		if (player.getMoney().value < goal) {
 
 			sendMsg(player.getId(), "\uD83C\uDF3F Не хватает деняк на чай :'(");
 		} else {
