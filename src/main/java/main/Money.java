@@ -35,7 +35,20 @@ public class Money
 	@Override
 	public String toString()
 	{
-		return "$" + value;
+		StringBuilder sb = new StringBuilder();
+		long value = this.value;
+		int digitNo = 0;
+		while (value > 0)
+		{
+			digitNo++;
+			sb.append(value % 10);
+			value /= 10;
+			if (digitNo % 3 == 0 && value > 0)
+			{
+				sb.append(",");
+			}
+		}
+		return sb.append("$").reverse().toString();
 	}
 
 	@Override
