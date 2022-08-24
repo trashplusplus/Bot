@@ -7,107 +7,77 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemDAO
-{
+public class ItemDAO {
 	private final Connection connection;
 
-	public ItemDAO(Connection connection)
-	{
+	public ItemDAO(Connection connection) {
 		this.connection = connection;
 	}
 
-	public Item get(long id)
-	{
+	public Item get(long id) {
 		Item item = null;
-		try
-		{
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from items where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-			{
-				item = new Item(
-						id,
-						rs.getString("name"),
-						ItemRarity.valueOf(rs.getString("rarity")),
-						rs.getInt("cost"));
+			if (rs.next()) {
+				item = form(rs);
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return item;
 	}
 
-	public int size()
-	{
-		try
-		{
+	public int size() {
+		try {
 			String query = "select count(*) from items;";
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(query);
 			return rs.getInt(1);
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception", e);
 		}
 	}
 
-	public Item getByName(String name)
-	{
+	public Item getByName(String name) {
 		Item item = null;
-		try
-		{
+		try {
 			PreparedStatement ps = connection.prepareStatement("select * from items where name = ?;");
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-			{
-				item = new Item(rs.getLong("id"),
-						rs.getString("name"),
-						ItemRarity.valueOf(rs.getString("rarity")),
-						rs.getInt("cost")
-				);
+			if (rs.next()) {
+				item = form(rs);
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return item;
 	}
 
-	public List<Item> getAll()
-	{
+	public List<Item> getAll() {
 		List<Item> res = new ArrayList<>();
-		try
-		{
+		try {
 			String query = "select * from items;";
 			PreparedStatement ps = connection.prepareStatement(query);
 			ResultSet rs = ps.executeQuery();
 
-			while (rs.next())
-			{
+			while (rs.next()) {
 				res.add(form(rs));
 			}
-		}
-		catch (SQLException ex)
-		{
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 
 		return res;
 	}
 
-	Item form(ResultSet rs) throws SQLException
-	{
+	Item form(ResultSet rs) throws SQLException {
 		long id = rs.getLong(1);
 		String title = rs.getString(2);
 		ItemRarity rarity = ItemRarity.valueOf(rs.getString(3));
-		int cost = rs.getInt(4);
+		long cost = rs.getLong(4);
 
 		return new Item(id, title, rarity, cost);
 	}

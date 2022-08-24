@@ -5,16 +5,16 @@ import java.util.Objects;
 public class Item
 {
 	private final long id;
-	private final int cost;
-	private final ItemRarity rarity;
 	private final String title;
+	private final ItemRarity rarity;
+	private final Money cost;
 
-	public Item(long id, String title, ItemRarity rarity, int cost)
+	public Item(long id, String title, ItemRarity rarity, long cost)
 	{
 		this.id = id;
 		this.title = title;
 		this.rarity = rarity;
-		this.cost = cost;
+		this.cost = new Money(cost);
 	}
 
 	public ItemRarity getRarity()
@@ -22,7 +22,7 @@ public class Item
 		return rarity;
 	}
 
-	public int getCost()
+	public Money getCost()
 	{
 		return cost;
 	}
@@ -40,7 +40,7 @@ public class Item
 	@Override
 	public String toString()
 	{
-		return String.format("|%s|%s|$%d|", title, rarity.toString(), cost);
+		return String.format("|%s|%s|%s|", title, rarity.toString(), cost);
 	}
 
 	@Override

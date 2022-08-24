@@ -24,14 +24,21 @@ public class CoinGame {
 
     public void coinWin(Player player, int money)
     {
-        player.balance += money;
+        try {
+            player.balance.transfer(money);
+        } catch (Money.MoneyException e) {
+            e.printStackTrace();
+        }
 
     }
 
     public void coinLose(Player player, int money)
     {
-       player.balance -= money;
-
+        try {
+            player.balance.transfer(-money);
+        } catch (Money.MoneyException e) {
+            e.printStackTrace();
+        }
     }
 
 }

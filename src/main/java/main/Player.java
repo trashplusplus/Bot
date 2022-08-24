@@ -6,7 +6,7 @@ public class Player
 {
 	private final long id;
 	private final Inventory inventory;
-	public int balance;
+	public Money balance;
 	private String username;
 	private int level;
 	private int xp;
@@ -37,11 +37,11 @@ public class Player
 
 	}
 
-	public Player(long id, int xp, int level, String username, int balance, State state, Inventory inventory, Stats stats, Bot host)
+	public Player(long id, int xp, int level, String username, long balance, State state, Inventory inventory, Stats stats, Bot host)
 	{
 		this.id = id;
 		this.username = username;
-		this.balance = balance;
+		this.balance = new Money(balance);
 		this.state = state;
 		this.stats = stats;
 		this.inventory = inventory;
@@ -80,7 +80,7 @@ public class Player
 		return inventory;
 	}
 
-	public int getMoney()
+	public Money getMoney()
 	{
 		return balance;
 	}
