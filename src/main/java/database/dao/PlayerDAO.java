@@ -50,7 +50,7 @@ public class PlayerDAO {
 
 	public Player get_by_id(long id) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("select * from players, ability_cooldowns on players.id = ability_cooldowns.player_id where id = ?;");
+			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?;");
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			Player player = null;
@@ -67,7 +67,7 @@ public class PlayerDAO {
 	}
 
 	public Player get_by_name(String name) {
-		String query = "select * from players, ability_cooldowns on players.id = ability_cooldowns.player_id where name = ?;";
+		String query = "select * from players where name = ?;";
 		try {
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setString(1, name);
@@ -88,7 +88,7 @@ public class PlayerDAO {
 		List<Player> result = new ArrayList<>();
 
 		try {
-			PreparedStatement ps = connection.prepareStatement("select * from players, ability_cooldowns on players.id = ability_cooldowns.player_id;");
+			PreparedStatement ps = connection.prepareStatement("select * from players;");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				result.add(form(rs));
@@ -104,7 +104,7 @@ public class PlayerDAO {
 	public List<Player> getTopN(String field_name, boolean ascending, int limit) {
 		try {
 			List<Player> players = new ArrayList<>();
-			String query = String.format("select * from players, ability_cooldowns on players.id = ability_cooldowns.player_id where registered = 1 order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
+			String query = String.format("select * from players where registered = 1 order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, limit);
 			ResultSet rs = ps.executeQuery();

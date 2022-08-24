@@ -41,7 +41,7 @@ public class AbilityDAO {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return new Long[2];
 	}
 
 	public List<Long> expireFind() {
