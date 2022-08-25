@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 public class Bot extends TelegramLongPollingBot {
@@ -192,7 +193,6 @@ public class Bot extends TelegramLongPollingBot {
 	void awaitingNickname_processor(Player player, Message message) {
 		long player_id = player.getId();
 		String username = message.getText();
-		Item tag = itemDAO.getByName("\uD83D\uDCDD Тег");
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 		if (username.matches(usernameTemplate)) {
@@ -1149,6 +1149,64 @@ public class Bot extends TelegramLongPollingBot {
 		}
 	}
 
+
+
+	public void command_case(Player player){
+		int casesCounter = 0;
+		int keysCounter = 0;
+		long id = player.getId();
+
+			StringBuilder sb = new StringBuilder("*Открытие кейсов*\n\n");
+
+			Item _case = itemDAO.getByName("\uD83D\uDCE6 Кейс Gift");
+			Item _key = itemDAO.getByName("\uD83D\uDD11 Ключ от кейса");
+
+
+			for(int i = 0; i < player.getInventory().getInvSize(); i++){
+				if(player.getInventory().getItem(i).equals(_case)){
+					casesCounter++;
+				}else if(player.getInventory().getItem(i).equals(_key)){
+					keysCounter++;
+				}
+			}
+
+
+			sb.append(String.format("\uD83D\uDCE6 Кейсы: %d\n", casesCounter));
+			sb.append(String.format("\uD83D\uDD11 Ключи: %d\n", keysCounter));
+			sb.append("\n\n");
+
+			sb.append("Введите /open чтобы открыть кейс: \n");
+
+			sendMsg(id, sb.toString());
+	}
+
+	public void command_open(Player player){
+
+		Random ran = new Random();
+		long id = player.getId();
+		Item _case = itemDAO.getByName("\uD83D\uDCE6 Кейс Gift");
+		Item _key = itemDAO.getByName("\uD83D\uDD11 Ключ от кейса");
+
+		List<Item> loot = new ArrayList<>();
+
+
+		loot = itemDAO.getAll().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift))).collect(Collectors.toList());
+
+
+		int ranIndex = ran.nextInt(loot.size());
+
+		if(player.getInventory().getItems().contains(_case) && player.getInventory().getItems().contains(_key)){
+			Item prize = itemDAO.get(ranIndex);
+			sendMsg(id, String.format("Вам выпал предмет: `%s`", prize.getTitle()));
+			player.getInventory().putItem(prize);
+			inventoryDAO.delete(player.getId(), _key.getId(), 1);
+			inventoryDAO.delete(player.getId(), _case.getId(), 1);
+			playerDAO.update(player);
+		}else{
+			sendMsg(id, "У вас нет либо ключа, либо кейса");
+		}
+
+	}
 
 	public void command_pay(Player player) {
 		if (player.balance.value <= 0) {

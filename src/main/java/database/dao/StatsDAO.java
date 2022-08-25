@@ -17,8 +17,8 @@ public class StatsDAO {
         this.connection = connection;
     }
 
-    public void put(Stats stats, long id){
-        try{
+    public void put(Stats stats, long id) {
+        try {
             PreparedStatement ps = connection.prepareStatement("insert into stats(player_id, bonus, coinWins, coinLosses, coffee, tea) values (?,?,?,?,?,?);");
             ps.setLong(1, id);
             ps.setInt(2, stats.bonus);
@@ -27,15 +27,15 @@ public class StatsDAO {
             ps.setInt(5, stats.coffee);
             ps.setInt(6, stats.tea);
             ps.execute();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("SQL Exception in StatsDAO");
         }
     }
 
-    public void update(Stats stats, long id){
+    public void update(Stats stats, long id) {
 
-        try{
+        try {
             PreparedStatement ps = connection.prepareStatement("update stats set bonus = ?, coinWins = ?, coinLosses = ?, coffee = ?, tea = ? where player_id = ?;");
             ps.setInt(1, stats.bonus);
             ps.setInt(2, stats.coinWins);
@@ -51,30 +51,29 @@ public class StatsDAO {
         }
     }
 
-    public Stats get(long id){
+    public Stats get(long id) {
         Stats stats = null;
-        try{
+        try {
             PreparedStatement ps = connection.prepareStatement("select * from stats where player_id = ?");
             ps.setLong(1, id);
 
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                  stats = new Stats(rs.getInt("bonus"),
-                  rs.getInt("coinWins"),
-                  rs.getInt("coinLosses"),
-                  rs.getInt("coffee"),
-                  rs.getInt("tea")
-                  );
+            if (rs.next()) {
+                stats = new Stats(rs.getInt("bonus"),
+                        rs.getInt("coinWins"),
+                        rs.getInt("coinLosses"),
+                        rs.getInt("coffee"),
+                        rs.getInt("tea")
+                );
             }
 
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stats;
 
     }
-
 
 
 }
