@@ -34,7 +34,7 @@ public class DatabaseDateMediator
 	{
 		if (ms == null)
 		{
-			return "";
+			return null;
 		}
 		date.setTime(ms);
 		return df.format(date);
