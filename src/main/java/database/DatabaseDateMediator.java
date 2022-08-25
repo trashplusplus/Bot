@@ -30,8 +30,12 @@ public class DatabaseDateMediator
 		return string_to_ms(date_string);
 	}
 
-	public static String ms_to_string(long ms)
+	public static String ms_to_string(Long ms)
 	{
+		if (ms == null)
+		{
+			return "";
+		}
 		date.setTime(ms);
 		return df.format(date);
 	}

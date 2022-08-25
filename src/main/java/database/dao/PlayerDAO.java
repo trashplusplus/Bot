@@ -8,20 +8,18 @@ import main.Stats;
 
 import java.sql.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class PlayerDAO {
+public class PlayerDAO
+{
 	private final Connection connection;
 	private final InventoryDAO inventoryDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
 	Bot host;
 
-	private static final long findCooldown = 20L * 60L * 1000L;
-	private static final long pocketsCooldown = 30L * 1000L;
-
-	public PlayerDAO(Connection connection, Bot host) {
+	public PlayerDAO(Connection connection, Bot host)
+	{
 		this.connection = connection;
 		inventoryDAO = new InventoryDAO(connection);
 		statsDAO = new StatsDAO(connection);
@@ -29,9 +27,13 @@ public class PlayerDAO {
 		this.host = host;
 	}
 
-	public void put(Player player) {
-		try {
-			PreparedStatement ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance, registered) values (?, ?, ?, ?, ?, ?);");
+	//region create
+	public void put(Player player)
+	{
+		PreparedStatement ps = null;
+		try
+		{
+			ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance, registered) values (?, ?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setInt(2, player.getXp());
 			ps.setInt(3, player.getLevel());
@@ -39,156 +41,443 @@ public class PlayerDAO {
 			ps.setLong(5, player.balance.value);
 			ps.setInt(6, player.getState() == Player.State.awaitingNickname ? 0 : 1);
 			ps.execute();
-			inventoryDAO.put(player.getId(), player.getInventory());
 			statsDAO.put(player.getStats(), player.getId());
-		} catch (SQLException e) {
+			abilityDAO.put(player.getId());
+			ps.close();
+			ps = null;
+		}
+		catch (SQLException e)
+		{
 			System.err.println(e.getErrorCode());
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception");
 		}
+		finally
+		{
+			if (ps != null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
 	}
+	//endregion
 
-	public Player get_by_id(long id) {
-		try {
-			PreparedStatement ps = connection.prepareStatement("select * from players where id = ?;");
+	//region read
+	public Player get_by_id(long id)
+	{
+		Player player = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String query = "select * from player where id = ?;";
+		try
+		{
+			ps = connection.prepareStatement(query);
 			ps.setLong(1, id);
-			ResultSet rs = ps.executeQuery();
-			Player player = null;
-			if (rs.next()) {
+			rs = ps.executeQuery();
+			if (rs.next())
+			{
 				player = form(rs);
 			}
 			rs.close();
-			return player;
-		} catch (SQLException e) {
+			rs = null;
+			ps.close();
+			ps = null;
+		}
+		catch (SQLException e)
+		{
 			System.err.println(e.getErrorCode());
 			e.printStackTrace();
-			throw new RuntimeException("SQL Exception");
+			throw new RuntimeException("SQL Exception");  // todo
 		}
+		finally
+		{
+			if (rs != null)
+			{
+				try
+				{
+					rs.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+			if (ps != null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+
+		return player;
 	}
 
-	public Player get_by_name(String name) {
-		String query = "select * from players where name = ?;";
-		try {
-			PreparedStatement ps = connection.prepareStatement(query);
+	public Player get_by_name(String name)
+	{
+		Player player = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String query = "select * from player where name = ?;";
+		try
+		{
+			ps = connection.prepareStatement(query);
 			ps.setString(1, name);
-			ResultSet rs = ps.executeQuery();
-			Player player = null;
-			if (rs.next()) {
+			rs = ps.executeQuery();
+			if (rs.next())
+			{
 				player = form(rs);
 			}
-			return player;
-		} catch (SQLException ex) {
+			rs.close();
+			rs = null;
+			ps.close();
+			ps = null;
+		}
+		catch (SQLException ex)
+		{
+			ex.printStackTrace();
+			throw new RuntimeException("SQL Exception", ex);  // todo
+		}
+		finally
+		{
+			if (rs != null)
+			{
+				try
+				{
+					rs.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+			if (ps != null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+
+		return player;
+	}
+
+	public List<Player> getAll()
+	{
+		List<Player> result = new ArrayList<>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String query = "select * from player;";
+		try
+		{
+			ps = connection.prepareStatement(query);
+			rs = ps.executeQuery();
+			while (rs.next())
+			{
+				result.add(form(rs));
+			}
+			rs.close();
+			rs = null;
+			ps.close();
+			ps = null;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new RuntimeException("SQL Exception", e);  // todo
+		}
+		finally
+		{
+			if (rs != null)
+			{
+				try
+				{
+					rs.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+			if (ps != null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public List<Player> getTopN(String field_name, boolean ascending, int limit)
+	{
+		List<Player> players = new ArrayList<>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String query = String.format("select * from player where R = 1 order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
+		try
+		{
+			ps = connection.prepareStatement(query);
+			ps.setInt(1, limit);
+			rs = ps.executeQuery();
+			while (rs.next())
+			{
+				players.add(form(rs));
+			}
+			rs.close();
+			rs = null;
+			ps.close();
+			ps = null;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new RuntimeException("SQL Exception", e);  // todo
+		}
+		finally
+		{
+			if (rs != null)
+			{
+				try
+				{
+					rs.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+			if (ps != null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+
+		return players;
+	}
+	//endregion
+
+	public int size()
+	{
+		Statement statement;
+		ResultSet rs;
+		String query = "select count(*) from players;";
+		try
+		{
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+			rs.next();
+			int result = rs.getInt(1);
+			rs.close();
+			statement.close();
+			return result;
+		}
+		catch (SQLException ex)
+		{
 			ex.printStackTrace();
 			throw new RuntimeException("SQL Exception", ex);
 		}
 	}
 
-	public List<Player> getAll() {
-		List<Player> result = new ArrayList<>();
-		try {
-			PreparedStatement ps = connection.prepareStatement("select * from players;");
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				result.add(form(rs));
-			}
-			return result;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("SQL Exception", e);
-		}
-	}
-
-	public List<Player> getTopN(String field_name, boolean ascending, int limit) {
-		try {
-			List<Player> players = new ArrayList<>();
-			String query = String.format("select * from players where registered = 1 order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
-			PreparedStatement ps = connection.prepareStatement(query);
-			ps.setInt(1, limit);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				players.add(form(rs));
-			}
-			return players;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("SQL Exception", e);
-		}
-	}
-
-	public int size() {
-		String query = "select count(*) from players;";
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery(query);
-			rs.next();
-			return rs.getInt(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("SQL Exception", e);
-		}
-	}
-
+	//region update
 	public void update(Player player)  // TODO extract exception to signature
 	{
-
 		long id = player.getId();
-		long now_t = System.currentTimeMillis();
-		try {
-			PreparedStatement ps = connection.prepareStatement("update players set xp = ?, 'level' = ?, name = ?, balance = ?, registered = ? where id = ?;");
-			ps.setInt(1, player.getXp());
-			ps.setInt(2, player.getLevel());
-			ps.setString(3, player.getUsername());
-			ps.setLong(4, player.balance.value);
-			ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
-			//ps.setString(6, DatabaseDateMediator.ms_to_string(player.last_fia));
-			//ps.setString(7, DatabaseDateMediator.ms_to_string(player.last_pockets));
-			ps.setLong(6, id);
-			ps.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Username is already used");
+		PreparedStatement ps = null;
+		Statement st = null;
+		synchronized (connection)
+		{
+			try
+			{
+				st = connection.createStatement();
+				//st.execute("begin transaction");
+
+				String update_players =
+						"update players set xp = ?, 'level' = ?, name = ?, balance = ?, registered = ? where id = ?;";
+				ps = connection.prepareStatement(update_players);
+				ps.setInt(1, player.getXp());
+				ps.setInt(2, player.getLevel());
+				ps.setString(3, player.getUsername());
+				ps.setLong(4, player.balance.value);
+				ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
+				ps.setLong(6, id);
+				ps.execute();
+
+				String update_stats =
+						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea) values (?, ?, ?, ?, ?, ?);";
+				ps = connection.prepareStatement(update_stats);
+				Stats stats = player.stats;
+				ps.setLong(1, id);
+				ps.setInt(2, stats.bonus);
+				ps.setInt(3, stats.coinWins);
+				ps.setInt(4, stats.coinLosses);
+				ps.setInt(5, stats.coffee);
+				ps.setInt(6, stats.tea);
+				ps.execute();
+
+				String update_cooldowns =
+						"insert or replace into cooldowns (player_id, find_expiration, pockets_expiration) values (?, ?, ?);";
+				ps = connection.prepareStatement(update_cooldowns);
+				ps.setLong(1, id);
+				ps.setString(2, DatabaseDateMediator.ms_to_string(player.findExpiration));
+				ps.setString(3, DatabaseDateMediator.ms_to_string(player.pocketsExpiration));
+				ps.execute();
+
+				//st.execute("commit transaction;");
+
+				ps.close();
+				ps = null;
+				st.close();
+				st = null;
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+				throw new RuntimeException("Username is already used");  // todo
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+			finally
+			{
+				if (ps != null)
+				{
+					try
+					{
+						ps.close();
+					}
+					catch (SQLException ex)
+					{
+						ex.printStackTrace();
+					}
+				}
+				if (st != null)
+				{
+					try
+					{
+						st.close();
+					}
+					catch (SQLException ex)
+					{
+						ex.printStackTrace();
+					}
+				}
+			}
 		}
 	}
+	//endregion
 
-	public void delete(long id) {
-		try {
-			PreparedStatement ps = connection.prepareStatement("delete from players where id = ?;");
+	//region delete
+	public void delete(long id)
+	{
+		PreparedStatement ps = null;
+		try
+		{
+			ps = connection.prepareStatement("delete from players where id = ?;");
 			ps.setLong(1, id);
 			ps.execute();
-		} catch (SQLException e) {
+			ps.close();
+			ps = null;
+		}
+		catch (SQLException e)
+		{
 			System.err.println(e.getErrorCode());
 			e.printStackTrace();
-			throw new RuntimeException("SQL Exception");
+			throw new RuntimeException("SQL Exception");  // todo
+		}
+		finally
+		{
+			if (ps != null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
+	//endregion
 
-	private Player form(ResultSet rs) throws SQLException {
+	private Player form(ResultSet rs) throws SQLException
+	{
 		long id = rs.getLong("id");
+		String username = rs.getString("name");
 		int xp = rs.getInt("xp");
 		int level = rs.getInt("level");
-		String username = rs.getString("name");
 		long balance = rs.getLong("balance");
-		Player.State state = rs.getInt("registered") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
-
+		//Player.State state = rs.getInt("registered") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
+		Player.State state = rs.getInt("R") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
+		//Long findExpiration = read_ts(rs, "find_expiration");
+		Long findExpiration = read_ts(rs, "FIND");
+		//Long pocketsExpiration = read_ts(rs, "pockets_expiration");
+		Long pocketsExpiration = read_ts(rs, "POCKETS");
+		int bonus = rs.getInt("bonus");
+		//int coinWins = rs.getInt("coinWins");
+		int coinWins = rs.getInt("W");
+		//int coinLosses = rs.getInt("coinLosses");
+		int coinLosses = rs.getInt("L");
+		int coffee = rs.getInt("coffee");
+		int tea = rs.getInt("tea");
+		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea);
 		Inventory inventory = inventoryDAO.get(id);
-		Stats stats = statsDAO.get(id);
 		Player player = new Player(id, xp, level, username, balance, state, inventory, stats, host);
-		Long[] expirations = abilityDAO.get(id);
-		player.findExpiration = expirations[0];
-		player.pocketsExpiration = expirations[1];
+		player.findExpiration = findExpiration;
+		player.pocketsExpiration = pocketsExpiration;
 		return player;
 	}
 
-	private long read_ts(ResultSet rs, String column_name) throws SQLException {
-		long result = 0;
+	private Long read_ts(ResultSet rs, String column_name) throws SQLException
+	{
+		Long result = null;
 		String date_UTC_string = rs.getString(column_name);
-		if (date_UTC_string != null) {
-			try {
+		if (date_UTC_string != null)
+		{
+			try
+			{
 				result = DatabaseDateMediator.string_to_ms(date_UTC_string);
-			} catch (ParseException e) {
+			}
+			catch (ParseException e)
+			{
 				//throw new SQLException("Error while parsing last find item date from database", e);
-				System.err.printf("Error while parsing last find item date from database, got:\n%s\n", date_UTC_string);
-			} catch (Exception ex) {
+				System.err.printf("Error while parsing %s from database, got:\n%s\n", column_name, date_UTC_string);
+			}
+			catch (Exception ex)
+			{
 				System.err.println("Unknown exception when reading database" + ex);
 				ex.printStackTrace();
 			}

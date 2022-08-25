@@ -174,9 +174,9 @@ public class Bot extends TelegramLongPollingBot {
 				if (text.equals("/start")) {
 					player = new Player(id, this);
 					active_players.put(id, player);
-					statsDAO.put(player.getStats(), player.getId());
+					//statsDAO.put(player.getStats(), player.getId());
 					playerDAO.put(player);
-					abilityDAO.put(id);
+					//abilityDAO.put(id);
 
 					sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
 					sendMsg(id, "Введите ник: ");
@@ -498,11 +498,12 @@ public class Bot extends TelegramLongPollingBot {
 				player.balance.transfer(-goal);
 
 				receiver.stats.coffee++;
-				statsDAO.update(receiver.getStats(), receiver.getId());
+				//statsDAO.update(receiver.getStats(), receiver.getId());
 				sendMsg(player.getId(), "☕ Кофе отправлен");
 				sendMsg(receiver.getId(), String.format("☕ Игрок `%s` угостил вас кружечкой кофе с сообщением: `%s`", player.getUsername(), note));
-				statsDAO.update(receiver.getStats(), receiver.getId());
+				//statsDAO.update(receiver.getStats(), receiver.getId());
 				playerDAO.update(player);
+				playerDAO.update(receiver);
 				player.setState(Player.State.awaitingCommands);
 			} else {
 				sendMsg(player.getId(), "Сообщение больше, чем 48 символов");
@@ -551,11 +552,12 @@ public class Bot extends TelegramLongPollingBot {
 				player.balance.transfer(-goal);
 
 				receiver.stats.tea++;
-				statsDAO.update(receiver.getStats(), receiver.getId());
+				//statsDAO.update(receiver.getStats(), receiver.getId());
 				sendMsg(player.getId(), "\uD83C\uDF3F Чай отправлен");
 				sendMsg(receiver.getId(), String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая с сообщением: `%s`", player.getUsername(), note));
-				statsDAO.update(receiver.getStats(), receiver.getId());
+				//statsDAO.update(receiver.getStats(), receiver.getId());
 				playerDAO.update(player);
+				playerDAO.update(receiver);
 				player.setState(Player.State.awaitingCommands);
 			} else {
 				sendMsg(player.getId(), "Сообщение больше, чем 48 символов");
@@ -789,7 +791,7 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			player.stats.bonus++;
 			playerDAO.update(player);
-			statsDAO.update(player.getStats(), player.getId());
+			//statsDAO.update(player.getStats(), player.getId());
 		} else {
 			sendMsg(id, "Вы уже получили свой бонус");
 		}
@@ -835,7 +837,6 @@ public class Bot extends TelegramLongPollingBot {
 
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
-		long cooldownMs = findCooldown;
 		if (player.getInventory().getInvSize() < limitSpace) {
 			if (player.findExpiration != null && player.findExpiration > now_ts) {
 				sendMsg(player_id, String.format("\u231B Время ожидания: %s",
@@ -845,10 +846,10 @@ public class Bot extends TelegramLongPollingBot {
 				inventoryDAO.putItem(player_id, new_item.getId());
 				sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 				player.addXp(2);
-				player.findExpiration = now_ts + cooldownMs;
+				player.findExpiration = now_ts + findCooldown;
 
 				playerDAO.update(player);
-				abilityDAO.updateFind(player_id, now_ts + cooldownMs);
+				//abilityDAO.updateFind(player_id, now_ts + cooldownMs);
 			}
 		} else {
 			sendMsg(player_id, "⚠ В вашем инвентаре нет места");
@@ -907,7 +908,7 @@ public class Bot extends TelegramLongPollingBot {
 				throw new RuntimeException("WTF?");
 			}
 			player.pocketsExpiration = now_ts + cooldownMs;
-			abilityDAO.updatePockets(player_id, now_ts + cooldownMs);
+			//abilityDAO.updatePockets(player_id, now_ts + cooldownMs);
 			playerDAO.update(player);
 		}
 	}
@@ -1275,7 +1276,7 @@ public class Bot extends TelegramLongPollingBot {
 		player.setState(Player.State.awaitingCommands);
 		sendMsg(player_id, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
 
-		statsDAO.update(player.getStats(), player.getId());
+		//statsDAO.update(player.getStats(), player.getId());
 		playerDAO.update(player);
 
 
