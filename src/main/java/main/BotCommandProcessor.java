@@ -68,7 +68,7 @@ public class BotCommandProcessor
 		res.put("/case", bot::command_case);
 
 		res.put("/open", bot::command_open);
-
+		res.put("/touch", bot::command_touch);
 
 
 
