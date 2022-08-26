@@ -37,6 +37,8 @@ public class Money
 	{
 		StringBuilder sb = new StringBuilder();
 		long value = this.value;
+		if (value == 0)
+			sb.append('0');
 		int digitNo = 0;
 		while (value > 0)
 		{
@@ -45,10 +47,10 @@ public class Money
 			value /= 10;
 			if (digitNo % 3 == 0 && value > 0)
 			{
-				sb.append(",");
+				sb.append(',');
 			}
 		}
-		return sb.append("$").reverse().toString();
+		return sb.append('$').reverse().toString();
 	}
 
 	@Override
