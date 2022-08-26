@@ -319,7 +319,7 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			active_players.remove(player_id);
 		}
-	
+
 
 
 
@@ -1263,6 +1263,28 @@ public class Bot extends TelegramLongPollingBot {
 		}
 	}
 
+	public void command_touch(Player player){
+		List<Player> players = playerDAO.getAll();
+		Random randomPlayer = new Random();
+		int randomIndex = randomPlayer.nextInt(players.size());
+
+
+		Map<Item, String> info = new HashMap<Item, String>();
+		info.put(itemDAO.getByName("\uD83E\uDD8B Брелок с бабочкой"), "Красивый брелок, надеюсь не улетит...");
+		info.put(itemDAO.getByName("\uD83D\uDCE6 Кейс Gift"), "Кажется, он пустой");
+		info.put(itemDAO.getByName("\uD83D\uDCDD Тег"), "Можно сменить ник на " + player.getUsername() + "1, чтобы быть еще круче");
+		info.put(itemDAO.getByName("\uD83D\uDCC0 Whirr - Feels Like You"), "Вы трогаете лучший shoegaze альбом 2019 года");
+		info.put(itemDAO.getByName("\uD83C\uDF92 Рюкзак"), "Блин, место много, но сменка не влазит...");
+		info.put(itemDAO.getByName("\uD83D\uDC8E Плюшевая Аянами Рей"), "Куда мы лезем, Боже...");
+		info.put(itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь"), "Светит ярко, особенно если в глаза");
+		info.put(itemDAO.getByName("☕ Чашка 'Египет'"), "Говорят кофе из этой чашки еще вкуснее");
+		info.put(itemDAO.getByName("\uD83D\uDC1FУдочка"), "Этой удочкой ловят не только рыбу, но и преступников");
+		info.put(itemDAO.getByName("Текст песни 'FF'"), "FF, я уперся в потолок...");
+		info.put(itemDAO.getByName("Бипки"), "Что такое бипки, кто-то знает?");
+		info.put(itemDAO.getByName("Камень"), "Вы попали в голову игроку `" + players.get(randomIndex).getUsername() + "` ему не понравилось, странно");
+
+
+	}
 
 	public void command_me(Player player) {
 		try{
@@ -1289,7 +1311,7 @@ public class Bot extends TelegramLongPollingBot {
 				"☕️ Выпито кружек кофе: " + player.stats.coffee +
 				"\n" +
 				"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins +
-				"\n" +
+				"\n";
 
 			this.execute(photo);
 			sendMsg(player_id, me);
