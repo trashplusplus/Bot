@@ -8,15 +8,15 @@ create table if not exists players
     registered integer not null default 0
 );
 
-create table if not exists ability_cooldowns
+create table if not exists cooldowns
 (
-    player_id integer references players (id),
+    player_id integer primary key references players (id) on update cascade on delete cascade,
     find_expiration text default null,
     pockets_expiration text default null
 );
 
-create index if not exists find_ex_id on ability_cooldowns (find_expiration);
-create index if not exists pockets_ex_id on ability_cooldowns (pockets_expiration);
+create index if not exists find_ex_id on cooldowns (find_expiration);
+create index if not exists pockets_ex_id on cooldowns (pockets_expiration);
 
 create table if not exists items
 (
@@ -99,7 +99,11 @@ insert or ignore into items (name, rarity, cost) values
     ('Горбуша', 'Common', 100),
     ('Бычок', 'Common', 100),
     ('Бутылка', 'Cheap', 5),
-    ('📝 Тег', 'Rare', 5000);
+    ('📝 Тег', 'Rare', 5000),
+    ('📦 Кейс Gift', 'Common', 500),
+    ('🔑 Ключ от кейса', 'Rare', 7000),
+    ('🦋 Брелок с бабочкой', 'Gift', 25000);
+
 
 
 
@@ -117,13 +121,27 @@ create table if not exists inventory
 
 create table if not exists stats
 (
-    player_id,
+    player_id integer primary key references players (id) on delete cascade on update cascade,
     bonus integer not null default 0,
-    coinWins integer,
-    coinLosses integer,
+    coinWins integer default 0,
+    coinLosses integer default 0,
     coffee integer default 0,
-    tea integer default 0,
-
-    foreign key (player_id) references players (id) on update cascade
-
+    tea integer default 0
 );
+
+
+create view if not exists player as
+    select
+        id, name, xp, level, balance, registered as R,
+        find_expiration as FIND, pockets_expiration as POCKETS,
+        coinWins as W, coinLosses as L, coffee, tea, bonus
+    from
+    (
+        players
+            left join
+        cooldowns
+            on id = cooldowns.player_id
+    )
+        left join
+    stats
+        on id = stats.player_id;
