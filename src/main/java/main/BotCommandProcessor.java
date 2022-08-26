@@ -65,6 +65,9 @@ public class BotCommandProcessor
 		res.put("/ach", bot::command_achievements);
 
 		res.put("Пирожок", bot::command_bonus);
+		res.put("/case", bot::command_case);
+
+		res.put("/open", bot::command_open);
 
 
 

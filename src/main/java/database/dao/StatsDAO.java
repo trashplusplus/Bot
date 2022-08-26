@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class StatsDAO {
+
 	private final Connection connection;
 
 	public StatsDAO(Connection connection) {
