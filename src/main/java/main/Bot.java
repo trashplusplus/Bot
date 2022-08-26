@@ -97,7 +97,12 @@ public class Bot extends TelegramLongPollingBot
 	public void setButtons(SendMessage sendMessage)
 	{
 		long id = Long.parseLong(sendMessage.getChatId());
-		Player player = playerDAO.get_by_id(id);
+		//Player player = playerDAO.get_by_id(id);
+		Player player = active_players.get(id);
+		if (player == null)
+		{
+			player = playerDAO.get_by_id(id);
+		}
 		//инициаллизация клавиатуры
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 		//установка разметки
@@ -122,33 +127,50 @@ public class Bot extends TelegramLongPollingBot
 			//keyboardFirstRow.add(new KeyboardButton("/start"));
 		}
 		else
+		switch (player.getState())
 		{
+			case awaitingCommands:
+			{
+				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
+				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
+				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
+				keyboardSecondRow.add(new KeyboardButton("\uD83E\uDDF6 Проверить карманы"));
 
 
-			keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
-			keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
-			keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
-			keyboardSecondRow.add(new KeyboardButton("\uD83E\uDDF6 Проверить карманы"));
+				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
+				keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
 
 
-			keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
-			keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
+				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCB0 Монетка"));
+				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDED2 Магазин"));
+				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
+
+				keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
+				keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
 
 
-			keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCB0 Монетка"));
-			keyboardThirdRow.add(new KeyboardButton("\uD83D\uDED2 Магазин"));
-			keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
-
-			keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
-			keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
-
-
-			keyboardFourthRow.add(new KeyboardButton("🐡 Рыбачить"));
-			keyboardFourthRow.add(new KeyboardButton("\uD83E\uDD88 Сдать рыбу"));
-
-
-			//keyboardFirstRow.add(new KeyboardButton("/me"));
-
+				keyboardFourthRow.add(new KeyboardButton("🐡 Рыбачить"));
+				keyboardFourthRow.add(new KeyboardButton("\uD83E\uDD88 Сдать рыбу"));
+				//keyboardFirstRow.add(new KeyboardButton("/me"));
+				break;
+			}
+			case awaitingTeaNote:
+			case awaitingCoffeeNote:
+			case shopPlaceGood_awaitingCost:
+			case payAwaitingAmount:
+				keyboardFirstRow.add(new KeyboardButton("/back"));
+			case shopBuy:
+			case coinDash:
+			case awaitingTea:
+			case awaitingCoffee:
+			case awaitingSellArguments:
+			case awaitingChangeNickname:
+			case shopPlaceGood_awaitingID:
+			case payAwaitingNickname:
+				keyboardFirstRow.add(new KeyboardButton("/cancel"));
+				break;
+			default:
+				return;
 		}
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));
@@ -263,6 +285,7 @@ public class Bot extends TelegramLongPollingBot
 		catch (NumberFormatException e)
 		{
 			e.printStackTrace();
+			player.setState(Player.State.awaitingCommands);
 			sendMsg(player_id, "⚠\t Пожалуйста, введите целое число");
 		}
 		catch (IndexOutOfBoundsException ee)
