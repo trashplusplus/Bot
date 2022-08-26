@@ -22,6 +22,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 public class Bot extends TelegramLongPollingBot
@@ -210,7 +211,6 @@ public class Bot extends TelegramLongPollingBot
 	{
 		long player_id = player.getId();
 		String username = message.getText();
-		Item tag = itemDAO.getByName("\uD83D\uDCDD Тег");
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 		if (username.matches(usernameTemplate))
@@ -321,19 +321,45 @@ public class Bot extends TelegramLongPollingBot
 		active_players.remove(player_id);
 	}
 
-	void coinDash_processor(Player player, Message message)
-	{
+	void coinDash_processor(Player player, Message message) {
+		List<String> text = new ArrayList<>();
+		text.add("Подбрасываем монетку...");
+		text.add("Молим удачу...");
+		text.add("Скрещиваем пальцы...");
+		text.add("Не не надеемся не на проигрыш...");
+		text.add("Закрываем глаза...");
+		text.add("Держим кулачки...");
+		text.add("Затаиваем дыхание...");
+		text.add("Верим в Бога...");
+		text.add("Надеемся на выигрыш...");
+		text.add("Загадываем желание...");
+		text.add("Думаем о победе...");
+		text.add("Надеемся на решку...");
+		text.add("Надеемся на орла...");
+		text.add("И выпадает...");
+
+
+
+
+
+
 		long player_id = player.getId();
 		String dash = message.getText();
 		try
 		{
 			int i_dash = Integer.parseInt(dash);
 
+			Random r = new Random();
+			int ran = r.nextInt(text.size());
+			if (i_dash > 0 && i_dash <= player.balance.value) {
+
+
 			if (i_dash > 0 && i_dash <= player.balance.value)
 			{
+
 				sendMsg(player_id, "\uD83C\uDFB0 Ваша ставка: " + new Money(i_dash));
 
-				sendMsg(player_id, "Подбрасываем монетку...");
+				sendMsg(player_id, text.get(ran));
 
 				Cooldown kd = new Cooldown(2, () -> coin_dash_callback(player, i_dash));
 				kd.startCooldown();
@@ -1291,8 +1317,13 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
-	public void command_me(Player player)
-	{
+
+	public void command_me(Player player) {
+		try{
+			SendPhoto photo = new SendPhoto();
+			photo.setPhoto(new InputFile(new File(".\\pics\\me.jpg")));
+			photo.setChatId(player.getId());
+
 		long player_id = player.getId();
 		String me = "Информация о персонаже\n" + "\n" +
 				"⭐ Ваш ник: " + player.getUsername() +
@@ -1314,10 +1345,14 @@ public class Bot extends TelegramLongPollingBot
 				"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins +
 				"\n" +
 
-				"\uD83D\uDCC9 Проигрыши в монетке: " + player.stats.coinLosses +
-				"\n";
+			this.execute(photo);
+			sendMsg(player_id, me);
 
-		sendMsg(player_id, me);
+
+		}catch (TelegramApiException e){
+			e.printStackTrace();
+		}
+
 	}
 
 	public void command_shopbuy(Player player)
@@ -1436,10 +1471,85 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 
-	public void command_pay(Player player)
-	{
-		if (player.balance.value <= 0)
-		{
+
+
+	public void command_case(Player player){
+		try{
+			SendPhoto photo = new SendPhoto();
+			photo.setPhoto(new InputFile(new File(".\\pics\\case.jpg")));
+			photo.setChatId(player.getId());
+
+			int casesCounter = 0;
+			int keysCounter = 0;
+			long id = player.getId();
+
+			StringBuilder sb = new StringBuilder("*Открытие кейсов*\n\n");
+
+			Item _case = itemDAO.getByName("\uD83D\uDCE6 Кейс Gift");
+			Item _key = itemDAO.getByName("\uD83D\uDD11 Ключ от кейса");
+
+
+			for(int i = 0; i < player.getInventory().getInvSize(); i++){
+				if(player.getInventory().getItem(i).equals(_case)){
+					casesCounter++;
+				}else if(player.getInventory().getItem(i).equals(_key)){
+					keysCounter++;
+				}
+			}
+
+			sb.append("В кейсах могут выпадать различные предметы редкости `Gift` и `Rare`\n");
+			sb.append("Чтобы открыть кейс нужен предмет `\uD83D\uDD11 Ключ от кейса`\n");
+
+			sb.append(String.format("\uD83D\uDCE6 Кейсы: %d\n", casesCounter));
+			sb.append(String.format("\uD83D\uDD11 Ключи: %d\n", keysCounter));
+			sb.append("\n\n");
+
+			sb.append("Введите /open чтобы открыть кейс: \n");
+			this.execute(photo);
+			sendMsg(id, sb.toString());
+
+		}catch (TelegramApiException e){
+			e.printStackTrace();
+		}
+
+	}
+
+	public void command_open(Player player){
+
+		Random ran = new Random();
+		long id = player.getId();
+		Item _case = itemDAO.getByName("\uD83D\uDCE6 Кейс Gift");
+		Item _key = itemDAO.getByName("\uD83D\uDD11 Ключ от кейса");
+
+		List<Item> loot;
+
+
+		loot = itemDAO.getAll().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift) ||
+				item.getRarity().equals(ItemRarity.Rare))).collect(Collectors.toList());
+
+
+		int ranIndex = ran.nextInt(loot.size());
+
+
+		if(player.getInventory().getItems().contains(_case)){
+			if(player.getInventory().getItems().contains(_key)){
+				Item prize = loot.get(ranIndex);
+				sendMsg(id, String.format("\uD83C\uDF89 Ура! Вам выпал предмет: `%s`", prize.getTitle()));
+				inventoryDAO.putItem(id, prize.getId());
+				inventoryDAO.delete(player.getId(), _key.getId(), 1);
+				inventoryDAO.delete(player.getId(), _case.getId(), 1);
+				playerDAO.update(player);
+			}else{
+				sendMsg(id, "У вас нет ключей");
+			}
+		}else{
+			sendMsg(id, "У вас нет кейсов");
+		}
+
+	}
+
+	public void command_pay(Player player) {
+		if (player.balance.value <= 0) {
 			sendMsg(player.getId(), "У вас нет денег для перевода");
 		}
 		else
