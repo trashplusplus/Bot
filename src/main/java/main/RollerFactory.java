@@ -68,6 +68,9 @@ public class RollerFactory
 				case Gift:
 					weights[i] = 2;
 					break;
+				case Limited:
+					weights[i] = 0;
+					break;
 				default:
 					throw new RuntimeException("WTF?");
 			}

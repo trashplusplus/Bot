@@ -62,7 +62,6 @@ public class BotCommandProcessor
 		res.put("🐡 Рыбачить", bot::command_fish);
 		res.put("/drop", bot::command_drop);
 		res.put("\uD83D\uDEE0 Продать Cheap", bot::command_drop);
-		res.put("/ach", bot::command_achievements);
 
 		res.put("Пирожок", bot::command_bonus);
 		res.put("/case", bot::command_case);
