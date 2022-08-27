@@ -5,7 +5,8 @@ public enum ItemRarity
 	Cheap,
 	Common,
 	Rare,
-	Gift;
+	Gift,
+	Limited;
 
 	@Override
 	public String toString()
@@ -25,6 +26,8 @@ public enum ItemRarity
 				return 3;
 			case Gift:
 				return 1;
+			case Limited:
+				return 0;
 		}
 
 		throw new RuntimeException("WTF?");
