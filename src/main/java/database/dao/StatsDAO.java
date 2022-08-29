@@ -17,13 +17,14 @@ public class StatsDAO {
 
 	public void put(Stats stats, long id) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("insert into stats(player_id, bonus, coinWins, coinLosses, coffee, tea) values (?,?,?,?,?,?);");
+			PreparedStatement ps = connection.prepareStatement("insert into stats(player_id, bonus, coinWins, coinLosses, coffee, tea, trees) values (?,?,?,?,?,?,?);");
 			ps.setLong(1, id);
 			ps.setInt(2, stats.bonus);
 			ps.setInt(3, stats.coinWins);
 			ps.setInt(4, stats.coinLosses);
 			ps.setInt(5, stats.coffee);
 			ps.setInt(6, stats.tea);
+			ps.setInt(7, stats.trees);
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -34,13 +35,14 @@ public class StatsDAO {
 	public void update(Stats stats, long id) {
 
 		try {
-			PreparedStatement ps = connection.prepareStatement("update stats set bonus = ?, coinWins = ?, coinLosses = ?, coffee = ?, tea = ? where player_id = ?;");
+			PreparedStatement ps = connection.prepareStatement("update stats set bonus = ?, coinWins = ?, coinLosses = ?, coffee = ?, tea = ?, trees = ? where player_id = ?;");
 			ps.setInt(1, stats.bonus);
 			ps.setInt(2, stats.coinWins);
 			ps.setInt(3, stats.coinLosses);
 			ps.setInt(4, stats.coffee);
 			ps.setInt(5, stats.tea);
-			ps.setLong(6, id);
+			ps.setInt(6, stats.trees);
+			ps.setLong(7, id);
 			ps.execute();
 
 		} catch (SQLException e) {
@@ -61,7 +63,8 @@ public class StatsDAO {
 						rs.getInt("coinWins"),
 						rs.getInt("coinLosses"),
 						rs.getInt("coffee"),
-						rs.getInt("tea")
+						rs.getInt("tea"),
+						rs.getInt("trees")
 				);
 			}
 

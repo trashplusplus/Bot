@@ -68,6 +68,8 @@ public class BotCommandProcessor
 
 		res.put("/open", bot::command_open);
 		res.put("/touch", bot::command_touch);
+		res.put("/check", bot::command_check);
+		res.put("/capitalgame", bot::command_capitalgame);
 
 
 

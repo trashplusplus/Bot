@@ -130,7 +130,9 @@ public class Player
 		awaitingCoffeeNote,
 		awaitingTea,
 		awaitingTeaNote,
-		touch
+		touch,
+		checkAwaitingNickname,
+		capitalGame
 
 	}
 
