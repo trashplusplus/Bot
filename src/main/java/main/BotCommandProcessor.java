@@ -62,13 +62,14 @@ public class BotCommandProcessor
 		res.put("🐡 Рыбачить", bot::command_fish);
 		res.put("/drop", bot::command_drop);
 		res.put("\uD83D\uDEE0 Продать Cheap", bot::command_drop);
-		res.put("/ach", bot::command_achievements);
 
 		res.put("Пирожок", bot::command_bonus);
 		res.put("/case", bot::command_case);
 
 		res.put("/open", bot::command_open);
 		res.put("/touch", bot::command_touch);
+		res.put("/check", bot::command_check);
+		res.put("/capitalgame", bot::command_capitalgame);
 
 
 

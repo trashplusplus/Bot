@@ -18,8 +18,6 @@ public class Player
 	public Stats stats;
 
 
-
-
 	Bot host;
 
 	// < commands args
@@ -92,8 +90,8 @@ public class Player
 
 	public void levelUp()
 	{
-		level++;
-		xp %= 10;
+
+		xp -= 10 * level++;
 
 		// back-notify the owner
 		host.level_up_notification(this);
@@ -102,7 +100,7 @@ public class Player
 	public void addXp(int xp)
 	{
 		this.xp += xp;
-		if (this.xp >= 10)
+		if (this.xp >= level * 10)
 			levelUp();
 	}
 
@@ -131,7 +129,10 @@ public class Player
 		awaitingCoffee,
 		awaitingCoffeeNote,
 		awaitingTea,
-		awaitingTeaNote
+		awaitingTeaNote,
+		touch,
+		checkAwaitingNickname,
+		capitalGame
 
 	}
 
