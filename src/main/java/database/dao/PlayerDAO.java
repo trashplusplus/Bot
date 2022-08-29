@@ -334,7 +334,7 @@ public class PlayerDAO
 				ps.execute();
 
 				String update_stats =
-						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea) values (?, ?, ?, ?, ?, ?);";
+						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea, trees) values (?, ?, ?, ?, ?, ?, ?);";
 				ps = connection.prepareStatement(update_stats);
 				Stats stats = player.stats;
 				ps.setLong(1, id);
@@ -343,6 +343,7 @@ public class PlayerDAO
 				ps.setInt(4, stats.coinLosses);
 				ps.setInt(5, stats.coffee);
 				ps.setInt(6, stats.tea);
+				ps.setInt(7, stats.trees);
 				ps.execute();
 
 				String update_cooldowns =

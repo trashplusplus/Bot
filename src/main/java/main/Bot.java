@@ -465,11 +465,8 @@ public class Bot extends TelegramLongPollingBot {
 		String dash = message.getText();
 		try {
 			int i_dash = Integer.parseInt(dash);
-
 			Random r = new Random();
 			int ran = r.nextInt(text.size());
-			if (i_dash > 0 && i_dash <= player.balance.value) {
-
 
 				if (i_dash > 0 && i_dash <= player.balance.value) {
 
@@ -482,7 +479,7 @@ public class Bot extends TelegramLongPollingBot {
 				} else {
 					sendMsg(player_id, "⚠\t У вас нет такой суммы");
 				}
-			}
+
 		}catch(NumberFormatException e)	{
 
 				sendMsg(player_id, "⚠\tВаша ставка должна быть целым числом");
@@ -981,10 +978,9 @@ public class Bot extends TelegramLongPollingBot {
 					player.stats.trees++;
 					playerDAO.update(player);
 
-
-
 				}else{
 					sendMsg(player.getId(), "У вас нет саженцов");
+
 				}
 
 			}
