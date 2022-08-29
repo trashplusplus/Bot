@@ -27,6 +27,8 @@ public class BotStateProcessor
 		res.put(Player.State.awaitingCoffee, bot::awaitingCoffee_processor);
 		res.put(Player.State.awaitingCoffeeNote, bot::awaitingCoffeeNote_processor);
 		res.put(Player.State.touch, bot::awaitingTouchId_processor);
+		res.put(Player.State.checkAwaitingNickname, bot::checkAwaitingNickname_processor);
+		res.put(Player.State.capitalGame, bot::capitalGame_processor);
 
 		return res;
 	}

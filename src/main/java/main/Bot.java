@@ -38,6 +38,7 @@ public class Bot extends TelegramLongPollingBot {
 	private static final Roller<Integer> moneyRoller = RollerFactory.getMoneyRoller(new Random());
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
 	private static final Roller<Item> fishRoller = RollerFactory.getFishRoller(new Random());
+	List<Player> playersInGame;
 
 	ScheduledFuture<?> sf_timers;
 	ScheduledFuture<?> sf_find;
@@ -70,6 +71,8 @@ public class Bot extends TelegramLongPollingBot {
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
+		playersInGame = new ArrayList<>();
+
 	}
 
 	public void sendMsg(Long chatId, String text) {
@@ -255,6 +258,24 @@ public class Bot extends TelegramLongPollingBot {
 		}
 	}
 
+	void capitalGame_processor(Player player, Message message){
+		String input = message.getText();
+		long id = player.getId();
+
+		if(input.equals("/exit")){
+			for(Player p : playersInGame){
+				sendMsg(p.getId(), String.format("Игрок `%s` покинул игру", player.getUsername()));
+				active_players.remove(player.getId());
+				playersInGame.remove(player);
+			}
+		}else{
+			for(Player p : playersInGame){
+				sendMsg(p.getId(), String.format("[Игрок] `%s`: %s", player.getUsername(), input));
+			}
+		}
+
+	}
+
 
 	void awaitingChangeNickname_processor(Player player, Message message) {
 		long player_id = player.getId();
@@ -298,8 +319,8 @@ public class Bot extends TelegramLongPollingBot {
 		magazines.put("Вы рассматриваете журнал Vogue 3/5", getPhoto(".\\pics\\mag\\magazine_fashion3.jpg", player));
 		magazines.put("Вы рассматриваете редкий журнал Vogue 4/5", getPhoto(".\\pics\\mag\\magazine_fashion4.jpg", player));
 		magazines.put("Вы рассматриваете журнал Vogue 5/5", getPhoto(".\\pics\\mag\\magazine_fashion5.jpg", player));
-		magazines.put("Вы рассматриваете журнал Playboy 1/2", getPhoto(".\\pics\\mag\\magazine_playboy.jpg", player));
-		magazines.put("Вы рассматриваете журнал Playboy 2/2", getPhoto(".\\pics\\mag\\magazine_playboy2.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал Playboy 1/2", getPhoto(".\\pics\\mag\\magazine_playboy.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал Playboy 2/2", getPhoto(".\\pics\\mag\\magazine_playboy2.jpg", player));
 		magazines.put("Вы рассматриваете машину с глазками", getPhoto(".\\pics\\mag\\magazine_car.jpg", player));
 		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 1/3", getPhoto(".\\pics\\mag\\magazine_point.jpg", player));
 		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 2/3", getPhoto(".\\pics\\mag\\magazine_point2.jpg", player));
@@ -386,6 +407,13 @@ public class Bot extends TelegramLongPollingBot {
 		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 2/3"), "Вы рассматриваете редкий журнал The Male Point Of View 2/3");
 		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 3/3"), "Вы рассматриваете редкий журнал The Male Point Of View 3/3");
 		info.put(itemDAO.getByName("Автомобильный журнал"), "Вы рассматриваете машину с глазками");
+		info.put(itemDAO.getByName("Джинсы"), "Плотная ткань, удобный шов, глубокие карманы");
+		info.put(itemDAO.getByName("Сомбреро"), "Ваша привлекательность в этой шляпе увеличивается на 35%");
+		info.put(itemDAO.getByName("Медиатор"), "Та штука, которая постоянно падает в гитару");
+		info.put(itemDAO.getByName("Пакет"), "В теории, в него можно положить хлеб");
+		info.put(itemDAO.getByName("Курточка"), "Очень подходит для дождливой погоды");
+		info.put(itemDAO.getByName("Петарда"), "У вас в руках корсар-1");
+		info.put(itemDAO.getByName("Тетрадь"), "У вас в руках крутая тетрадка с машинами и голыми девушками, пруфов не будет, поверьте мне наслово");
 
 		long id = player.getId();
 		try {
@@ -616,6 +644,42 @@ public class Bot extends TelegramLongPollingBot {
 		}
 		active_players.remove(player_id);
 	}
+
+	public void checkAwaitingNickname_processor(Player player, Message message){
+		long player_id = player.getId();
+		String nickname = message.getText();
+
+		Player anotherPlayer = playerDAO.get_by_name(nickname);
+
+		if (anotherPlayer != null){
+			Inventory inventory = anotherPlayer.getInventory();
+			if (inventory.getInvSize() != 0)
+			{
+				StringBuilder sb = new StringBuilder("\uD83C\uDF81\t Инвентарь игрока `" + anotherPlayer.getUsername() + "`: ");
+				sb.append("\n");
+				sb.append("========================\n");
+				for (int i = 0; i < inventory.getInvSize(); i++)
+				{
+					sb.append(String.format("Предмет #[%d] : %s\n", i, inventory.getItem(i).toString()));
+				}
+				sb.append("========================\n");
+				//sendMsg(message, "\u26BD");
+				sb.append("\uD83C\uDF81\t Всего предметов: ").append(inventory.getInvSize());
+				sendMsg(player_id, sb.toString());
+			}
+			else
+			{
+				sendMsg(player_id, "\uD83C\uDF81\t Инвентарь `" + nickname + "` пуст\n");
+			}
+		} else {
+				sendMsg(player_id, "Такого игрока не существует");
+		}
+
+		active_players.remove(player.getId());
+
+	}
+
+
 
 	public void payAwaitingNickname_processor(Player player, Message message)
 	{
@@ -1266,6 +1330,26 @@ public class Bot extends TelegramLongPollingBot {
 		sendMsg(player.getId(), String.format("\uD83D\uDCB2 Ваш баланс: %s", player.balance));
 	}
 
+	public void command_capitalgame(Player player){
+
+		sendMsg(player.getId(), "Чтобы выйти введите /exit");
+
+		playersInGame.add(player);
+		for(Player currentPlayer: playersInGame){
+			sendMsg(currentPlayer.getId(), String.format("Игрок `%s` присоединился к игре", player.getUsername()));
+		}
+
+
+		active_players.put(player.getId(), player);
+		player.setState(Player.State.capitalGame);
+
+	}
+
+	public void command_check(Player player){
+		sendMsg(player.getId(), "\uD83D\uDC41 Введите ник игрока, чей инвентарь Вы хотите просмотреть: ");
+		active_players.put(player.getId(), player);
+		player.setState(Player.State.checkAwaitingNickname);
+	}
 
 	public void command_stats(Player player)
 	{
