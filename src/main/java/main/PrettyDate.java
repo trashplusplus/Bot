@@ -73,6 +73,11 @@ public class PrettyDate
 			sb.append(localizer.seconds(seconds));
 		}
 
+		if (sb.length() == 0)
+		{
+			return "<1 секунды";
+		}
+
 		return sb.toString();
 	}
 }
