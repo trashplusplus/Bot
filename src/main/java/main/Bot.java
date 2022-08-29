@@ -959,7 +959,7 @@ public class Bot extends TelegramLongPollingBot {
 
 		Random r = new Random();
 		boolean success = r.nextBoolean();
-		long fee = r.nextInt(3500) % 500;
+		long fee = r.nextInt(3500);
 		try
 		{
 			Item i = itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь");
