@@ -541,13 +541,6 @@ public class Bot extends TelegramLongPollingBot
 				sendMsg(player_id, "⚠\tВаша ставка должна быть целым числом");
 				e.printStackTrace();
 
-			}
-		}
-		catch (NumberFormatException e)
-		{
-
-			sendMsg(player_id, "⚠\tВаша ставка должна быть целым числом");
-			e.printStackTrace();
 		}
 		active_players.remove(player_id);
 	}
