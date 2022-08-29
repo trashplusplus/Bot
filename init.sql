@@ -106,7 +106,21 @@ insert or ignore into items (name, rarity, cost) values
     ('Саженец', 'Cheap', 150),
     ('Подшипник', 'Cheap', 50),
     ('⌚ Часы', 'Gift', 10000),
-    ('🧚‍♀ Фея', 'Limited', 0);
+    ('🧚‍♀ Фея', 'Limited', 0),
+    ('Космический журнал', 'Rare', 7000),
+    ('🍓 Журнал Playboy 1/2', 'Gift', 7000),
+    ('🍓 Журнал Playboy 2/2', 'Gift', 11000),
+    ('Журнал ''Стальной алхимик''', 'Common', 1500),
+    ('🔮 Журнал Vogue 1/5', 'Gift', 10500),
+    ('🔮 Журнал Vogue 2/5', 'Gift', 3000),
+    ('🔮 Журнал Vogue 3/5', 'Gift', 5000),
+    ('🔮 Журнал Vogue 4/5', 'Gift', 9000),
+    ('🔮 Журнал Vogue 5/5', 'Gift', 5000),
+    ('🍓 Журнал The Male Point Of View 1/3', 'Gift', 15000),
+    ('🍓 Журнал The Male Point Of View 2/3', 'Gift', 20000),
+    ('🍓 Журнал The Male Point Of View 3/3', 'Gift', 23000),
+    ('Автомобильный журнал', 'Common', 1500);
+
 
 
 
@@ -130,7 +144,8 @@ create table if not exists stats
     coinWins integer default 0,
     coinLosses integer default 0,
     coffee integer default 0,
-    tea integer default 0
+    tea integer default 0,
+    trees integer default 0
 );
 
 
@@ -138,7 +153,7 @@ create view if not exists player as
     select
         id, name, xp, level, balance, registered as R,
         find_expiration as FIND, pockets_expiration as POCKETS,
-        coinWins as W, coinLosses as L, coffee, tea, bonus
+        coinWins as W, coinLosses as L, coffee, tea, bonus, trees
     from
     (
         players

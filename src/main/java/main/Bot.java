@@ -169,7 +169,7 @@ public class Bot extends TelegramLongPollingBot {
 			System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
 
 			if (player == null) {
-				if (text.equals("/start")) {
+				if (text.equals("/start") || text.equals("⭐ Начать")) {
 					player = new Player(id, this);
 					active_players.put(id, player);
 					//statsDAO.put(player.getStats(), player.getId());
@@ -288,8 +288,22 @@ public class Bot extends TelegramLongPollingBot {
 	void awaitingTouchId_processor(Player player, Message message) {
 		Map<String, SendPhoto> magazines = new HashMap<>();
 
-		magazines.put("Вы детально рассматриваете Аянами Рей", getPhoto(".\\pics\\magazine_evangelion.jpg", player));
-		magazines.put("Вы рассматриваете винтажный журнал", getPhoto("\\pics\\magazine_evangelion.jpg", player));
+		magazines.put("Вы детально рассматриваете Аянами Рей", getPhoto(".\\pics\\mag\\magazine_evangelion.jpg", player));
+		magazines.put("Вы рассматриваете винтажный журнал", getPhoto(".\\pics\\mag\\magazine_vintage.jpg", player));
+		magazines.put("Вы рассматриваете космический журнал", getPhoto(".\\pics\\mag\\magazine_space.jpg", player));
+		magazines.put("Продолжение следует", getPhoto(".\\pics\\mag\\magazine_playboy2.jpg", player));
+		magazines.put("Бегом искать филосовский камень", getPhoto(".\\pics\\mag\\magazine_fullmetal.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал Vogue 1/5", getPhoto(".\\pics\\mag\\magazine_fashion.jpg", player));
+		magazines.put("Вы рассматриваете журнал Vogue 2/5", getPhoto(".\\pics\\mag\\magazine_fashion2.jpg", player));
+		magazines.put("Вы рассматриваете журнал Vogue 3/5", getPhoto(".\\pics\\mag\\magazine_fashion3.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал Vogue 4/5", getPhoto(".\\pics\\mag\\magazine_fashion4.jpg", player));
+		magazines.put("Вы рассматриваете журнал Vogue 5/5", getPhoto(".\\pics\\mag\\magazine_fashion5.jpg", player));
+		magazines.put("Вы рассматриваете журнал Playboy 1/2", getPhoto(".\\pics\\mag\\magazine_playboy.jpg", player));
+		magazines.put("Вы рассматриваете журнал Playboy 2/2", getPhoto(".\\pics\\mag\\magazine_playboy2.jpg", player));
+		magazines.put("Вы рассматриваете машину с глазками", getPhoto(".\\pics\\mag\\magazine_car.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 1/3", getPhoto(".\\pics\\mag\\magazine_point.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 2/3", getPhoto(".\\pics\\mag\\magazine_point2.jpg", player));
+		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 3/3", getPhoto(".\\pics\\mag\\magazine_point3.jpg", player));
 
 		Map<Item, String> info = new HashMap<>();
 		Calendar cal = Calendar.getInstance();
@@ -326,7 +340,7 @@ public class Bot extends TelegramLongPollingBot {
 		info.put(itemDAO.getByName("Ожерелье"), "Его можно подарить Вашей девушке, хотя на руке тоже ничего смотрится...");
 		info.put(itemDAO.getByName("Кукурушки"), "Не хватает молока");
 		info.put(itemDAO.getByName("Карась"), "Карась, кадвась, катрись...");
-		info.put(itemDAO.getByName("Бычок"), "Погодите, это что окурок?");
+		info.put(itemDAO.getByName("Бычок"), "Погодите, это что окурок?!");
 		info.put(itemDAO.getByName("Браслет 'Сириус'"), "Красивый браслет со звездочками");
 		info.put(itemDAO.getByName("Шоколадка"), "Лучше съесть ее в сторонке, пока игрок `" + anotherPlayer + "` не видит");
 		info.put(itemDAO.getByName("Стальной нож"), "Им можно порезать хлеб, остается найти кто такой Хлеб");
@@ -355,10 +369,23 @@ public class Bot extends TelegramLongPollingBot {
 		info.put(itemDAO.getByName("Лопата"), "Пора картошку копать");
 		info.put(itemDAO.getByName("Футболка 'Drain'"), "Если эта футболка у Вас, получается `" + anotherPlayer + "` сейчас без футболки?");
 		info.put(itemDAO.getByName("Бусы"), "Красивые бусы, их можно продать скупщику");
-		info.put(itemDAO.getByName("Саженец"), "Если его посадить, вырастет большое дерево");
-		info.put(itemDAO.getByName("Подшипник"), "Лучше чем спиннер");
+		info.put(itemDAO.getByName("Саженец"), "Саженцы можно посадить в *Лесу* и получить за это опыт или деньги");
+		info.put(itemDAO.getByName("Подшипник"), "Вы искачкали руки в мазуте");
 		info.put(itemDAO.getByName("⌚ Часы"), String.format("На часах %d:%d", hours, minutes));
 		info.put(itemDAO.getByName("\uD83E\uDDDA\u200D♀ Фея"), "Карманная фея, ну такого `" + anotherPlayer + "` точно не видел");
+		info.put(itemDAO.getByName("Космический журнал"), "Вы рассматриваете космический журнал");
+		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал Playboy 1/2"), "Вы рассматриваете редкий журнал Playboy 1/2");
+		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал Playboy 2/2"), "Вы рассматриваете редкий журнал Playboy 2/2");
+		info.put(itemDAO.getByName("Журнал 'Стальной алхимик'"), "Вы держите журнал по Стальному Алхимику");
+		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 1/5"), "Вы рассматриваете редкий журнал Vogue 1/5");
+		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 2/5"), "Вы рассматриваете журнал Vogue 2/5");
+		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 3/5"), "Вы рассматриваете журнал Vogue 3/5");
+		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 4/5"), "Вы рассматриваете редкий журнал Vogue 4/5");
+		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 5/5"), "Вы рассматриваете журнал Vogue 5/5");
+		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 1/3"), "Вы рассматриваете редкий журнал The Male Point Of View 1/3");
+		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 2/3"), "Вы рассматриваете редкий журнал The Male Point Of View 2/3");
+		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 3/3"), "Вы рассматриваете редкий журнал The Male Point Of View 3/3");
+		info.put(itemDAO.getByName("Автомобильный журнал"), "Вы рассматриваете машину с глазками");
 
 		long id = player.getId();
 		try {
@@ -849,12 +876,13 @@ public class Bot extends TelegramLongPollingBot {
 				"\n" +
 				" \\[Развлечения] \n" +
 				"\uD83C\uDFB0 /coin - сыграть в Монетку \n" +
-				"\uD83C\uDFB0 /tea - отправить чай \n" +
-				"\uD83C\uDFB0 /coffee - отправить кофе \n" +
+				"\uD83C\uDF3F /tea - отправить чай \n" +
+				"☕️ /coffee - отправить кофе \n" +
+				"\uD83D\uDD11 /case - открывать кейсы \n" +
 				"\n" +
 				" \\[Локации] \n" +
 
-				"\uD83D\uDC80 /forest - посетить Лес \n" +
+				"\uD83C\uDF33 /forest - посетить Лес \n" +
 
 				"\uD83D\uDC21 /fish - пойти на рыбалку \n"
 
@@ -867,7 +895,7 @@ public class Bot extends TelegramLongPollingBot {
 
 		Random r = new Random();
 		boolean success = r.nextBoolean();
-		long fee = r.nextInt(3500) % 10;
+		long fee = r.nextInt(3500) % 500;
 		try
 		{
 			Item i = itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь");
@@ -876,18 +904,19 @@ public class Bot extends TelegramLongPollingBot {
 			{
 				if(player.getInventory().getItems().contains(j)){
 					if(success == true){
-						sendMsg(player.getId(), "\uD83C\uDF31 Вы посадили саженец, природа это оценила | +$" + fee);
+						sendMsg(player.getId(), "\uD83C\uDF33 Вы посадили саженец, природа это оценила | +$" + fee);
 						player.getMoney().transfer(fee);
 						player.addXp(1);
 						inventoryDAO.delete(player.getId(), j.getId(), 1);
 
 					}else{
-						sendMsg(player.getId(), "\uD83C\uDF31 Вы посадили саженец");
-						sendMsg(player.getId(), "\uD83C\uDF31 Всего посажено: " + player.stats.trees);
+						sendMsg(player.getId(), "\uD83C\uDF33 Вы посадили саженец");
 						player.addXp(2);
 					}
 					inventoryDAO.delete(player.getId(), j.getId(), 1);
+					player.stats.trees++;
 					playerDAO.update(player);
+
 
 
 				}else{
@@ -1139,7 +1168,7 @@ public class Bot extends TelegramLongPollingBot {
 				Item new_item = findRoller.roll();
 				inventoryDAO.putItem(player_id, new_item.getId());
 				sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
-				player.addXp(2);
+				player.addXp(5);
 				player.findExpiration = now_ts + findCooldown;
 
 				playerDAO.update(player);
@@ -1245,7 +1274,7 @@ public class Bot extends TelegramLongPollingBot {
 
 	public void command_top(Player player)
 	{
-		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ 10 игроков:\n");
+		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ 10 самых богатых игроков:\n\n");
 		players_list.append("========================");
 		players_list.append("\n");
 		for (Player pl : playerDAO.getTopN("balance", false, 10))
@@ -1260,9 +1289,12 @@ public class Bot extends TelegramLongPollingBot {
 				players_list.append("\n");
 				players_list.append("========================");
 				players_list.append("\n");
+
 			}
 
 		}
+		players_list.append("\n");
+		players_list.append("\uD83D\uDCBB Всего игроков: " + playerDAO.getAll().size());
 		sendMsg(player.getId(), players_list.toString());
 	}
 
@@ -1410,55 +1442,44 @@ public class Bot extends TelegramLongPollingBot {
 			photo.setChatId(player.getId());
 
 		long player_id = player.getId();
-		String me = "Информация о персонаже\n" + "\n" +
-				"Здесь показывается вся Ваша статистика и ачивки\n\n" +
-				"⭐ Ваш ник: " + player.getUsername() +
-				"\n" +
-				"\n" +
-				"\uD83D\uDCB0 Ваш баланс: " + player.getMoney() +
-				"\n" +
-				"\n" +
-				"\uD83C\uDF20 Ваш GameID: " + player_id +
-				"\n" +
-				"\n" +
-				String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP)", player.getLevel(), player.getXp()) +
-				"\n" +
-
-				"\uD83C\uDF3F Выпито кружек чая: " + player.stats.tea +
-				"\n" +
-				"☕️ Выпито кружек кофе: " + player.stats.coffee +
-				"\n" +
-				"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins +
-				"\n" +
-				"\uD83D\uDCC9 Проигрыши в монетке: " + player.stats.coinLosses +
-				"\n\n";
+		StringBuilder sb = new StringBuilder("*Информация о персонаже*\n\n");
+		sb.append("Здесь показывается вся Ваша статистика и достижения\n\n");
+		sb.append("⭐ Ваш ник: " + player.getUsername() + "\n\n");
+		sb.append("\uD83D\uDCB0 Ваш баланс: " + player.getMoney() + "\n\n");
+		sb.append("\uD83C\uDF20 Ваш GameID: " + player_id + "\n\n");
+		sb.append(String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP) \n", player.getLevel(), player.getXp()));
+		sb.append("\uD83C\uDF3F Выпито кружек чая: " + player.stats.tea + "\n");
+		sb.append("☕️ Выпито кружек кофе: " + player.stats.coffee + "\n");
+		sb.append(	"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins + "\n");
+		sb.append("\uD83D\uDCC9 Проигрыши в монетке: " + player.stats.coinLosses +"\n");
+		sb.append("\uD83C\uDF31 Посажено деревьев: " + player.stats.trees +"\n\n");
 
 			long id = player.getId();
-			StringBuilder sb = new StringBuilder("Ваши достижения: \n\n");
+			StringBuilder sb2 = new StringBuilder("*Ваши достижения:* \n\n");
 
 			if (player.stats.coffee < 30)
 			{
-				sb.append("❌");
+				sb2.append("❌");
 			}
 			else
 			{
-				sb.append("✅");
+				sb2.append("✅");
 			}
-			sb.append(" Выпить 30 кружек кофе\n");
+			sb2.append(" Выпить 30 кружек кофе\n");
 
 			if (player.stats.tea < 30)
 			{
-				sb.append("❌");
+				sb2.append("❌");
 			}
 			else
 			{
-				sb.append("✅");
+				sb2.append("✅");
 			}
-			sb.append(" Выпить 30 кружек чая\n");
+			sb2.append(" Выпить 30 кружек чая\n");
 
 
 			this.execute(photo);
-			sendMsg(player_id, me + sb.toString());
+			sendMsg(player_id, sb.toString() + sb2);
 
 
 		}catch (TelegramApiException e){
@@ -1530,7 +1551,9 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			else
 			{
-				StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
+
+				StringBuilder sb = new StringBuilder("\uD83D\uDCE1 Новости\n\nОфициальный телеграм канал: *@needlechat*\n\n");
+						sb.append("\uD83D\uDC5C Все предметы в магазине:\n\n");
 				//sb.append("=====================\n");
 				for (ShopItem i : shopDAO.getAll())
 				{
