@@ -1005,6 +1005,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			Item i = itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь");
 			Item j = itemDAO.getByName("Саженец");
+			Achievements a = new Achievements(player);
 			if (player.getInventory().getItems().contains(i))
 			{
 				if(player.getInventory().getItems().contains(j)){
@@ -1016,7 +1017,12 @@ public class Bot extends TelegramLongPollingBot
 
 					}else{
 						sendMsg(player.getId(), "\uD83C\uDF33 Вы посадили саженец");
+
 						player.addXp(2);
+					}
+					if (a.checkTrees(15)){
+						sendMsg(player.getId(), "\uD83C\uDF33 Вы заработали достижение Хранитель леса | +$10,000");
+						player.getMoney().transfer(10000);
 					}
 					inventoryDAO.delete(player.getId(), j.getId(), 1);
 					player.stats.trees++;
@@ -1583,31 +1589,13 @@ public class Bot extends TelegramLongPollingBot
 		sb.append("\uD83C\uDF31 Посажено деревьев: " + player.stats.trees +"\n\n");
 
 			long id = player.getId();
-			StringBuilder sb2 = new StringBuilder("*Ваши достижения:* \n\n");
+			//StringBuilder sb2 = new StringBuilder("*Ваши достижения:* \n\n");
 
-			if (player.stats.coffee < 30)
-			{
-				sb2.append("❌");
-			}
-			else
-			{
-				sb2.append("✅");
-			}
-			sb2.append(" Выпить 30 кружек кофе\n");
-
-			if (player.stats.tea < 30)
-			{
-				sb2.append("❌");
-			}
-			else
-			{
-				sb2.append("✅");
-			}
-			sb2.append(" Выпить 30 кружек чая\n");
+			Achievements a = new Achievements(player);
 
 
 			this.execute(photo);
-			sendMsg(player_id, sb.toString() + sb2);
+			sendMsg(player_id, sb + a.getTeaAch() + a.getCoffeeAch() + a.getTreesAch());
 
 
 		}catch (TelegramApiException e){
