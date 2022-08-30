@@ -263,7 +263,7 @@ public class Bot extends TelegramLongPollingBot
 				inventoryDAO.delete(player_id, item.getId(), 1);
 
 				playerDAO.update(player);
-					sendMsg(player_id, "✅ Предмет продан | + " + item.getCost());
+
 				}else{
 					sendMsg(player_id, "\uD83D\uDC8D Лимитированные вещи нельзя продавать");
 				}
@@ -313,11 +313,12 @@ public class Bot extends TelegramLongPollingBot
 				active_players.remove(player.getId());
 				playersInGame.remove(player);
 			}
-		}else{
-			for(Player p : playersInGame){
-				sendMsg(p.getId(), String.format("[Игрок] `%s`: %s", player.getUsername(), input));
-			}
 		}
+
+
+			if(playersInGame.size() >= 2){
+				sendMsg(id, "Игра началась");
+			}
 
 	}
 
@@ -378,7 +379,6 @@ public class Bot extends TelegramLongPollingBot
 		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 1/3", getPhoto(".\\pics\\mag\\magazine_point.jpg", player));
 		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 2/3", getPhoto(".\\pics\\mag\\magazine_point2.jpg", player));
 		magazines.put("Вы рассматриваете редкий журнал The Male Point Of View 3/3", getPhoto(".\\pics\\mag\\magazine_point3.jpg", player));
-
 
 		Map<Item, String> info = new HashMap<>();
 		Calendar cal = Calendar.getInstance();
