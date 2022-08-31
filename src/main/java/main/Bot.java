@@ -378,7 +378,6 @@ public class Bot extends TelegramLongPollingBot
 		active_players.remove(player_id);
 	}
 
-
 	public SendPhoto getPhoto(String path, Player player){
 		SendPhoto photo = new SendPhoto();
 		photo.setPhoto(new InputFile(new File(path)));
@@ -424,7 +423,7 @@ public class Bot extends TelegramLongPollingBot
 		info.put(itemDAO.getByName("\uD83D\uDC8E Плюшевая Аянами Рей"), "Такая мягкая и такая chikita...");
 		info.put(itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь"), "Светит ярко, особенно если в глаза");
 		info.put(itemDAO.getByName("☕ Чашка 'Египет'"), "Говорят кофе из этой чашки еще вкуснее");
-		info.put(itemDAO.getByName("\uD83D\uDC1FУдочка"), "Этой удочкой ловят не только рыбу, но и преступников");
+		info.put(itemDAO.getByName("\uD83D\uDC1FУдочка"), "Удочкой можно ловить рыбу");
 		info.put(itemDAO.getByName("Текст песни 'FF'"), "FF, я уперся в потолок...");
 		info.put(itemDAO.getByName("Бипки"), "Что такое бипки, кто-то знает?");
 		info.put(itemDAO.getByName("Камень"), "Вы попали в голову игроку `" + anotherPlayer + "` ему не понравилось, странно...");

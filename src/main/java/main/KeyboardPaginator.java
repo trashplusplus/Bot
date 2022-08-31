@@ -49,7 +49,7 @@ class KeyboardPage
 	boolean has_previous = false;
 	boolean has_next = false;
 	int rows = 4;
-	int max_columns = 2;
+	int max_columns = 4;
 
 	KeyboardPage()
 	{
