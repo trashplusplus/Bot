@@ -1953,6 +1953,7 @@ public class Bot extends TelegramLongPollingBot
 		List<Long> expires = abilityDAO.expireFind();
 		for (long id : expires)
 		{
+			System.out.printf("Find expiration notification fired for player id%d", id);
 			sendMsg(id, "⭐ Вы снова можете искать редкие предметы!");
 		}
 	}
