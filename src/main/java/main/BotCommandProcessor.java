@@ -25,8 +25,6 @@ public class BotCommandProcessor
 
 		res.put("\uD83E\uDDF6 Проверить карманы", bot::command_pockets);
 		res.put("/pockets", bot::command_pockets);
-		res.put("/balance", bot::command_balance);
-		res.put("/stats", bot::command_stats);
 
 		res.put("/top", bot::command_top);
 		res.put("\uD83C\uDF80 Топ 10", bot::command_top);
