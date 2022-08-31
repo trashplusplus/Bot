@@ -108,11 +108,13 @@ class KeyboardPage
 			row = new KeyboardRow();
 			if (page.has_previous)
 			{
-				row.add("/previous");
+				//row.add("/previous");
+				row.add(BotCommandProcessor.PREVIOUS_BUTTON);
 			}
 			if (page.has_next)
 			{
-				row.add("/next");
+				//row.add("/next");
+				row.add(BotCommandProcessor.NEXT_BUTTON);
 			}
 			page.markup.add(row);
 

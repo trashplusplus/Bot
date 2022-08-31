@@ -26,6 +26,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static main.BotCommandProcessor.*;
+
 
 public class Bot extends TelegramLongPollingBot
 {
@@ -78,10 +80,10 @@ public class Bot extends TelegramLongPollingBot
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
 		playersInGame = new ArrayList<>();
 		paginator = new KeyboardPaginator()
-				.first("/find", "/pockets", "/mud", "/fish")
-				.then("/me", "/inv", "/top", "/stats")
-				.then("/pay", "/sell", "/shopshow", "/drop", "/coin")
-				.last("/help", "/info");
+				.first(FIND_BUTTON, POCKETS_BUTTON, MUD_BUTTON, FISH_BUTTON)
+				.then(ME_BUTTON, INV_BUTTON, TOP_BUTTON, "/stats")
+				.then("/pay", SELL_BUTTON, SHOPSHOW_BUTTON, DROP_BUTTON, COIN_BUTTON)
+				.last(HELP_BUTTON, "/info");
 	}
 
 	public void sendMsg(Long chatId, String text)

@@ -70,8 +70,26 @@ public class BotCommandProcessor
 		res.put("/capitalgame", bot::command_capitalgame);
 
 		res.put("/previous", bot::command_previous);
+		res.put(PREVIOUS_BUTTON, bot::command_previous);
 		res.put("/next", bot::command_next);
+		res.put(NEXT_BUTTON, bot::command_next);
 
 		return res;
 	}
+
+	public static final String SHOPSHOW_BUTTON = "\uD83D\uDED2 Магазин";
+	public static final String SELL_BUTTON = "\uD83D\uDCDE Скупщик";
+	public static final String TOP_BUTTON = "\uD83C\uDF80 Топ 10";
+	public static final String POCKETS_BUTTON = "\uD83E\uDDF6 Проверить карманы";
+	public static final String MUD_BUTTON = "\uD83D\uDD26 Рыться в грязи";
+	public static final String FIND_BUTTON = "\uD83D\uDC8E Искать редкие предметы";
+	public static final String INV_BUTTON = "\uD83C\uDF92 Инвентарь";
+	public static final String ME_BUTTON = "⭐️ Персонаж";
+	public static final String HELP_BUTTON = "\uD83C\uDF3A Помощь";
+	public static final String COIN_BUTTON = "\uD83D\uDCB0 Монетка";
+	public static final String DROP_BUTTON = "\uD83D\uDEE0 Продать Cheap";
+	public static final String SELLFISH_BUTTON = "\uD83E\uDD88 Сдать рыбу";
+	public static final String FISH_BUTTON = "🐡 Рыбачить";
+	public static final String PREVIOUS_BUTTON = "◀️ Предыдущая страница";
+	public static final String NEXT_BUTTON = "▶️ Следующая страница";
 }
