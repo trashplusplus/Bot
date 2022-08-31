@@ -71,7 +71,8 @@ public class BotCommandProcessor
 		res.put("/check", bot::command_check);
 		res.put("/capitalgame", bot::command_capitalgame);
 
-
+		res.put("/previous", bot::command_previous);
+		res.put("/next", bot::command_next);
 
 		return res;
 	}
