@@ -48,7 +48,7 @@ class KeyboardPage
 	List<KeyboardRow> markup;
 	boolean has_previous = false;
 	boolean has_next = false;
-	int rows = 3;
+	int rows = 4;
 	int max_columns = 2;
 
 	KeyboardPage()

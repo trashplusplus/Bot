@@ -16,17 +16,17 @@ public class Achievements {
 
     public Achievements(Player player){
 
-        teaAchs.put(15, false);
-        teaAchs.put(50, false);
         teaAchs.put(75, false);
+        teaAchs.put(50, false);
+        teaAchs.put(15, false);
 
-        coffeeAchs.put(15, false);
-        coffeeAchs.put(50, false);
         coffeeAchs.put(75, false);
+        coffeeAchs.put(50, false);
+        coffeeAchs.put(15, false);
 
-        treesAchs.put(5, false);
-        treesAchs.put(20, false);
         treesAchs.put(50, false);
+        treesAchs.put(20, false);
+        treesAchs.put(5, false);
 
 
 

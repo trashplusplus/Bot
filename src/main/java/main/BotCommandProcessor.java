@@ -30,6 +30,7 @@ public class BotCommandProcessor
 		res.put("\uD83C\uDF80 Топ 10", bot::command_top);
 
 		res.put("/info", bot::command_info);
+		res.put(INFO_BUTTON, bot::command_info);
 		res.put("/sell", bot::command_sell);
 		res.put("\uD83D\uDCDE Скупщик", bot::command_sell);
 		res.put("/changenickname", bot::command_changeNickname);
@@ -45,24 +46,29 @@ public class BotCommandProcessor
 		res.put("/start", bot::command_start_already_registered);
 		res.put("⭐ Начать", bot::command_start_already_registered);
 		res.put("/pay", bot::command_pay);
+		res.put(PAY_BUTTON, bot::command_pay);
 		res.put("/shopbuy", bot::command_shopbuy);
 		res.put("/shopshow", bot::command_shopshow);
 		res.put("\uD83D\uDED2 Магазин", bot::command_shopshow);
 		res.put("/shopplace", bot::command_shopplace);
 
 		res.put("/tea", bot::command_tea);
+		res.put(TEA_BUTTON, bot::command_tea);
 		res.put("/coffee", bot::command_coffee);
+		res.put(COFFEE_BUTTON, bot::command_coffee);
 
 		res.put("/forest", bot::command_forest);
+		res.put(FOREST_BUTTON, bot::command_forest);
 		res.put("/fish", bot::command_fish);
 		res.put("/sellfish", bot::command_sellfish);
-		res.put("\uD83E\uDD88 Сдать рыбу", bot::command_sellfish);
+		res.put(SELLFISH_BUTTON, bot::command_sellfish);
 		res.put("🐡 Рыбачить", bot::command_fish);
 		res.put("/drop", bot::command_drop);
 		res.put("\uD83D\uDEE0 Продать Cheap", bot::command_drop);
 
 		res.put("Пирожок", bot::command_bonus);
 		res.put("/case", bot::command_case);
+		res.put(CASE_BUTTON, bot::command_case);
 
 		res.put("/open", bot::command_open);
 		res.put("/touch", bot::command_touch);
@@ -90,6 +96,12 @@ public class BotCommandProcessor
 	public static final String DROP_BUTTON = "\uD83D\uDEE0 Продать Cheap";
 	public static final String SELLFISH_BUTTON = "\uD83E\uDD88 Сдать рыбу";
 	public static final String FISH_BUTTON = "🐡 Рыбачить";
-	public static final String PREVIOUS_BUTTON = "◀️ Предыдущая страница";
-	public static final String NEXT_BUTTON = "▶️ Следующая страница";
+	public static final String PREVIOUS_BUTTON = "◀️ Назад";
+	public static final String NEXT_BUTTON = "▶️ Вперед";
+	public static final String INFO_BUTTON = "ℹ️Информация";
+	public static final String PAY_BUTTON = "\uD83D\uDCB3 Передать деньги";
+	public static final String COFFEE_BUTTON = "☕️Отправить кофе";
+	public static final String TEA_BUTTON = "\uD83C\uDF3F Отправить чай";
+	public static final String FOREST_BUTTON = "\uD83C\uDF33 Садить деревья";
+	public static final String CASE_BUTTON = "\uD83D\uDD11 Открывать кейсы";
 }

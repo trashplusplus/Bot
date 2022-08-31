@@ -81,9 +81,10 @@ public class Bot extends TelegramLongPollingBot
 		playersInGame = new ArrayList<>();
 		paginator = new KeyboardPaginator()
 				.first(FIND_BUTTON, POCKETS_BUTTON, MUD_BUTTON, FISH_BUTTON)
-				.then(ME_BUTTON, INV_BUTTON, TOP_BUTTON, "/stats")
-				.then("/pay", SELL_BUTTON, SHOPSHOW_BUTTON, DROP_BUTTON, COIN_BUTTON)
-				.last(HELP_BUTTON, "/info");
+				.then(ME_BUTTON, INV_BUTTON, TOP_BUTTON, "/важная кнопк")
+				.then(PAY_BUTTON, SELL_BUTTON, SHOPSHOW_BUTTON, DROP_BUTTON, COIN_BUTTON)
+				.then(COFFEE_BUTTON, TEA_BUTTON, SELLFISH_BUTTON, FOREST_BUTTON, CASE_BUTTON)
+				.last(HELP_BUTTON, INFO_BUTTON);
 	}
 
 	public void sendMsg(Long chatId, String text)
