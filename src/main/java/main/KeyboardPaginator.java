@@ -84,11 +84,19 @@ class KeyboardPage
 			int current_column = 0;
 			KeyboardRow row = null;
 
-			for (String button : buttons)
+			int max_buttons = page.max_columns * page.rows;
+			int buttons_count = buttons.size();
+			if (buttons_count > max_buttons)
 			{
+				System.err.printf("Too many buttons provided for a page. Max: %d, actual: %d, trimmed: %d \n", max_buttons, buttons_count, buttons_count - max_buttons);
+				buttons_count = max_buttons;
+			}
+			for (int i = 0; i < buttons_count; i++)
+			{
+				String button = buttons.get(i);
 				if (current_row >= page.rows)
 				{
-					break;
+					throw new Error("Button markup overflow");
 				}
 				if (new_row)
 				{
@@ -97,6 +105,10 @@ class KeyboardPage
 				}
 				row.add(button);
 				current_column++;
+				if (i == buttons_count - 1 && current_column < page.max_columns)
+				{
+					page.markup.add(row);
+				}
 				if (current_column >= page.max_columns)
 				{
 					current_column = 0;
@@ -105,6 +117,29 @@ class KeyboardPage
 					page.markup.add(row);
 				}
 			}
+
+
+			//for (String button : buttons)
+			//{
+			//	if (current_row >= page.rows)
+			//	{
+			//		break;
+			//	}
+			//	if (new_row)
+			//	{
+			//		row = new KeyboardRow();
+			//		new_row = false;
+			//	}
+			//	row.add(button);
+			//	current_column++;
+			//	if (current_column >= page.max_columns)
+			//	{
+			//		current_column = 0;
+			//		current_row++;
+			//		new_row = true;
+			//		page.markup.add(row);
+			//	}
+			//}
 			row = new KeyboardRow();
 			if (page.has_previous)
 			{

@@ -85,6 +85,7 @@ public class Bot extends TelegramLongPollingBot
 				.then(PAY_BUTTON, SELL_BUTTON, SHOPSHOW_BUTTON, DROP_BUTTON, COIN_BUTTON)
 				.then(COFFEE_BUTTON, TEA_BUTTON, SELLFISH_BUTTON, FOREST_BUTTON, CASE_BUTTON)
 				.last(HELP_BUTTON, INFO_BUTTON);
+
 	}
 
 	public void sendMsg(Long chatId, String text)
@@ -1078,6 +1079,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			e.printStackTrace();
 		}
+		active_players.remove(player.getId());
 	}
 
 	public void command_fish(Player player)
@@ -1131,6 +1133,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(player.getId(), "\uD83D\uDC7E Для похода на рыбалку вам нужен 5 уровень");
 		}
+		active_players.remove(player.getId());
 	}
 
 
@@ -1183,6 +1186,7 @@ public class Bot extends TelegramLongPollingBot
 			{
 				sendMsg(id, "\uD83E\uDD88У вас нет рыбы\nЧтобы ловить рыбу, введите /fish");
 			}
+			active_players.remove(id);
 		}
 	}
 
@@ -1221,6 +1225,8 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(id, "У вас нет дешевых вещей");
 		}
+
+		active_players.remove(id);
 	}
 
 	//SUPER SECRET BONUS
@@ -1324,6 +1330,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(player_id, "⚠ В вашем инвентаре нет места");
 		}
+		active_players.remove(player_id);
 	}
 
 
@@ -1361,6 +1368,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(id, "⚠ В вашем инвентаре нет места");
 		}
+		active_players.remove(id);
 	}
 
 
@@ -1833,6 +1841,7 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(id, "У вас нет кейсов");
 		}
+		active_players.remove(id);
 	}
 
 	public void command_pay(Player player)
