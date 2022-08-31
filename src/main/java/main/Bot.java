@@ -53,6 +53,8 @@ public class Bot extends TelegramLongPollingBot
 
 	private final String token;
 
+	KeyboardPaginator paginator;
+
 	Map<Long, Player> active_players;
 
 	Map<Player.State, BiConsumer<Player, Message>> state_processor;
@@ -75,7 +77,11 @@ public class Bot extends TelegramLongPollingBot
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
 		playersInGame = new ArrayList<>();
-
+		paginator = new KeyboardPaginator()
+				.first("/find", "/pockets", "/mud", "/fish")
+				.then("/me", "/inv", "/top", "/stats")
+				.then("/pay", "/sell", "/shopshow", "/drop", "/coin")
+				.last("/help", "/info");
 	}
 
 	public void sendMsg(Long chatId, String text)
@@ -116,75 +122,68 @@ public class Bot extends TelegramLongPollingBot
 		replyKeyboardMarkup.setSelective(true);
 		replyKeyboardMarkup.setResizeKeyboard(true);
 		//скрывать или не скрывать после использования
-		replyKeyboardMarkup.setOneTimeKeyboard(true);
-
-		List<KeyboardRow> keyboardRowList = new ArrayList<>();
-		KeyboardRow keyboardFirstRow = new KeyboardRow();
-		KeyboardRow keyboardSecondRow = new KeyboardRow();
-		KeyboardRow keyboardThirdRow = new KeyboardRow();
-		KeyboardRow keyboardFourthRow = new KeyboardRow();
-		//добавили новую кнопку в первый ряд
-		//KeyboardButton startButton = new KeyboardButton("/start");
+		replyKeyboardMarkup.setOneTimeKeyboard(false);
 
 		if (player == null)
 		{
-			keyboardFirstRow.add(new KeyboardButton("⭐ Начать"));
-			//keyboardFirstRow.add(new KeyboardButton("/start"));
+			List<KeyboardRow> rows = new ArrayList<>();
+			KeyboardRow row = new KeyboardRow();
+			row.add(new KeyboardButton("⭐ Начать"));
+			rows.add(row);
+			replyKeyboardMarkup.setKeyboard(rows);
 		}
 		else
-		switch (player.getState())
 		{
-			case awaitingCommands:
-			{
-				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
-				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
-				keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
-				keyboardSecondRow.add(new KeyboardButton("\uD83E\uDDF6 Проверить карманы"));
-
-
-				keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
-				keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
-
-
-				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCB0 Монетка"));
-				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDED2 Магазин"));
-				keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
-
-				keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
-				keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
-
-
-				keyboardFourthRow.add(new KeyboardButton("🐡 Рыбачить"));
-				keyboardFourthRow.add(new KeyboardButton("\uD83E\uDD88 Сдать рыбу"));
-				//keyboardFirstRow.add(new KeyboardButton("/me"));
-				break;
-			}
-			case awaitingTeaNote:
-			case awaitingCoffeeNote:
-			case shopPlaceGood_awaitingCost:
-			case payAwaitingAmount:
-				keyboardFirstRow.add(new KeyboardButton("/back"));
-			case shopBuy:
-			case coinDash:
-			case awaitingTea:
-			case awaitingCoffee:
-			case awaitingSellArguments:
-			case awaitingChangeNickname:
-			case shopPlaceGood_awaitingID:
-			case payAwaitingNickname:
-				keyboardFirstRow.add(new KeyboardButton("/cancel"));
-				break;
-			default:
-				return;
+			replyKeyboardMarkup.setKeyboard(paginator.get(player.page));
 		}
+		//switch (player.getState())
+		//{
+		//	case awaitingCommands:
+		//	{
+		//		keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
+		//		keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
+		//		keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
+		//		keyboardSecondRow.add(new KeyboardButton("\uD83E\uDDF6 Проверить карманы"));
+		//
+		//
+		//		keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
+		//		keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
+		//
+		//
+		//		keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCB0 Монетка"));
+		//		keyboardThirdRow.add(new KeyboardButton("\uD83D\uDED2 Магазин"));
+		//		keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
+		//
+		//		keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
+		//		keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
+		//
+		//
+		//		keyboardFourthRow.add(new KeyboardButton("🐡 Рыбачить"));
+		//		keyboardFourthRow.add(new KeyboardButton("\uD83E\uDD88 Сдать рыбу"));
+		//		//keyboardFirstRow.add(new KeyboardButton("/me"));
+		//		break;
+		//	}
+		//	case awaitingTeaNote:
+		//	case awaitingCoffeeNote:
+		//	case shopPlaceGood_awaitingCost:
+		//	case payAwaitingAmount:
+		//		keyboardFirstRow.add(new KeyboardButton("/back"));
+		//	case shopBuy:
+		//	case coinDash:
+		//	case awaitingTea:
+		//	case awaitingCoffee:
+		//	case awaitingSellArguments:
+		//	case awaitingChangeNickname:
+		//	case shopPlaceGood_awaitingID:
+		//	case payAwaitingNickname:
+		//		keyboardFirstRow.add(new KeyboardButton("/cancel"));
+		//		break;
+		//	default:
+		//		return;
+		//}
 
 		//keyboardFirstRow.add(new KeyboardButton("/find"));
 		//добавили в спиок всех кнопок
-		keyboardRowList.add(keyboardFirstRow);
-		keyboardRowList.add(keyboardSecondRow);
-		keyboardRowList.add(keyboardThirdRow);
-		keyboardRowList.add(keyboardFourthRow);
-		replyKeyboardMarkup.setKeyboard(keyboardRowList);
 	}
 
 	@Override
@@ -205,6 +204,7 @@ public class Bot extends TelegramLongPollingBot
 			else
 			{
 				player = playerDAO.get_by_id(id);
+				active_players.put(id, player);
 			}
 
 			System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
@@ -1904,6 +1904,24 @@ public class Bot extends TelegramLongPollingBot
 	public void command_start_already_registered(Player player)
 	{
 		sendMsg(player.getId(), "Вы уже зарегистрированы.\n");
+	}
+
+	public void command_previous(Player player)
+	{
+		if (player.page > 0)
+		{
+			player.page--;
+		}
+		sendMsg(player.getId(), String.format("Страница команд №%d", player.page + 1));
+	}
+
+	public void command_next(Player player)
+	{
+		if (player.page < paginator.size - 1)
+		{
+			player.page++;
+		}
+		sendMsg(player.getId(), String.format("Страница команд №%d", player.page + 1));
 	}
 
 	public void cleanShopFromExpired()

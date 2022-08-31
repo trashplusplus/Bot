@@ -17,6 +17,8 @@ public class Player
 
 	public Stats stats;
 
+	public int page = 0;
+
 
 	Bot host;
 
