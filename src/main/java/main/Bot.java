@@ -42,7 +42,6 @@ public class Bot extends TelegramLongPollingBot
 	private static final Roller<Integer> moneyRoller = RollerFactory.getMoneyRoller(new Random());
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
 	private static final Roller<Item> fishRoller = RollerFactory.getFishRoller(new Random());
-	List<Player> playersInGame;
 
 	ScheduledFuture<?> sf_timers;
 	ScheduledFuture<?> sf_find;
@@ -78,13 +77,11 @@ public class Bot extends TelegramLongPollingBot
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, 1L, 1L, TimeUnit.MINUTES);
-		playersInGame = new ArrayList<>();
 		paginator = new KeyboardPaginator()
-				.first(FIND_BUTTON, POCKETS_BUTTON, MUD_BUTTON, FISH_BUTTON)
-				.then(ME_BUTTON, INV_BUTTON, TOP_BUTTON, "/важная кнопк")
-				.then(PAY_BUTTON, SELL_BUTTON, SHOPSHOW_BUTTON, DROP_BUTTON, COIN_BUTTON)
-				.then(COFFEE_BUTTON, TEA_BUTTON, SELLFISH_BUTTON, FOREST_BUTTON, CASE_BUTTON)
-				.last(HELP_BUTTON, INFO_BUTTON);
+				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
+				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
+				.last(PAY_BUTTON, INFO_BUTTON, CHANGENICKNAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON);
+
 
 	}
 
@@ -332,20 +329,44 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	void capitalGame_processor(Player player, Message message){
+		Map<String, String> counCapi = new HashMap<>();
+		Random ran = new Random();
+		int money = ran.nextInt(2000);
+		counCapi.put("Украина", "Киев");
+		counCapi.put("Афганистан", "Кабул");
+		counCapi.put("Польша", "Варшава");
+		counCapi.put("Литва", "Вильнюс");
+		counCapi.put("Латвия", "Рига");
+		counCapi.put("Эстония", "Таллин");
+		counCapi.put("Швеция", "Стокгольм");
+		counCapi.put("Словения", "Любляна");
+		counCapi.put("Молдавия", "Кишинёв");
+		counCapi.put("Греция", "Афины");
+		counCapi.put("Албания", "Тирана");
+		counCapi.put("Чехия", "Прага");
+		counCapi.put("Норвегия", "Осло");
+		counCapi.put("Вьетнам", "Ханой");
+		counCapi.put("Монголия", "Улан-Батор");
+
+
 		String input = message.getText();
 		long id = player.getId();
 
-		if(input.equals("/exit")){
-			for(Player p : playersInGame){
-				sendMsg(p.getId(), String.format("Игрок `%s` покинул игру", player.getUsername()));
-				active_players.remove(player.getId());
-				playersInGame.remove(player);
-			}
-		}
+		 if (!input.equals(counCapi.get(player.countryKey))){
+			sendMsg(id , "❌ Неправильно");
+		}else{
+			 sendMsg(id , "\uD83C\uDFC6 Правильно | + $" + money);
+			 try {
+				 player.getMoney().transfer(money);
+			 } catch (Money.MoneyException e) {
+				 e.printStackTrace();
+			 }
+		 }
 
-			if(playersInGame.size() >= 2){
-				sendMsg(id, "Игра началась");
-			}
+		active_players.remove(player);
+		player.setState(Player.State.awaitingCommands);
+
+		
 
 	}
 
@@ -1417,16 +1438,36 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_capitalgame(Player player){
 
-		sendMsg(player.getId(), "Чтобы выйти введите /exit");
+		List<String> countries = new ArrayList<>();
+		countries.add("Украина");
+		countries.add("Польша");
+		countries.add("Афганистан");
 
-		playersInGame.add(player);
-		for(Player currentPlayer: playersInGame){
-			sendMsg(currentPlayer.getId(), String.format("Игрок `%s` присоединился к игре", player.getUsername()));
-		}
+		countries.add("Польша");
+		countries.add("Литва" );
+		countries.add("Латвия");
+		countries.add("Эстония");
+		countries.add("Швеция");
+		countries.add("Словения");
+		countries.add("Молдавия");
+		countries.add("Греция");
+		countries.add("Албания");
+		countries.add("Чехия");
+		countries.add("Норвегия");
+		countries.add("Вьетнам");
+		countries.add("Монголия");
 
 
+		Random ran = new Random();
+		int random = ran.nextInt(countries.size());
+
+		player.countryKey = countries.get(random);
+
+		sendMsg(player.getId(), "\uD83E\uDDE9 Столица страны: " + player.countryKey + "");
 		active_players.put(player.getId(), player);
 		player.setState(Player.State.capitalGame);
+
+
 
 	}
 
