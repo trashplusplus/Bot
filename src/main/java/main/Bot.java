@@ -42,6 +42,8 @@ public class Bot extends TelegramLongPollingBot
 	private static final Roller<Integer> moneyRoller = RollerFactory.getMoneyRoller(new Random());
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
 	private static final Roller<Item> fishRoller = RollerFactory.getFishRoller(new Random());
+	private static final Capitalgame capitalgame = new Capitalgame();
+
 
 	ScheduledFuture<?> sf_timers;
 	ScheduledFuture<?> sf_find;
@@ -82,7 +84,7 @@ public class Bot extends TelegramLongPollingBot
 				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
 				.last(PAY_BUTTON, INFO_BUTTON, CHANGENICKNAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON);
 
-		//itemDAO.loadItems();
+		capitalgame.init();
 	}
 
 	public void sendMsg(Long chatId, String text)
@@ -329,30 +331,16 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 	void capitalGame_processor(Player player, Message message){
-		Map<String, String> counCapi = new HashMap<>();
+
 		Random ran = new Random();
 		int money = ran.nextInt(2000);
-		counCapi.put("Украина", "Киев");
-		counCapi.put("Афганистан", "Кабул");
-		counCapi.put("Польша", "Варшава");
-		counCapi.put("Литва", "Вильнюс");
-		counCapi.put("Латвия", "Рига");
-		counCapi.put("Эстония", "Таллин");
-		counCapi.put("Швеция", "Стокгольм");
-		counCapi.put("Словения", "Любляна");
-		counCapi.put("Молдавия", "Кишинёв");
-		counCapi.put("Греция", "Афины");
-		counCapi.put("Албания", "Тирана");
-		counCapi.put("Чехия", "Прага");
-		counCapi.put("Норвегия", "Осло");
-		counCapi.put("Вьетнам", "Ханой");
-		counCapi.put("Монголия", "Улан-Батор");
+
 
 
 		String input = message.getText();
 		long id = player.getId();
 
-		 if (!input.equals(counCapi.get(player.countryKey))){
+		 if (!input.equals(capitalgame.getCapital(player.countryKey))){
 			sendMsg(id , "❌ Неправильно");
 		}else{
 			 sendMsg(id , "\uD83C\uDFC6 Правильно | + $" + money);
@@ -1437,36 +1425,15 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_capitalgame(Player player){
 
-		List<String> countries = new ArrayList<>();
-		countries.add("Украина");
-		countries.add("Польша");
-		countries.add("Афганистан");
-
-		countries.add("Польша");
-		countries.add("Литва" );
-		countries.add("Латвия");
-		countries.add("Эстония");
-		countries.add("Швеция");
-		countries.add("Словения");
-		countries.add("Молдавия");
-		countries.add("Греция");
-		countries.add("Албания");
-		countries.add("Чехия");
-		countries.add("Норвегия");
-		countries.add("Вьетнам");
-		countries.add("Монголия");
-
 
 		Random ran = new Random();
-		int random = ran.nextInt(countries.size());
+		int random = ran.nextInt(capitalgame.getCountries().size());
 
-		player.countryKey = countries.get(random);
+		player.countryKey = capitalgame.getCountry(random);
 
 		sendMsg(player.getId(), "\uD83E\uDDE9 Столица страны: " + player.countryKey + "");
 		active_players.put(player.getId(), player);
 		player.setState(Player.State.capitalGame);
-
-
 
 	}
 

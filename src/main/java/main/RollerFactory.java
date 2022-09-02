@@ -12,8 +12,6 @@ public class RollerFactory
 {
 	static final ItemDAO itemDAO = new ItemDAO(SQLSession.sqlConnection);
 
-
-
 	public static Roller<Item> getMudRoller(Random random)
 	{
 		List<Item> cheap_items = new ArrayList<>();
