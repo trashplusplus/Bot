@@ -82,7 +82,7 @@ public class Bot extends TelegramLongPollingBot
 				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
 				.last(PAY_BUTTON, INFO_BUTTON, CHANGENICKNAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON);
 
-
+		//itemDAO.loadItems();
 	}
 
 	public void sendMsg(Long chatId, String text)
@@ -367,7 +367,6 @@ public class Bot extends TelegramLongPollingBot
 		player.setState(Player.State.awaitingCommands);
 
 		
-
 	}
 
 
@@ -375,7 +374,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 		long player_id = player.getId();
 		String nickname = message.getText();
-		Item tag = itemDAO.getByName("\uD83D\uDCDD Тег");
+		Item tag = itemDAO.getByNameFromCollection("\uD83D\uDCDD Тег");
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 		if (nickname.matches(usernameTemplate))
@@ -437,84 +436,84 @@ public class Bot extends TelegramLongPollingBot
 		int randomIndex = randomPlayer.nextInt(players.size());
 		String anotherPlayer = players.get(randomIndex).getUsername();
 
-		info.put(itemDAO.getByName("\uD83E\uDD8B Брелок с бабочкой"), "Красивый брелок, надеюсь не улетит...");
-		info.put(itemDAO.getByName("\uD83D\uDCE6 Кейс Gift"), "Кажется, он пустой");
-		info.put(itemDAO.getByName("\uD83D\uDCDD Тег"), "Можно сменить ник на `super-" + player.getUsername() + "`, чтобы быть еще круче");
-		info.put(itemDAO.getByName("\uD83D\uDCC0 Whirr - Feels Like You"), "У вас в руках лучший shoegaze альбом 2019 года");
-		info.put(itemDAO.getByName("\uD83C\uDF92 Рюкзак"), "Блин, места много, но сменка все равно не влазит...");
-		info.put(itemDAO.getByName("\uD83D\uDC8E Плюшевая Аянами Рей"), "Такая мягкая и такая chikita...");
-		info.put(itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь"), "Светит ярко, особенно если в глаза");
-		info.put(itemDAO.getByName("☕ Чашка 'Египет'"), "Говорят кофе из этой чашки еще вкуснее");
-		info.put(itemDAO.getByName("\uD83D\uDC1FУдочка"), "Удочкой можно ловить рыбу");
-		info.put(itemDAO.getByName("Текст песни 'FF'"), "FF, я уперся в потолок...");
-		info.put(itemDAO.getByName("Бипки"), "Что такое бипки, кто-то знает?");
-		info.put(itemDAO.getByName("Камень"), "Вы попали в голову игроку `" + anotherPlayer + "` ему не понравилось, странно...");
-		info.put(itemDAO.getByName("Сим-карта 777"), "Ало, это пиццерия? Мне гавайскую");
-		info.put(itemDAO.getByName("Пачка сигарет"), "Курить вредно, очень вредно...");
-		info.put(itemDAO.getByName("Стиральный порошок"), "Порошок пахнет свежестью, теперь нужно понюхать стиральный");
-		info.put(itemDAO.getByName("Зубная щетка"), "Щубная зетка");
-		info.put(itemDAO.getByName("Цветная резинка для волос"), "Так сложно найти резинку, когда она так нужна...");
-		info.put(itemDAO.getByName("Отвертка"), "Вы держите отвертку");
-		info.put(itemDAO.getByName("Букет цветов"), "Пахнет хризантемами");
-		info.put(itemDAO.getByName("Витаминки"), "Это были не витаминки...");
-		info.put(itemDAO.getByName("Чулки"), "Слышно аромат мускуса, на фоне играет George Michael - Careless Whisper...");
-		info.put(itemDAO.getByName("Чупа-чупс"), "Если долго сосать чупа-чупс, то в какой-то момент можно начать сосать палку");
-		info.put(itemDAO.getByName("Ожерелье"), "Его можно подарить Вашей девушке, хотя на руке тоже ничего смотрится...");
-		info.put(itemDAO.getByName("Кукурушки"), "Не хватает молока");
-		info.put(itemDAO.getByName("Карась"), "Карась, кадвась, катрись...");
-		info.put(itemDAO.getByName("Бычок"), "Погодите, это что окурок?!");
-		info.put(itemDAO.getByName("Браслет 'Сириус'"), "Красивый браслет со звездочками");
-		info.put(itemDAO.getByName("Шоколадка"), "Лучше съесть ее в сторонке, пока игрок `" + anotherPlayer + "` не видит");
-		info.put(itemDAO.getByName("Стальной нож"), "Им можно порезать хлеб, остается найти кто такой Хлеб");
-		info.put(itemDAO.getByName("USB провод"), "Черный и такой длиииинный");
-		info.put(itemDAO.getByName("Энергетик"), "Вы делаете глоток и чувствуете как энергия течет в ваших венах");
-		info.put(itemDAO.getByName("Бутылка"), "Не удалось рассмотреть бутылку, так как ее уже тестирует игрок `" + anotherPlayer + "`");
-		info.put(itemDAO.getByName("Носки"), "Странно, что оба на месте");
-		info.put(itemDAO.getByName("Баллончик с краской"), "Вы тегнули");
-		info.put(itemDAO.getByName("Синий браслет"), "Для полной картины не хватает желтого браслета");
-		info.put(itemDAO.getByName("Желтый браслет"), "Для полной картины не хватает синего браслета");
-		info.put(itemDAO.getByName("Красный браслет"), "Пацаны с района с завистью смотрят на ваш красный браслет");
-		info.put(itemDAO.getByName("Зеленый браслет"), "Зеленый браслет стильно смотрится на вашей руке");
-		info.put(itemDAO.getByName("Браслет 'Орион'"), "Не показывайте этот браслет игроку `" +anotherPlayer + "` иначе отберет");
-		info.put(itemDAO.getByName("Струны"), "Сейчас бы гитарку...");
-		info.put(itemDAO.getByName("Журнал Евангелион"), "Вы детально рассматриваете Аянами Рей");
-		info.put(itemDAO.getByName("Крем для рук"), "Интересно, а что если помазать ноги...");
-		info.put(itemDAO.getByName("Бутылка вина 'Cabernet Sauvignon'"), "Оно просроченное");
-		info.put(itemDAO.getByName("Банан"), "Если его съесть, то будет вкусно");
-		info.put(itemDAO.getByName("Винтажный журнал"), "Вы рассматриваете винтажный журнал");
-		info.put(itemDAO.getByName("Горбуша"), "Вы рассматриваете потенциальный ужин");
-		info.put(itemDAO.getByName("\uD83D\uDD11 Ключ от кейса"), "Им можно открыть кейс или дом игрока `" + anotherPlayer  +"`");
-		info.put(itemDAO.getByName("Ручка"), "Она принадлежит игроку `" + anotherPlayer + "`, возможно рядом завалялась и ношка");
-		info.put(itemDAO.getByName("Крекеры"), "Хорошо подходят, чтобы попить чай или кофе с игроком `" + anotherPlayer + "`");
-		info.put(itemDAO.getByName("Платок"), "Сразу видно что краденный, с какой-то бабушки сняли. Вы ужасный человек");
-		info.put(itemDAO.getByName("Подвеска 'Nosebleed'"), "Если надеть ее игрок `" + anotherPlayer + "` будет в шоке");
-		info.put(itemDAO.getByName("Лопата"), "Пора картошку копать");
-		info.put(itemDAO.getByName("Футболка 'Drain'"), "Если эта футболка у Вас, получается `" + anotherPlayer + "` сейчас без футболки?");
-		info.put(itemDAO.getByName("Бусы"), "Красивые бусы, их можно продать скупщику");
-		info.put(itemDAO.getByName("Саженец"), "Саженцы можно посадить в *Лесу* и получить за это опыт или деньги");
-		info.put(itemDAO.getByName("Подшипник"), "Вы искачкали руки в мазуте");
-		info.put(itemDAO.getByName("⌚ Часы"), String.format("На часах %s ", sdf.format(new Date())));
-		info.put(itemDAO.getByName("\uD83E\uDDDA\u200D♀ Фея"), "Карманная фея, ну такого `" + anotherPlayer + "` точно не видел");
-		info.put(itemDAO.getByName("Космический журнал"), "Вы рассматриваете космический журнал");
-		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал Playboy 1/2"), "Вы рассматриваете редкий журнал Playboy 1/2");
-		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал Playboy 2/2"), "Вы рассматриваете редкий журнал Playboy 2/2");
-		info.put(itemDAO.getByName("Журнал 'Стальной алхимик'"), "Вы держите журнал по Стальному Алхимику");
-		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 1/5"), "Вы рассматриваете редкий журнал Vogue 1/5");
-		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 2/5"), "Вы рассматриваете журнал Vogue 2/5");
-		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 3/5"), "Вы рассматриваете журнал Vogue 3/5");
-		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 4/5"), "Вы рассматриваете редкий журнал Vogue 4/5");
-		info.put(itemDAO.getByName("\uD83D\uDD2E Журнал Vogue 5/5"), "Вы рассматриваете журнал Vogue 5/5");
-		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 1/3"), "Вы рассматриваете редкий журнал The Male Point Of View 1/3");
-		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 2/3"), "Вы рассматриваете редкий журнал The Male Point Of View 2/3");
-		info.put(itemDAO.getByName("\uD83C\uDF53 Журнал The Male Point Of View 3/3"), "Вы рассматриваете редкий журнал The Male Point Of View 3/3");
-		info.put(itemDAO.getByName("Автомобильный журнал"), "Вы рассматриваете машину с глазками");
-		info.put(itemDAO.getByName("Джинсы"), "Плотная ткань, удобный шов, глубокие карманы");
-		info.put(itemDAO.getByName("Сомбреро"), "Ваша привлекательность в этой шляпе увеличивается на 35%");
-		info.put(itemDAO.getByName("Медиатор"), "Та штука, которая постоянно падает в гитару");
-		info.put(itemDAO.getByName("Пакет"), "В теории, в него можно положить хлеб");
-		info.put(itemDAO.getByName("Курточка"), "Очень подходит для дождливой погоды");
-		info.put(itemDAO.getByName("Петарда"), "У вас в руках корсар-1");
-		info.put(itemDAO.getByName("Тетрадь"), "У вас в руках крутая тетрадка с машинами и голыми девушками, пруфов не будет, поверьте мне наслово");
+		info.put(itemDAO.getByNameFromCollection("\uD83E\uDD8B Брелок с бабочкой"), "Красивый брелок, надеюсь не улетит...");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift"), "Кажется, он пустой");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDCDD Тег"), "Можно сменить ник на `super-" + player.getUsername() + "`, чтобы быть еще круче");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDCC0 Whirr - Feels Like You"), "У вас в руках лучший shoegaze альбом 2019 года");
+		info.put(itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак"), "Блин, места много, но сменка все равно не влазит...");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDC8E Плюшевая Аянами Рей"), "Такая мягкая и такая chikita...");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD26 Поисковый фонарь"), "Светит ярко, особенно если в глаза");
+		info.put(itemDAO.getByNameFromCollection("☕ Чашка 'Египет'"), "Говорят кофе из этой чашки еще вкуснее");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDC1FУдочка"), "Удочкой можно ловить рыбу");
+		info.put(itemDAO.getByNameFromCollection("Текст песни 'FF'"), "FF, я уперся в потолок...");
+		info.put(itemDAO.getByNameFromCollection("Бипки"), "Что такое бипки, кто-то знает?");
+		info.put(itemDAO.getByNameFromCollection("Камень"), "Вы попали в голову игроку `" + anotherPlayer + "` ему не понравилось, странно...");
+		info.put(itemDAO.getByNameFromCollection("Сим-карта 777"), "Ало, это пиццерия? Мне гавайскую");
+		info.put(itemDAO.getByNameFromCollection("Пачка сигарет"), "Курить вредно, очень вредно...");
+		info.put(itemDAO.getByNameFromCollection("Стиральный порошок"), "Порошок пахнет свежестью, теперь нужно понюхать стиральный");
+		info.put(itemDAO.getByNameFromCollection("Зубная щетка"), "Щубная зетка");
+		info.put(itemDAO.getByNameFromCollection("Цветная резинка для волос"), "Так сложно найти резинку, когда она так нужна...");
+		info.put(itemDAO.getByNameFromCollection("Отвертка"), "Вы держите отвертку");
+		info.put(itemDAO.getByNameFromCollection("Букет цветов"), "Пахнет хризантемами");
+		info.put(itemDAO.getByNameFromCollection("Витаминки"), "Это были не витаминки...");
+		info.put(itemDAO.getByNameFromCollection("Чулки"), "Слышно аромат мускуса, на фоне играет George Michael - Careless Whisper...");
+		info.put(itemDAO.getByNameFromCollection("Чупа-чупс"), "Если долго сосать чупа-чупс, то в какой-то момент можно начать сосать палку");
+		info.put(itemDAO.getByNameFromCollection("Ожерелье"), "Его можно подарить Вашей девушке, хотя на руке тоже ничего смотрится...");
+		info.put(itemDAO.getByNameFromCollection("Кукурушки"), "Не хватает молока");
+		info.put(itemDAO.getByNameFromCollection("Карась"), "Карась, кадвась, катрись...");
+		info.put(itemDAO.getByNameFromCollection("Бычок"), "Погодите, это что окурок?!");
+		info.put(itemDAO.getByNameFromCollection("Браслет 'Сириус'"), "Красивый браслет со звездочками");
+		info.put(itemDAO.getByNameFromCollection("Шоколадка"), "Лучше съесть ее в сторонке, пока игрок `" + anotherPlayer + "` не видит");
+		info.put(itemDAO.getByNameFromCollection("Стальной нож"), "Им можно порезать хлеб, остается найти кто такой Хлеб");
+		info.put(itemDAO.getByNameFromCollection("USB провод"), "Черный и такой длиииинный");
+		info.put(itemDAO.getByNameFromCollection("Энергетик"), "Вы делаете глоток и чувствуете как энергия течет в ваших венах");
+		info.put(itemDAO.getByNameFromCollection("Бутылка"), "Не удалось рассмотреть бутылку, так как ее уже тестирует игрок `" + anotherPlayer + "`");
+		info.put(itemDAO.getByNameFromCollection("Носки"), "Странно, что оба на месте");
+		info.put(itemDAO.getByNameFromCollection("Баллончик с краской"), "Вы тегнули");
+		info.put(itemDAO.getByNameFromCollection("Синий браслет"), "Для полной картины не хватает желтого браслета");
+		info.put(itemDAO.getByNameFromCollection("Желтый браслет"), "Для полной картины не хватает синего браслета");
+		info.put(itemDAO.getByNameFromCollection("Красный браслет"), "Пацаны с района с завистью смотрят на ваш красный браслет");
+		info.put(itemDAO.getByNameFromCollection("Зеленый браслет"), "Зеленый браслет стильно смотрится на вашей руке");
+		info.put(itemDAO.getByNameFromCollection("Браслет 'Орион'"), "Не показывайте этот браслет игроку `" +anotherPlayer + "` иначе отберет");
+		info.put(itemDAO.getByNameFromCollection("Струны"), "Сейчас бы гитарку...");
+		info.put(itemDAO.getByNameFromCollection("Журнал Евангелион"), "Вы детально рассматриваете Аянами Рей");
+		info.put(itemDAO.getByNameFromCollection("Крем для рук"), "Интересно, а что если помазать ноги...");
+		info.put(itemDAO.getByNameFromCollection("Бутылка вина 'Cabernet Sauvignon'"), "Оно просроченное");
+		info.put(itemDAO.getByNameFromCollection("Банан"), "Если его съесть, то будет вкусно");
+		info.put(itemDAO.getByNameFromCollection("Винтажный журнал"), "Вы рассматриваете винтажный журнал");
+		info.put(itemDAO.getByNameFromCollection("Горбуша"), "Вы рассматриваете потенциальный ужин");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса"), "Им можно открыть кейс или дом игрока `" + anotherPlayer  +"`");
+		info.put(itemDAO.getByNameFromCollection("Ручка"), "Она принадлежит игроку `" + anotherPlayer + "`, возможно рядом завалялась и ношка");
+		info.put(itemDAO.getByNameFromCollection("Крекеры"), "Хорошо подходят, чтобы попить чай или кофе с игроком `" + anotherPlayer + "`");
+		info.put(itemDAO.getByNameFromCollection("Платок"), "Сразу видно что краденный, с какой-то бабушки сняли. Вы ужасный человек");
+		info.put(itemDAO.getByNameFromCollection("Подвеска 'Nosebleed'"), "Если надеть ее игрок `" + anotherPlayer + "` будет в шоке");
+		info.put(itemDAO.getByNameFromCollection("Лопата"), "Пора картошку копать");
+		info.put(itemDAO.getByNameFromCollection("Футболка 'Drain'"), "Если эта футболка у Вас, получается `" + anotherPlayer + "` сейчас без футболки?");
+		info.put(itemDAO.getByNameFromCollection("Бусы"), "Красивые бусы, их можно продать скупщику");
+		info.put(itemDAO.getByNameFromCollection("Саженец"), "Саженцы можно посадить в *Лесу* и получить за это опыт или деньги");
+		info.put(itemDAO.getByNameFromCollection("Подшипник"), "Вы искачкали руки в мазуте");
+		info.put(itemDAO.getByNameFromCollection("⌚ Часы"), String.format("На часах %s ", sdf.format(new Date())));
+		info.put(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея"), "Карманная фея, ну такого `" + anotherPlayer + "` точно не видел");
+		info.put(itemDAO.getByNameFromCollection("Космический журнал"), "Вы рассматриваете космический журнал");
+		info.put(itemDAO.getByNameFromCollection("\uD83C\uDF53 Журнал Playboy 1/2"), "Вы рассматриваете редкий журнал Playboy 1/2");
+		info.put(itemDAO.getByNameFromCollection("\uD83C\uDF53 Журнал Playboy 2/2"), "Вы рассматриваете редкий журнал Playboy 2/2");
+		info.put(itemDAO.getByNameFromCollection("Журнал 'Стальной алхимик'"), "Вы держите журнал по Стальному Алхимику");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD2E Журнал Vogue 1/5"), "Вы рассматриваете редкий журнал Vogue 1/5");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD2E Журнал Vogue 2/5"), "Вы рассматриваете журнал Vogue 2/5");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD2E Журнал Vogue 3/5"), "Вы рассматриваете журнал Vogue 3/5");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD2E Журнал Vogue 4/5"), "Вы рассматриваете редкий журнал Vogue 4/5");
+		info.put(itemDAO.getByNameFromCollection("\uD83D\uDD2E Журнал Vogue 5/5"), "Вы рассматриваете журнал Vogue 5/5");
+		info.put(itemDAO.getByNameFromCollection("\uD83C\uDF53 Журнал The Male Point Of View 1/3"), "Вы рассматриваете редкий журнал The Male Point Of View 1/3");
+		info.put(itemDAO.getByNameFromCollection("\uD83C\uDF53 Журнал The Male Point Of View 2/3"), "Вы рассматриваете редкий журнал The Male Point Of View 2/3");
+		info.put(itemDAO.getByNameFromCollection("\uD83C\uDF53 Журнал The Male Point Of View 3/3"), "Вы рассматриваете редкий журнал The Male Point Of View 3/3");
+		info.put(itemDAO.getByNameFromCollection("Автомобильный журнал"), "Вы рассматриваете машину с глазками");
+		info.put(itemDAO.getByNameFromCollection("Джинсы"), "Плотная ткань, удобный шов, глубокие карманы");
+		info.put(itemDAO.getByNameFromCollection("Сомбреро"), "Ваша привлекательность в этой шляпе увеличивается на 35%");
+		info.put(itemDAO.getByNameFromCollection("Медиатор"), "Та штука, которая постоянно падает в гитару");
+		info.put(itemDAO.getByNameFromCollection("Пакет"), "В теории, в него можно положить хлеб");
+		info.put(itemDAO.getByNameFromCollection("Курточка"), "Очень подходит для дождливой погоды");
+		info.put(itemDAO.getByNameFromCollection("Петарда"), "У вас в руках корсар-1");
+		info.put(itemDAO.getByNameFromCollection("Тетрадь"), "У вас в руках крутая тетрадка с машинами и голыми девушками, пруфов не будет, поверьте мне наслово");
 
 		long id = player.getId();
 		try {
@@ -1060,8 +1059,8 @@ public class Bot extends TelegramLongPollingBot
 		long fee = r.nextInt(3500);
 		try
 		{
-			Item i = itemDAO.getByName("\uD83D\uDD26 Поисковый фонарь");
-			Item j = itemDAO.getByName("Саженец");
+			Item i = itemDAO.getByNameFromCollection("\uD83D\uDD26 Поисковый фонарь");
+			Item j = itemDAO.getByNameFromCollection("Саженец");
 			Achievements a = new Achievements(player);
 			if (player.getInventory().getItems().contains(i))
 			{
@@ -1106,9 +1105,9 @@ public class Bot extends TelegramLongPollingBot
 	public void command_fish(Player player)
 	{
 		//Item i = new Item(46, "Удочка", ItemRarity.Rare, 5000);
-		Item i = itemDAO.getByName("\uD83D\uDC1FУдочка");
+		Item i = itemDAO.getByNameFromCollection("\uD83D\uDC1FУдочка");
 		int limitSpace;
-		Item backpack = itemDAO.getByName("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
 
 		if (player.getInventory().getItems().contains(backpack))
 		{
@@ -1279,7 +1278,7 @@ public class Bot extends TelegramLongPollingBot
 	public void command_inv(Player player)
 	{
 		int limitSpace;
-		Item backpack = itemDAO.getByName("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;
@@ -1315,7 +1314,7 @@ public class Bot extends TelegramLongPollingBot
 	public void command_find(Player player)
 	{
 		int limitSpace;
-		Item backpack = itemDAO.getByName("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;
@@ -1358,7 +1357,7 @@ public class Bot extends TelegramLongPollingBot
 	public void command_mud(Player player)
 	{
 		int limitSpace;
-		Item backpack = itemDAO.getByName("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;
@@ -1485,7 +1484,7 @@ public class Bot extends TelegramLongPollingBot
 		players_list.append("\n");
 		for (Player pl : playerDAO.getTopN("balance", false, 10))
 		{
-			if(pl.getInventory().getItems().contains(itemDAO.getByName("\uD83E\uDDDA\u200D♀ Фея"))){
+			if(pl.getInventory().getItems().contains(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея"))){
 				players_list.append(String.format("Игрок \uD83E\uDDDA\u200D♀ `%s` | %s | %d LVL", pl.getUsername(), pl.balance, pl.getLevel()));
 				players_list.append("\n");
 				players_list.append("========================");
@@ -1574,7 +1573,7 @@ public class Bot extends TelegramLongPollingBot
 	public void command_changeNickname(Player player)
 	{
 		long id = player.getId();
-		Item i = itemDAO.getByName("\uD83D\uDCDD Тег");
+		Item i = itemDAO.getByNameFromCollection("\uD83D\uDCDD Тег");
 		if (player.getInventory().getItems().contains(i))
 		{
 			active_players.put(player.getId(), player);
@@ -1683,7 +1682,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 		long player_id = player.getId();
 		int limitSpace;
-		Item backpack = itemDAO.getByName("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;
@@ -1811,8 +1810,8 @@ public class Bot extends TelegramLongPollingBot
 
 			StringBuilder sb = new StringBuilder("*Открытие кейсов*\n\n");
 
-			Item _case = itemDAO.getByName("\uD83D\uDCE6 Кейс Gift");
-			Item _key = itemDAO.getByName("\uD83D\uDD11 Ключ от кейса");
+			Item _case = itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift");
+			Item _key = itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса");
 
 
 			for (int i = 0; i < player.getInventory().getInvSize(); i++)
@@ -1849,13 +1848,13 @@ public class Bot extends TelegramLongPollingBot
 
 		Random ran = new Random();
 		long id = player.getId();
-		Item _case = itemDAO.getByName("\uD83D\uDCE6 Кейс Gift");
-		Item _key = itemDAO.getByName("\uD83D\uDD11 Ключ от кейса");
+		Item _case = itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift");
+		Item _key = itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса");
 
 		List<Item> loot;
 
 
-		loot = itemDAO.getAll().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift) ||
+		loot = itemDAO.getAllFromCollection().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift) ||
 				item.getRarity().equals(ItemRarity.Rare))).collect(Collectors.toList());
 
 
@@ -1903,7 +1902,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 
 		int goal;
-		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
+		Item cup = itemDAO.getByNameFromCollection("☕ Чашка 'Египет'");
 		if (player.getInventory().getItems().contains(cup))
 		{
 			goal = 200;
@@ -1931,7 +1930,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 
 		int goal;
-		Item cup = itemDAO.getByName("☕ Чашка 'Египет'");
+		Item cup = itemDAO.getByNameFromCollection("☕ Чашка 'Египет'");
 		if (player.getInventory().getItems().contains(cup))
 		{
 			goal = 200;
