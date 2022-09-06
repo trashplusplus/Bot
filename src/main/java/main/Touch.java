@@ -22,7 +22,6 @@ public class Touch {
         infoInit(player, anotherPlayer);
         magazinesInit(player);
 
-
     }
 
     private SendPhoto getPhoto(String path, Player player){

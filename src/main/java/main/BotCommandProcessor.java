@@ -83,6 +83,13 @@ public class BotCommandProcessor
 		res.put(PREVIOUS_BUTTON, bot::command_previous);
 		res.put("/next", bot::command_next);
 		res.put(NEXT_BUTTON, bot::command_next);
+		res.put("/drinks", bot::command_drinks);
+		res.put(DRINKS_BUTTON, bot::command_drinks);
+
+		res.put("/recipes", bot::command_recipes);
+		res.put(RECIPES_BUTTON, bot::command_recipes);
+
+
 
 		return res;
 	}
@@ -112,4 +119,6 @@ public class BotCommandProcessor
 	public static final String SHOPPLACE_BUTTON = "\uD83D\uDED2 Разместить товар";
 	public static final String CHECK_BUTTON = "\uD83D\uDC41 Осмотреть игрока";
 	public static final String CAPITALGAME_BUTTON = "\uD83C\uDDFA\uD83C\uDDE6 Столицы";
+	public static final String DRINKS_BUTTON = "\uD83E\uDDC3 Напитки";
+	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
 }

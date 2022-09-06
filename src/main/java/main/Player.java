@@ -135,7 +135,8 @@ public class Player
 		awaitingTeaNote,
 		touch,
 		checkAwaitingNickname,
-		capitalGame
+		capitalGame,
+		craftAwaitingID
 
 	}
 
