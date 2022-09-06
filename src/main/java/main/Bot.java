@@ -1156,7 +1156,7 @@ public class Bot extends TelegramLongPollingBot
 
 		LocalTime currentTime = LocalTime.now();
 
-		if (currentTime.isBefore(open) || currentTime.isAfter(close))
+		if (currentTime.isBefore(open) || currentTime.isAfter(close))  // wtf?
 		{
 			sendMsg(id, "\uD83E\uDD88 Рыбная лавка работает с 10:00 до 15:00\n\nСдавая рыбу в лавке, Вы можете получить " +
 					"в несколько раз больше выручки, чем если бы сдавали ее \uD83D\uDCDE Скупщику");
@@ -1167,17 +1167,20 @@ public class Bot extends TelegramLongPollingBot
 			fish_titles.add("Горбуша");
 			fish_titles.add("Бычок");
 			fish_titles.add("Карась");
-			int fee = 0;
-			for (int i = 0; i < player.getInventory().getItems().size(); i++)
+			long fee = 0L;
+
+			Iterator<Item> iter = player.getInventory().getItems().iterator();
+			while (iter.hasNext())
 			{
-				Item fish = player.getInventory().getItem(i);
-				if (fish_titles.contains(fish.getTitle()))
+				Item item = iter.next();
+				if (fish_titles.contains(item.getTitle()))
 				{
-					fee += fish.getCost().value * 7;
-					inventoryDAO.delete(player, fish.getId(), 1);
-					player.getInventory().removeItem(i);
+					fee += item.getCost().value * 7;
+					inventoryDAO.delete(id, item.getId(), 1);
+					iter.remove();
 				}
 			}
+
 			if (fee > 0)
 			{
 				sendMsg(id, String.format("\uD83E\uDD88 Покупатель выложил за всю рыбу %s", new Money(fee)));
@@ -1202,20 +1205,21 @@ public class Bot extends TelegramLongPollingBot
 	public void command_drop(Player player)
 	{
 		long id = player.getId();
-		int fee = 0;
+		long fee = 0L;
 
-		for (int i = 0; i < player.getInventory().getItems().size(); i++)
+		Iterator<Item> iter = player.getInventory().getItems().iterator();
+		while (iter.hasNext())
 		{
-			Item cheapItem = player.getInventory().getItem(i);
-			if (cheapItem.getRarity() == ItemRarity.Cheap && !cheapItem.getTitle().equals("Саженец"))
+			Item item = iter.next();
+			if (item.getRarity() == ItemRarity.Cheap && !item.getTitle().equals("Саженец"))
 			{
-				fee += cheapItem.getCost().value;
-				inventoryDAO.delete(player, cheapItem.getId(), 1);
-				player.getInventory().removeItem(i);  // TODO urgent iterator fix
+				fee += item.getCost().value;
+				inventoryDAO.delete(id, item.getId(), 1);
+				iter.remove();
 			}
 		}
 
-		if (fee > 0)
+		if (fee > 0L)
 		{
 			sendMsg(id, String.format("\uD83D\uDCB3 Вы продали все дешевые вещи за %s", new Money(fee)));
 			try
