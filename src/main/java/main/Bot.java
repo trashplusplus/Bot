@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static main.BotCommandProcessor.*;
 
@@ -1758,17 +1759,9 @@ public class Bot extends TelegramLongPollingBot
 			Item _case = itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift");
 			Item _key = itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса");
 
-			for (int i = 0; i < player.getInventory().getInvSize(); i++)  // todo refactor with stream
-			{
-				if (player.getInventory().getItem(i).equals(_case))
-				{
-					casesCounter++;
-				}
-				else if (player.getInventory().getItem(i).equals(_key))
-				{
-					keysCounter++;
-				}
-			}
+			Stream<Item> items_stream = player.getInventory().getItems().stream();
+			casesCounter = (int) items_stream.filter(i -> i.equals(_case)).count();
+			keysCounter = (int) items_stream.filter(i -> i.equals(_key)).count();
 
 			sb.append("В кейсах могут выпадать различные предметы редкости `Gift` и `Rare`\n");
 			sb.append("Чтобы открыть кейс нужен предмет `\uD83D\uDD11 Ключ от кейса`\n\n");
