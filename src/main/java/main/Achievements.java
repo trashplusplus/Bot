@@ -6,30 +6,26 @@ import java.util.*;
 public class Achievements {
     Player player;
     
-    Set<Integer> teaAchs = new HashSet<>();
-    Set<Integer> coffeeAchs = new HashSet<>();
-    Set<Integer> treesAchs = new HashSet<>();
+    Set<Integer> teaAchs = new LinkedHashSet<>();
+    Set<Integer> coffeeAchs = new LinkedHashSet<>();
+    Set<Integer> treesAchs = new LinkedHashSet<>();
 
 
     public Achievements(Player player){
 
-        teaAchs.add(75);
-        teaAchs.add(50);
         teaAchs.add(15);
+        teaAchs.add(50);
+        teaAchs.add(75);
 
-        coffeeAchs.add(75);
-        coffeeAchs.add(50);
         coffeeAchs.add(15);
+        coffeeAchs.add(50);
+        coffeeAchs.add(75);
 
-        treesAchs.add(50);
-        treesAchs.add(20);
         treesAchs.add(5);
-
+        treesAchs.add(20);
+        treesAchs.add(50);
 
         this.player = player;
-
-
-
     }
 
     public String getTeaAch(){
@@ -77,6 +73,7 @@ public class Achievements {
             return true;
         return false;
     }
+
 
 
 

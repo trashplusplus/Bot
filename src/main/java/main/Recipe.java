@@ -8,6 +8,7 @@ import static main.RollerFactory.itemDAO;
 public class Recipe {
     List<Item> energyRecipe = new ArrayList<>();
     List<Item> caseRecipe = new ArrayList<>();
+
     List<Item> allRecipes = new ArrayList<>();
 
     Recipe(){
