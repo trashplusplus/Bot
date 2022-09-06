@@ -27,6 +27,7 @@ public class Player
 	public Integer to_place_item = null;
 	public Player coffee_acceptor = null;
 	public Player tea_acceptor = null;
+	public String countryKey = null;
 	// > commands args
 
 	public Date sellfish = null;
@@ -134,7 +135,8 @@ public class Player
 		awaitingTeaNote,
 		touch,
 		checkAwaitingNickname,
-		capitalGame
+		capitalGame,
+		craftAwaitingID
 
 	}
 

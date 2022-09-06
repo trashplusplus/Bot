@@ -29,6 +29,7 @@ public class BotStateProcessor
 		res.put(Player.State.touch, bot::awaitingTouchId_processor);
 		res.put(Player.State.checkAwaitingNickname, bot::checkAwaitingNickname_processor);
 		res.put(Player.State.capitalGame, bot::capitalGame_processor);
+		res.put(Player.State.craftAwaitingID, bot::craftAwaitingID_processor);
 
 		return res;
 	}

@@ -9,9 +9,11 @@ import java.util.List;
 
 public class ItemDAO {
 	private final Connection connection;
+	private final List<Item> allItems = new ArrayList<>();
 
 	public ItemDAO(Connection connection) {
 		this.connection = connection;
+		loadItems();
 	}
 
 	public Item get(long id) {
@@ -81,4 +83,33 @@ public class ItemDAO {
 
 		return new Item(id, title, rarity, cost);
 	}
+
+	public void loadItems(){
+		try {
+			String query = "select * from items;";
+			PreparedStatement ps = connection.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				allItems.add(form(rs));
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	public Item getByNameFromCollection(String title){
+		Item item = null;
+		for(Item i: allItems){
+			if(title.equals(i.getTitle()))
+			item = i;
+		}
+		return item;
+	}
+
+	public List<Item> getAllFromCollection(){
+		return allItems;
+	}
 }
+

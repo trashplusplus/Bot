@@ -34,6 +34,7 @@ public class BotCommandProcessor
 		res.put("/sell", bot::command_sell);
 		res.put("\uD83D\uDCDE Скупщик", bot::command_sell);
 		res.put("/changenickname", bot::command_changeNickname);
+		res.put(CHANGENICKNAME_BUTTON, bot::command_changeNickname);
 
 		res.put("/coin", bot::command_coin);
 		res.put("\uD83D\uDCB0 Монетка", bot::command_coin);
@@ -51,6 +52,7 @@ public class BotCommandProcessor
 		res.put("/shopshow", bot::command_shopshow);
 		res.put("\uD83D\uDED2 Магазин", bot::command_shopshow);
 		res.put("/shopplace", bot::command_shopplace);
+		res.put(SHOPPLACE_BUTTON, bot::command_shopplace);
 
 		res.put("/tea", bot::command_tea);
 		res.put(TEA_BUTTON, bot::command_tea);
@@ -73,12 +75,21 @@ public class BotCommandProcessor
 		res.put("/open", bot::command_open);
 		res.put("/touch", bot::command_touch);
 		res.put("/check", bot::command_check);
+		res.put(CHECK_BUTTON, bot::command_check);
 		res.put("/capitalgame", bot::command_capitalgame);
+		res.put(CAPITALGAME_BUTTON, bot::command_capitalgame);
 
 		res.put("/previous", bot::command_previous);
 		res.put(PREVIOUS_BUTTON, bot::command_previous);
 		res.put("/next", bot::command_next);
 		res.put(NEXT_BUTTON, bot::command_next);
+		res.put("/drinks", bot::command_drinks);
+		res.put(DRINKS_BUTTON, bot::command_drinks);
+
+		res.put("/recipes", bot::command_recipes);
+		res.put(RECIPES_BUTTON, bot::command_recipes);
+
+
 
 		return res;
 	}
@@ -98,10 +109,16 @@ public class BotCommandProcessor
 	public static final String FISH_BUTTON = "🐡 Рыбачить";
 	public static final String PREVIOUS_BUTTON = "◀️ Назад";
 	public static final String NEXT_BUTTON = "▶️ Вперед";
-	public static final String INFO_BUTTON = "ℹ️Информация";
+	public static final String INFO_BUTTON = "ℹ️Как играть";
 	public static final String PAY_BUTTON = "\uD83D\uDCB3 Передать деньги";
-	public static final String COFFEE_BUTTON = "☕️Отправить кофе";
-	public static final String TEA_BUTTON = "\uD83C\uDF3F Отправить чай";
+	public static final String COFFEE_BUTTON = "☕️Кофе";
+	public static final String TEA_BUTTON = "\uD83C\uDF3F Чай";
 	public static final String FOREST_BUTTON = "\uD83C\uDF33 Садить деревья";
-	public static final String CASE_BUTTON = "\uD83D\uDD11 Открывать кейсы";
+	public static final String CASE_BUTTON = "\uD83D\uDD11 Кейсы";
+	public static final String CHANGENICKNAME_BUTTON = "\uD83D\uDC80 Сменить ник";
+	public static final String SHOPPLACE_BUTTON = "\uD83D\uDED2 Разместить товар";
+	public static final String CHECK_BUTTON = "\uD83D\uDC41 Осмотреть игрока";
+	public static final String CAPITALGAME_BUTTON = "\uD83C\uDDFA\uD83C\uDDE6 Столицы";
+	public static final String DRINKS_BUTTON = "\uD83E\uDDC3 Напитки";
+	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
 }
