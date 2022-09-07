@@ -4,10 +4,7 @@ import main.Bot;
 import main.Player;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CachedPlayerDAO implements IPlayerDAO
 {
@@ -25,6 +22,11 @@ public class CachedPlayerDAO implements IPlayerDAO
 		players.forEach((p, v) -> databaseDAO.update(p));
 		players.entrySet().removeIf(e -> !e.getValue());
 		players.replaceAll((p, v) -> false);
+	}
+
+	public Set<Player> cached_players()
+	{
+		return players.keySet();
 	}
 
 	@Override
