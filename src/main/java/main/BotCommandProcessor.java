@@ -121,4 +121,5 @@ public class BotCommandProcessor
 	public static final String CAPITALGAME_BUTTON = "\uD83C\uDDFA\uD83C\uDDE6 Столицы";
 	public static final String DRINKS_BUTTON = "\uD83E\uDDC3 Напитки";
 	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
+	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
 }

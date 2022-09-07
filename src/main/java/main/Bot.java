@@ -151,7 +151,7 @@ public class Bot extends TelegramLongPollingBot
 					case shopPlaceGood_awaitingID:
 					case payAwaitingNickname:
 					default:
-						row.add(new KeyboardButton("/cancel"));
+						row.add(new KeyboardButton(CANCEL_BUTTON));
 						break;
 				}
 				List<KeyboardRow> rows = new ArrayList<>();
@@ -193,7 +193,7 @@ public class Bot extends TelegramLongPollingBot
 			}
 			else
 			{
-				if (!text.equals("/cancel"))
+				if (!text.equals(CANCEL_BUTTON))
 				{
 					state_processor.get(player.getState()).accept(player, message);
 				}
@@ -685,7 +685,8 @@ public class Bot extends TelegramLongPollingBot
 		String nickname = message.getText();
 
 		Player anotherPlayer = playerDAO.get_by_name(nickname);
-
+		
+		player.setState(Player.State.awaitingCommands);
 		if (anotherPlayer != null)
 		{
 			Inventory inventory = anotherPlayer.getInventory();
@@ -712,7 +713,6 @@ public class Bot extends TelegramLongPollingBot
 		{
 			sendMsg(player_id, "Такого игрока не существует");
 		}
-		player.setState(Player.State.awaitingCommands);
 	}
 
 
