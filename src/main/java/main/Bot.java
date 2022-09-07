@@ -591,7 +591,9 @@ public class Bot extends TelegramLongPollingBot
 					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
 					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift").getId());
 					player.addXp(4);
-				} else {
+				}
+				else
+				{
 					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n " + recipe.caseRecipe.toString());
 				}
 			}
@@ -838,7 +840,10 @@ public class Bot extends TelegramLongPollingBot
 
 				receiver.stats.coffee++;
 				sendMsg(player.getId(), "☕ Кофе отправлен");
-				if(player.coffee_acceptor.getStats().coffee == 75){player.coffee_acceptor.ach_coffee();}
+				if (player.coffee_acceptor.getStats().coffee == 75)
+				{
+					player.coffee_acceptor.ach_coffee();
+				}
 				player.addXp(1);
 				sendMsg(receiver.getId(), String.format("☕ Игрок `%s` угостил вас кружечкой кофе с сообщением: `%s`", player.getUsername(), note));
 			}
@@ -911,7 +916,10 @@ public class Bot extends TelegramLongPollingBot
 
 				receiver.stats.tea++;
 				sendMsg(player.getId(), "\uD83C\uDF3F Чай отправлен");
-				if(player.tea_acceptor.getStats().tea == 75){player.tea_acceptor.ach_tea();}
+				if (player.tea_acceptor.getStats().tea == 75)
+				{
+					player.tea_acceptor.ach_tea();
+				}
 				player.addXp(1);
 				sendMsg(receiver.getId(), String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая с сообщением: `%s`", player.getUsername(), note));
 			}
@@ -1036,7 +1044,8 @@ public class Bot extends TelegramLongPollingBot
 						player.addXp(2);
 					}
 					player.stats.trees++;  // todo this is shit
-					if(player.stats.trees == 50){
+					if (player.stats.trees == 50)
+					{
 						player.ach_treeHard();
 					}
 					inventoryDAO.delete(player.getId(), seedling.getId(), 1);
@@ -1163,7 +1172,6 @@ public class Bot extends TelegramLongPollingBot
 			}
 		}
 	}
-
 
 
 	public void command_drop(Player player)
@@ -1413,7 +1421,8 @@ public class Bot extends TelegramLongPollingBot
 		players_list.append("\n");
 		for (Player pl : playerDAO.get_top("balance", false, 10))
 		{
-			if(pl.getInventory().getItems().contains(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея"))){
+			if (pl.getInventory().getItems().contains(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея")))
+			{
 				players_list.append(String.format("Игрок `%s` \\[\uD83E\uDDDA\u200D♀] | %s | %d LVL", pl.getUsername(), pl.balance, pl.getLevel()));
 				players_list.append("\n");
 				players_list.append("========================");
@@ -1538,7 +1547,6 @@ public class Bot extends TelegramLongPollingBot
 
 	public void command_touch(Player player)
 	{
-
 		Inventory inventory = player.getInventory();
 		long id = player.getId();
 
@@ -1927,11 +1935,15 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
-	public void achievement_notification(Player player, String congraText, int fee){
+	public void achievement_notification(Player player, String congraText, int fee)
+	{
 		sendMsg(player.getId(), "✨" + congraText + " | + " + new Money(fee));
-		try	{
+		try
+		{
 			player.balance.transfer(fee);
-		}catch (Money.MoneyException e)	{
+		}
+		catch (Money.MoneyException e)
+		{
 			e.printStackTrace();
 			sendMsg(player.getId(), e.getMessage());
 		}
