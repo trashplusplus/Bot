@@ -247,6 +247,7 @@ public class Bot extends TelegramLongPollingBot
 		long player_id = player.getId();
 		try
 		{
+			player.setState(Player.State.awaitingCommands);
 			Inventory inventory = player.getInventory();
 			String sellID = message.getText();
 			int sell_id = Integer.parseInt(sellID);
@@ -277,10 +278,6 @@ public class Bot extends TelegramLongPollingBot
 		{
 			e.printStackTrace();
 			sendMsg(player_id, e.getMessage());
-		}
-		finally
-		{
-			player.setState(Player.State.awaitingCommands);
 		}
 	}
 
@@ -657,6 +654,7 @@ public class Bot extends TelegramLongPollingBot
 		long player_id = player.getId();
 		try
 		{
+			player.setState(Player.State.awaitingCommands);
 			int cost = Integer.parseInt(message.getText());
 			if (cost > 0)
 			{
@@ -668,7 +666,6 @@ public class Bot extends TelegramLongPollingBot
 				inventory.removeItem(player.to_place_item);
 
 				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);
-				player.setState(Player.State.awaitingCommands);
 			}
 			else
 			{
