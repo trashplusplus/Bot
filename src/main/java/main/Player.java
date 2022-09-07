@@ -93,11 +93,21 @@ public class Player
 
 	public void levelUp()
 	{
-
 		xp -= 10 * level++;
-
 		// back-notify the owner
 		host.level_up_notification(this);
+	}
+
+	public void ach_treeHard(){
+		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Зеленый лес*", 15000);
+	}
+
+	public void ach_coffee(){
+		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Джон Коффи*", 7500);
+	}
+
+	public void ach_tea(){
+		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Гринфилд*", 7500);
 	}
 
 	public void addXp(int xp)

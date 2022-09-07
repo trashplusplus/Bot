@@ -575,6 +575,8 @@ public class Bot extends TelegramLongPollingBot
 
 						sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
 						inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("Энергетик").getId());
+						player.addXp(4);
+						playerDAO.update(player);
 
 				}else{
 					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n" + recipe.energyRecipe.toString());
@@ -590,6 +592,8 @@ public class Bot extends TelegramLongPollingBot
 
 					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
 					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift").getId());
+					player.addXp(4);
+					playerDAO.update(player);
 
 				}else{
 					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n " + recipe.caseRecipe.toString());
@@ -854,6 +858,7 @@ public class Bot extends TelegramLongPollingBot
 				receiver.stats.coffee++;
 				//statsDAO.update(receiver.getStats(), receiver.getId());
 				sendMsg(player.getId(), "☕ Кофе отправлен");
+				if(player.coffee_acceptor.getStats().coffee == 75){player.coffee_acceptor.ach_coffee();}
 				player.addXp(1);
 				sendMsg(receiver.getId(), String.format("☕ Игрок `%s` угостил вас кружечкой кофе с сообщением: `%s`", player.getUsername(), note));
 				//statsDAO.update(receiver.getStats(), receiver.getId());
@@ -930,6 +935,7 @@ public class Bot extends TelegramLongPollingBot
 				receiver.stats.tea++;
 				//statsDAO.update(receiver.getStats(), receiver.getId());
 				sendMsg(player.getId(), "\uD83C\uDF3F Чай отправлен");
+				if(player.tea_acceptor.getStats().tea == 75){player.tea_acceptor.ach_tea();}
 				player.addXp(1);
 				sendMsg(receiver.getId(), String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая с сообщением: `%s`", player.getUsername(), note));
 				//statsDAO.update(receiver.getStats(), receiver.getId());
@@ -1048,7 +1054,6 @@ public class Bot extends TelegramLongPollingBot
 		{
 			Item i = itemDAO.getByNameFromCollection("\uD83D\uDD26 Поисковый фонарь");
 			Item j = itemDAO.getByNameFromCollection("Саженец");
-			Achievements a = new Achievements(player);
 			if (player.getInventory().getItems().contains(i))
 			{
 				if(player.getInventory().getItems().contains(j)){
@@ -1058,17 +1063,20 @@ public class Bot extends TelegramLongPollingBot
 						player.addXp(1);
 						inventoryDAO.delete(player.getId(), j.getId(), 1);
 
+
 					}else{
 						sendMsg(player.getId(), "\uD83C\uDF33 Вы посадили саженец");
 
 						player.addXp(2);
 					}
-					if (a.checkTrees(15)){
-						sendMsg(player.getId(), "\uD83C\uDF33 Вы заработали достижение Хранитель леса | +$10,000");
-						player.getMoney().transfer(10000);
-					}
+
 					inventoryDAO.delete(player.getId(), j.getId(), 1);
 					player.stats.trees++;
+					if(player.stats.trees == 50){
+						player.ach_treeHard();
+					}
+
+
 					playerDAO.update(player);
 
 				}else{
@@ -1198,8 +1206,7 @@ public class Bot extends TelegramLongPollingBot
 	}
 
 
-	public void command_drop(Player player)
-	{
+	public void command_drop(Player player){
 
 		long id = player.getId();
 		int fee = 0;
@@ -1274,7 +1281,6 @@ public class Bot extends TelegramLongPollingBot
 		{
 			limitSpace = 20;
 		}
-
 
 		long player_id = player.getId();
 		Inventory inventory = player.getInventory();
@@ -1455,7 +1461,7 @@ public class Bot extends TelegramLongPollingBot
 		for (Player pl : playerDAO.getTopN("balance", false, 10))
 		{
 			if(pl.getInventory().getItems().contains(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея"))){
-				players_list.append(String.format("Игрок \uD83E\uDDDA\u200D♀ `%s` | %s | %d LVL", pl.getUsername(), pl.balance, pl.getLevel()));
+				players_list.append(String.format("Игрок `%s` \\[\uD83E\uDDDA\u200D♀] | %s | %d LVL", pl.getUsername(), pl.balance, pl.getLevel()));
 				players_list.append("\n");
 				players_list.append("========================");
 				players_list.append("\n");
@@ -1464,9 +1470,7 @@ public class Bot extends TelegramLongPollingBot
 				players_list.append("\n");
 				players_list.append("========================");
 				players_list.append("\n");
-
 			}
-
 		}
 		players_list.append("\n");
 		players_list.append("\uD83D\uDCBB Всего игроков: " + playerDAO.getAll().size());
@@ -1795,6 +1799,7 @@ public class Bot extends TelegramLongPollingBot
 			}
 
 			sb.append("В кейсах могут выпадать различные предметы редкости `Gift` и `Rare`\n");
+			sb.append("Кейсы можно скрафтить из `Отвертки` и `Подшипника` в разделе `\uD83E\uDD65 Рецепты`\n");
 			sb.append("Чтобы открыть кейс нужен предмет `\uD83D\uDD11 Ключ от кейса`\n\n");
 
 			sb.append(String.format("\uD83D\uDCE6 Кейсы: %d\n", casesCounter));
@@ -1998,6 +2003,17 @@ public class Bot extends TelegramLongPollingBot
 		playerDAO.update(player);
 	}
 
+	public void achievement_notification(Player player, String congraText, int fee){
+		sendMsg(player.getId(), "✨" + congraText + " | + " + new Money(fee));
+		try	{
+			player.balance.transfer(fee);
+		}catch (Money.MoneyException e)	{
+			e.printStackTrace();
+			sendMsg(player.getId(), e.getMessage());
+		}
+		playerDAO.update(player);
+	}
+
 	public String getBotUsername()
 	{
 		return "Needle";
@@ -2041,6 +2057,3 @@ public class Bot extends TelegramLongPollingBot
 		playerDAO.update(player);
 	}
 }
-
-
-
