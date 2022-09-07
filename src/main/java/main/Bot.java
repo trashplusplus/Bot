@@ -74,7 +74,6 @@ public class Bot extends TelegramLongPollingBot
 		token = init_token();
 		state_processor = BotStateProcessor.get_map(this);
 		command_processor = BotCommandProcessor.get_map(this);
-		//active_players = new HashMap<>();
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
@@ -111,16 +110,11 @@ public class Bot extends TelegramLongPollingBot
 	public void setButtons(SendMessage sendMessage)
 	{
 		long id = Long.parseLong(sendMessage.getChatId());
-		//Player player = playerDAO.get_by_id(id);
 		Player player = playerDAO.get_by_id(id);
 		//инициаллизация клавиатуры
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-		//установка разметки
-		sendMessage.setReplyMarkup(replyKeyboardMarkup);
-		//вывод клавиатуры (видел или нет)
 		replyKeyboardMarkup.setSelective(true);
 		replyKeyboardMarkup.setResizeKeyboard(true);
-		//скрывать или не скрывать после использования
 		replyKeyboardMarkup.setOneTimeKeyboard(false);
 
 		if (player == null)
@@ -133,56 +127,39 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			replyKeyboardMarkup.setKeyboard(paginator.get(player.page));
+			Player.State state = player.getState();
+			if (state == Player.State.awaitingCommands)
+			{
+				replyKeyboardMarkup.setKeyboard(paginator.get(player.page));
+			}
+			else
+			{
+				KeyboardRow row = new KeyboardRow();
+				switch (state)
+				{
+					case awaitingTeaNote:
+					case awaitingCoffeeNote:
+					case shopPlaceGood_awaitingCost:
+					case payAwaitingAmount:
+						//row.add(new KeyboardButton("/back"));
+					case shopBuy:
+					case coinDash:
+					case awaitingTea:
+					case awaitingCoffee:
+					case awaitingSellArguments:
+					case awaitingChangeNickname:
+					case shopPlaceGood_awaitingID:
+					case payAwaitingNickname:
+					default:
+						row.add(new KeyboardButton("/cancel"));
+						break;
+				}
+				List<KeyboardRow> rows = new ArrayList<>();
+				rows.add(row);
+				replyKeyboardMarkup.setKeyboard(rows);
+			}
 		}
-		//switch (player.getState())
-		//{
-		//	case awaitingCommands:
-		//	{
-		//		keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF92 Инвентарь"));
-		//		keyboardSecondRow.add(new KeyboardButton("\uD83D\uDC8E Искать редкие предметы"));
-		//		keyboardSecondRow.add(new KeyboardButton("\uD83D\uDD26 Рыться в грязи"));
-		//		keyboardSecondRow.add(new KeyboardButton("\uD83E\uDDF6 Проверить карманы"));
-		//
-		//
-		//		keyboardFirstRow.add(new KeyboardButton("\uD83C\uDF3A Помощь"));
-		//		keyboardFirstRow.add(new KeyboardButton("⭐️ Персонаж"));
-		//
-		//
-		//		keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCB0 Монетка"));
-		//		keyboardThirdRow.add(new KeyboardButton("\uD83D\uDED2 Магазин"));
-		//		keyboardThirdRow.add(new KeyboardButton("\uD83D\uDCDE Скупщик"));
-		//
-		//		keyboardFourthRow.add(new KeyboardButton("\uD83C\uDF80 Топ 10"));
-		//		keyboardFourthRow.add(new KeyboardButton("\uD83D\uDEE0 Продать Cheap"));
-		//
-		//
-		//		keyboardFourthRow.add(new KeyboardButton("🐡 Рыбачить"));
-		//		keyboardFourthRow.add(new KeyboardButton("\uD83E\uDD88 Сдать рыбу"));
-		//		//keyboardFirstRow.add(new KeyboardButton("/me"));
-		//		break;
-		//	}
-		//	case awaitingTeaNote:
-		//	case awaitingCoffeeNote:
-		//	case shopPlaceGood_awaitingCost:
-		//	case payAwaitingAmount:
-		//		keyboardFirstRow.add(new KeyboardButton("/back"));
-		//	case shopBuy:
-		//	case coinDash:
-		//	case awaitingTea:
-		//	case awaitingCoffee:
-		//	case awaitingSellArguments:
-		//	case awaitingChangeNickname:
-		//	case shopPlaceGood_awaitingID:
-		//	case payAwaitingNickname:
-		//		keyboardFirstRow.add(new KeyboardButton("/cancel"));
-		//		break;
-		//	default:
-		//		return;
-		//}
-
-		//keyboardFirstRow.add(new KeyboardButton("/find"));
-		//добавили в спиок всех кнопок
+		sendMessage.setReplyMarkup(replyKeyboardMarkup);
 	}
 
 	@Override
@@ -216,7 +193,15 @@ public class Bot extends TelegramLongPollingBot
 			}
 			else
 			{
-				state_processor.get(player.getState()).accept(player, message);
+				if (!text.equals("/cancel"))
+				{
+					state_processor.get(player.getState()).accept(player, message);
+				}
+				else
+				{
+					player.setState(Player.State.awaitingCommands);
+					sendMsg(id, "Выберите действие");
+				}
 			}
 		}
 	}
@@ -320,6 +305,7 @@ public class Bot extends TelegramLongPollingBot
 		String input = message.getText();
 		long id = player.getId();
 
+		player.setState(Player.State.awaitingCommands);
 		if (!input.equals(capitalgame.getCapital(player.countryKey)))
 		{
 			sendMsg(id, "❌ Неправильно");
@@ -336,9 +322,6 @@ public class Bot extends TelegramLongPollingBot
 				e.printStackTrace();
 			}
 		}
-
-		//active_players.remove(player);
-		player.setState(Player.State.awaitingCommands);
 	}
 
 
@@ -572,11 +555,13 @@ public class Bot extends TelegramLongPollingBot
 					inventoryDAO.delete(player_id, i.getId(), 1);
 					inventoryDAO.delete(player_id, j.getId(), 1);
 					inventoryDAO.delete(player_id, k.getId(), 1);  // todo remove from memory
+					player.setState(Player.State.awaitingCommands);
 					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
 					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("Энергетик").getId());
 				}
 				else
 				{
+					player.setState(Player.State.awaitingCommands);
 					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n" + recipe.energyRecipe.toString());
 				}
 			}
@@ -589,12 +574,14 @@ public class Bot extends TelegramLongPollingBot
 					inventoryDAO.delete(player_id, i.getId(), 1);
 					inventoryDAO.delete(player_id, j.getId(), 1);
 
+					player.setState(Player.State.awaitingCommands);
 					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
 					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift").getId());
 					player.addXp(4);
 				}
 				else
 				{
+					player.setState(Player.State.awaitingCommands);
 					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n " + recipe.caseRecipe.toString());
 				}
 			}
@@ -606,14 +593,15 @@ public class Bot extends TelegramLongPollingBot
 		catch (NumberFormatException e)
 		{
 			e.printStackTrace();
+			player.setState(Player.State.awaitingCommands);
 			sendMsg(player_id, "⚠\t Пожалуйста, введите целое число");
 		}
 		catch (IndexOutOfBoundsException ee)
 		{
 			ee.printStackTrace();
+			player.setState(Player.State.awaitingCommands);
 			sendMsg(player_id, "⚠\t Указан неверный ID");
 		}
-		player.setState(Player.State.awaitingCommands);
 	}
 
 
@@ -806,12 +794,13 @@ public class Bot extends TelegramLongPollingBot
 			}
 			else
 			{
-				sendMsg(player_id, "Такого игрока не существует");
 				player.setState(Player.State.awaitingCommands);
+				sendMsg(player_id, "Такого игрока не существует");
 			}
 		}
 		else
 		{
+			player.setState(Player.State.awaitingCommands);
 			sendMsg(player_id, "\uD83C\uDF38 Кофе можно отправлять только другим игрокам");
 		}
 	}
@@ -835,6 +824,7 @@ public class Bot extends TelegramLongPollingBot
 			String note = message.getText();
 			if (note.length() < 48)
 			{
+				player.setState(Player.State.awaitingCommands);
 				Player receiver = player.coffee_acceptor;
 
 				player.balance.transfer(-goal);
@@ -863,7 +853,6 @@ public class Bot extends TelegramLongPollingBot
 			ex.printStackTrace();
 			sendMsg(player.getId(), ex.getMessage());
 		}
-		player.setState(Player.State.awaitingCommands);
 	}
 
 	public void awaitingTea_processor(Player player, Message message)
@@ -882,14 +871,14 @@ public class Bot extends TelegramLongPollingBot
 			}
 			else
 			{
-				sendMsg(player_id, "Такого игрока не существует");
 				player.setState(Player.State.awaitingCommands);
+				sendMsg(player_id, "Такого игрока не существует");
 			}
 		}
 		else
 		{
-			sendMsg(player_id, "\uD83C\uDF38 Чай можно отправлять только другим игрокам");
 			player.setState(Player.State.awaitingCommands);
+			sendMsg(player_id, "\uD83C\uDF38 Чай можно отправлять только другим игрокам");
 		}
 	}
 
@@ -908,6 +897,7 @@ public class Bot extends TelegramLongPollingBot
 
 		try
 		{
+			player.setState(Player.State.awaitingCommands);
 			String note = message.getText();
 			if (note.length() < 48)
 			{
@@ -939,7 +929,6 @@ public class Bot extends TelegramLongPollingBot
 			ex.printStackTrace();
 			sendMsg(player.getId(), ex.getMessage());
 		}
-		player.setState(Player.State.awaitingCommands);
 	}
 
 	public void command_drinks(Player player)
@@ -1693,6 +1682,7 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
+			player.setState(Player.State.shopPlaceGood_awaitingID);
 			Inventory inventory = player.getInventory();
 
 			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
@@ -1704,8 +1694,6 @@ public class Bot extends TelegramLongPollingBot
 			sb.append("=====================\n");
 			sendMsg(player_id, sb.toString());
 			sendMsg(player_id, "Введите ID предмета, который хотите продать\n");
-
-			player.setState(Player.State.shopPlaceGood_awaitingID);
 		}
 	}
 
@@ -1727,9 +1715,17 @@ public class Bot extends TelegramLongPollingBot
 			Item _case = itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift");
 			Item _key = itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса");
 
-			Stream<Item> items_stream = player.getInventory().getItems().stream();
-			casesCounter = (int) items_stream.filter(i -> i.equals(_case)).count();
-			keysCounter = (int) items_stream.filter(i -> i.equals(_key)).count();
+			for (Item item : player.getInventory().getItems())
+			{
+				if (item.equals(_case))
+				{
+					casesCounter++;
+				}
+				if (item.equals(_key))
+				{
+					keysCounter++;
+				}
+			}
 
 			sb.append("В кейсах могут выпадать различные предметы редкости `Gift` и `Rare`\n");
 			sb.append("Кейсы можно скрафтить из `Отвертки` и `Подшипника` в разделе `\uD83E\uDD65 Рецепты`\n");
@@ -1894,8 +1890,9 @@ public class Bot extends TelegramLongPollingBot
 		List<Long> expires = abilityDAO.expireFind();
 		for (long id : expires)
 		{
-			System.out.printf("Find expiration notification fired for player id%d", id);
+			System.out.printf("Find expiration notification fired for player id%d\n", id);
 			sendMsg(id, "⭐ Вы снова можете искать редкие предметы!");
+			playerDAO.get_by_id(id).findExpiration = null;
 		}
 	}
 
