@@ -30,7 +30,7 @@ import static main.BotCommandProcessor.*;
 
 public class Bot extends TelegramLongPollingBot
 {
-	private final PlayerDAO playerDAO;
+	private final IPlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
 	private final ItemDAO itemDAO;
 	private final ShopDAO shopDAO;
@@ -57,14 +57,14 @@ public class Bot extends TelegramLongPollingBot
 
 	KeyboardPaginator paginator;
 
-	Map<Long, Player> active_players;
+	//Map<Long, Player> active_players;
 
 	Map<Player.State, BiConsumer<Player, Message>> state_processor;
 	Map<String, Consumer<Player>> command_processor;
 
 	public Bot(Connection connection) throws FileNotFoundException
 	{
-		playerDAO = new PlayerDAO(connection, this);
+		playerDAO = new CachedPlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
 		itemDAO = new ItemDAO(connection);
 		shopDAO = new ShopDAO(connection, this);
@@ -73,7 +73,7 @@ public class Bot extends TelegramLongPollingBot
 		token = init_token();
 		state_processor = BotStateProcessor.get_map(this);
 		command_processor = BotCommandProcessor.get_map(this);
-		active_players = new HashMap<>();
+		//active_players = new HashMap<>();
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
@@ -111,11 +111,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 		long id = Long.parseLong(sendMessage.getChatId());
 		//Player player = playerDAO.get_by_id(id);
-		Player player = active_players.get(id);
-		if (player == null)
-		{
-			player = playerDAO.get_by_id(id);
-		}
+		Player player = playerDAO.get_by_id(id);
 		//инициаллизация клавиатуры
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 		//установка разметки
@@ -198,22 +194,15 @@ public class Bot extends TelegramLongPollingBot
 			long id = message.getChatId();
 			String text = message.getText();
 
-			Player player = active_players.get(id);
-			if (player == null)
-			{
-				player = playerDAO.get_by_id(id);
-				active_players.put(id, player);
-			}
+			Player player = playerDAO.get_by_id(id);
 
 			System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
-
 
 			if (player == null)
 			{
 				if (text.equals("/start") || text.equals("⭐ Начать"))
 				{
 					player = new Player(id, this);
-					active_players.put(id, player);
 					playerDAO.put(player);
 
 					sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
@@ -393,7 +382,7 @@ public class Bot extends TelegramLongPollingBot
 	void awaitingTouchId_processor(Player player, Message message)
 	{
 		Random randomPlayer = new Random();
-		List<Player> players = playerDAO.getAll();
+		List<Player> players = playerDAO.get_all();
 		int randomIndex = randomPlayer.nextInt(players.size());
 		String anotherPlayer = players.get(randomIndex).getUsername();
 
@@ -749,15 +738,7 @@ public class Bot extends TelegramLongPollingBot
 
 		if (!nickname.equals(player.getUsername()))
 		{
-			Player acceptor;
-			try
-			{
-				acceptor = active_players.values().stream().filter(p -> p.getUsername().equals(nickname)).findAny().get();
-			}
-			catch (NoSuchElementException ex)
-			{
-				acceptor = playerDAO.get_by_name(nickname);
-			}
+			Player acceptor = playerDAO.get_by_name(nickname);
 			if (acceptor != null)
 			{
 				player.payment_acceptor = acceptor;
@@ -816,15 +797,7 @@ public class Bot extends TelegramLongPollingBot
 
 		if (!nickname.equals(player.getUsername()))
 		{
-			Player acceptor;
-			try
-			{
-				acceptor = active_players.values().stream().filter(p -> p.getUsername().equals(nickname)).findAny().get();
-			}
-			catch (NoSuchElementException ex)
-			{
-				acceptor = playerDAO.get_by_name(nickname);
-			}
+			Player acceptor = playerDAO.get_by_name(nickname);
 			if (acceptor != null)
 			{
 				player.coffee_acceptor = acceptor;
@@ -896,15 +869,7 @@ public class Bot extends TelegramLongPollingBot
 
 		if (!nickname.equals(player.getUsername()))
 		{
-			Player acceptor;
-			try
-			{
-				acceptor = active_players.values().stream().filter(p -> p.getUsername().equals(nickname)).findAny().get();
-			}
-			catch (NoSuchElementException ex)
-			{
-				acceptor = playerDAO.get_by_name(nickname);
-			}
+			Player acceptor = playerDAO.get_by_name(nickname);
 			if (acceptor != null)
 			{
 				player.tea_acceptor = acceptor;
@@ -1449,7 +1414,7 @@ public class Bot extends TelegramLongPollingBot
 		StringBuilder players_list = new StringBuilder("\uD83D\uDCBB Топ 10 самых богатых игроков:\n\n");
 		players_list.append("========================");
 		players_list.append("\n");
-		for (Player pl : playerDAO.getTopN("balance", false, 10))
+		for (Player pl : playerDAO.get_top("balance", false, 10))
 		{
 			if (pl.getInventory().getItems().contains(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея")))
 			{
@@ -1467,7 +1432,7 @@ public class Bot extends TelegramLongPollingBot
 			}
 		}
 		players_list.append("\n");
-		players_list.append("\uD83D\uDCBB Всего игроков: ").append(playerDAO.getAll().size());
+		players_list.append("\uD83D\uDCBB Всего игроков: ").append(playerDAO.get_all().size());
 		sendMsg(player.getId(), players_list.toString());
 	}
 
@@ -1516,7 +1481,6 @@ public class Bot extends TelegramLongPollingBot
 		StringBuilder stringBuilder = new StringBuilder();
 		if (inventory.getInvSize() > 0)
 		{
-			active_players.put(player.getId(), player);
 			stringBuilder.append("\uD83E\uDDF6 Предметы, доступные к продаже:\n");
 			stringBuilder.append("\n");
 			stringBuilder.append("============================\n");
@@ -1656,7 +1620,6 @@ public class Bot extends TelegramLongPollingBot
 			}
 			else
 			{
-				active_players.put(player_id, player);
 				StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
 				for (ShopItem i : shopDAO.getAll())
 				{
@@ -1933,9 +1896,10 @@ public class Bot extends TelegramLongPollingBot
 	public void dump_database()
 	{
 		System.out.println("Dump database fired");
-		for (Player player : active_players.values())
+		if (playerDAO instanceof CachedPlayerDAO)
 		{
-			playerDAO.update(player);
+			((CachedPlayerDAO) playerDAO).dump();
+			System.out.println("Database dumped");
 		}
 	}
 

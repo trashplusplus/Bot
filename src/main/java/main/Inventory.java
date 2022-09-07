@@ -14,7 +14,8 @@ public class Inventory
 
 	public List<Item> getItems()
 	{
-		return new ArrayList<>(this.inventory);
+		return inventory;
+		//return new ArrayList<>(this.inventory);
 	}
 
 	public String showInventory()

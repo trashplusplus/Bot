@@ -10,7 +10,7 @@ import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
 
-public class PlayerDAO
+public class PlayerDAO implements IPlayerDAO
 {
 	private final Connection connection;
 	private final InventoryDAO inventoryDAO;
@@ -179,7 +179,7 @@ public class PlayerDAO
 		return player;
 	}
 
-	public List<Player> getAll()
+	public List<Player> get_all()
 	{
 		List<Player> result = new ArrayList<>();
 		PreparedStatement ps = null;
@@ -232,7 +232,7 @@ public class PlayerDAO
 		return result;
 	}
 
-	public List<Player> getTopN(String field_name, boolean ascending, int limit)
+	public List<Player> get_top(String field_name, boolean ascending, long limit)
 	{
 		List<Player> players = new ArrayList<>();
 		PreparedStatement ps = null;
@@ -241,7 +241,7 @@ public class PlayerDAO
 		try
 		{
 			ps = connection.prepareStatement(query);
-			ps.setInt(1, limit);
+			ps.setLong(1, limit);
 			rs = ps.executeQuery();
 			while (rs.next())
 			{
