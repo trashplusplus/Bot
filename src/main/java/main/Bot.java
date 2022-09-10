@@ -550,8 +550,11 @@ public class Bot extends TelegramLongPollingBot
 				{
 					player.addXp(4);
 					inventoryDAO.delete(player_id, i.getId(), 1);
+					player.getInventory().getItems().removeIf(item -> item.equals(i));
 					inventoryDAO.delete(player_id, j.getId(), 1);
+					player.getInventory().getItems().removeIf(item -> item.equals(j));
 					inventoryDAO.delete(player_id, k.getId(), 1);  // todo remove from memory
+					player.getInventory().getItems().removeIf(item -> item.equals(k));  // todo test
 					player.setState(Player.State.awaitingCommands);
 					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
 					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("Энергетик").getId());
