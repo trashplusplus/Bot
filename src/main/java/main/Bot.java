@@ -544,12 +544,12 @@ public class Bot extends TelegramLongPollingBot
 
 			if(recipe.hasRecipe(inventory, ingredients)){
 				for(Item i: ingredients){
-					player.addXp(4);
 					inventoryDAO.delete(player_id, i.getId(), 1);
-					player.setState(Player.State.awaitingCommands);
-					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
-					inventoryDAO.putItem(player_id, craftName.getId());
 				}
+				player.setState(Player.State.awaitingCommands);
+				sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен " + craftName.getTitle());
+				inventoryDAO.putItem(player_id, craftName.getId());
+				player.addXp(4);
 			}else{
 				sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n " + recipe.recipes.get(craftName).toString());
 			}
