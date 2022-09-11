@@ -1,27 +1,51 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static main.RollerFactory.itemDAO;
 
 public class Recipe {
-    List<Item> energyRecipe = new ArrayList<>();
-    List<Item> caseRecipe = new ArrayList<>();
 
-    List<Item> allRecipes = new ArrayList<>();
+    Map<Item, List<Item>> recipes = new HashMap<>();
+
 
     Recipe(){
-        energyRecipe.add(itemDAO.getByNameFromCollection("Стиральный порошок"));
-        energyRecipe.add(itemDAO.getByNameFromCollection("Бутылка"));
-        energyRecipe.add(itemDAO.getByNameFromCollection("Банан"));
 
-        caseRecipe.add(itemDAO.getByNameFromCollection("Отвертка"));
-        caseRecipe.add(itemDAO.getByNameFromCollection("Подшипник"));
+        createRecipe("Энергетик", "Стиральный порошок", "Банан", "Бутылка");
+        createRecipe("\uD83D\uDCE6 Кейс Gift", "Отвертка", "Подшипник");
 
+        /*
+        recipes.put(itemDAO.getByNameFromCollection("Энергетик"),new ArrayList<Item>(Arrays.asList(
+                itemDAO.getByNameFromCollection("Стиральный порошок"),
+                itemDAO.getByNameFromCollection("Банан"),
+                itemDAO.getByNameFromCollection("Бутылка"))));
+        recipes.put(itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift"), new ArrayList<Item>(Arrays.asList(
+                itemDAO.getByNameFromCollection("Отвертка"),
+                itemDAO.getByNameFromCollection("Подшипник")
+        )));
+        */
+    }
 
-        allRecipes.add(itemDAO.getByNameFromCollection("Энергетик"));
-        allRecipes.add(itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift"));
+    public void createRecipe(String resultProduct, String...ingredients){
+
+        Item resultProductToItem = itemDAO.getByNameFromCollection(resultProduct);
+        List<Item> ingredientsToItem = new ArrayList<>();
+
+        for(int i = 0; i < ingredients.length; i++){
+            ingredientsToItem.add(itemDAO.getByNameFromCollection(ingredients[i]));
+        }
+
+        recipes.put(resultProductToItem, ingredientsToItem);
+    }
+
+    public Item choice(int index){
+        List<Item> ingredientsToItem = new ArrayList<>();
+
+        for(Map.Entry<Item, List<Item>> entry : recipes.entrySet()){
+                Item key = entry.getKey();
+                ingredientsToItem.add(key);
+            }
+        return ingredientsToItem.get(index);
     }
 
 

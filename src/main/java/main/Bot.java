@@ -539,53 +539,21 @@ public class Bot extends TelegramLongPollingBot
 			Inventory inventory = player.getInventory();
 			String craftID = message.getText();
 			int craft_id = Integer.parseInt(craftID);
+			Item craftName = recipe.choice(craft_id);
+			List<Item> ingredients = recipe.recipes.get(craftName);
 
-
-			if (craft_id == 0)
-			{
-				Item i = recipe.energyRecipe.get(0);
-				Item j = recipe.energyRecipe.get(1);
-				Item k = recipe.energyRecipe.get(2);
-				if (recipe.hasRecipe(inventory, recipe.energyRecipe))
-				{
+			if(recipe.hasRecipe(inventory, ingredients)){
+				for(Item i: ingredients){
 					player.addXp(4);
 					inventoryDAO.delete(player_id, i.getId(), 1);
-					inventoryDAO.delete(player_id, j.getId(), 1);
-					inventoryDAO.delete(player_id, k.getId(), 1);  // todo remove from memory
 					player.setState(Player.State.awaitingCommands);
 					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
-					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("Энергетик").getId());
+					inventoryDAO.putItem(player_id, craftName.getId());
 				}
-				else
-				{
-					player.setState(Player.State.awaitingCommands);
-					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n" + recipe.energyRecipe.toString());
-				}
+			}else{
+				sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n " + recipe.recipes.get(craftName).toString());
 			}
-			else if (craft_id == 1)
-			{
-				Item i = recipe.caseRecipe.get(0);
-				Item j = recipe.caseRecipe.get(1);
-				if (recipe.hasRecipe(inventory, recipe.caseRecipe))
-				{
-					inventoryDAO.delete(player_id, i.getId(), 1);
-					inventoryDAO.delete(player_id, j.getId(), 1);
 
-					player.setState(Player.State.awaitingCommands);
-					sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен");
-					inventoryDAO.putItem(player_id, itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift").getId());
-					player.addXp(4);
-				}
-				else
-				{
-					player.setState(Player.State.awaitingCommands);
-					sendMsg(player_id, "\uD83E\uDE93 Для крафта нужно иметь: \n " + recipe.caseRecipe.toString());
-				}
-			}
-			else
-			{
-				throw new IndexOutOfBoundsException();
-			}
 		}
 		catch (NumberFormatException e)
 		{
@@ -942,14 +910,19 @@ public class Bot extends TelegramLongPollingBot
 		sb.append("Предметы, доступные для крафта: \n");
 		Recipe recipe = new Recipe();
 
-		if (recipe.allRecipes != null)
+		if (recipe.recipes != null)
 		{
 			sb.append("\n");
 			sb.append("========================\n");
-			for (int i = 0; i < recipe.allRecipes.size(); i++)
-			{
-				sb.append(String.format("Рецепт |%d|: %s\n", i, recipe.allRecipes.get(i).getTitle()));
+			int i = 0;
+
+			for(Map.Entry<Item, List<Item>> entry : recipe.recipes.entrySet()){
+				String craftName = entry.getKey().getTitle();
+				sb.append(String.format("Рецепт |%d|: %s\n", i, craftName));
+				i++;
 			}
+
+
 			sb.append("========================\n");
 			sb.append("Чтобы скрафтить предмет введите его ID: ");
 			player.setState(Player.State.craftAwaitingID);

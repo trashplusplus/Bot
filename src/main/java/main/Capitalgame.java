@@ -33,7 +33,7 @@ public class Capitalgame {
         counCapi.put("Демократическая республика Конго", "Киншаса");
         counCapi.put("Беларусь", "Минск");
         counCapi.put("Сербия", "Белград");
-        counCapi.put("Соединенные штаты Америки", "Вашингтон");
+        counCapi.put("Соединенные Штаты Америки", "Вашингтон");
         counCapi.put("Канада", "Оттава");
         counCapi.put("Босния и Герцеговина", "Сараево");
         counCapi.put("Хорватия", "Загреб");
@@ -57,6 +57,22 @@ public class Capitalgame {
         counCapi.put("Люксембург", "Люксембург");
         counCapi.put("Швейцария", "Берн");
         counCapi.put("Кения", "Найроби");
+        counCapi.put("Иран", "Тегеран");
+        counCapi.put("Черногория", "Подгорица");
+        counCapi.put("Бразилия", "Бразилиа");
+        counCapi.put("Перу", "Лима");
+        counCapi.put("Чили", "Сантьяго");
+        counCapi.put("Колумбия", "Богота");
+        counCapi.put("Аргентина", "Буэнос-Айрес");
+        counCapi.put("Боливия", "Сукре");
+        counCapi.put("Уругвай", "Монтевидео");
+        counCapi.put("Парагвай", "Асунсьон");
+        counCapi.put("Аруба", "Ораньестад");
+        counCapi.put("Кюрасао", "Виллемстад");
+        counCapi.put("Венесуэлла", "Каракас");
+        counCapi.put("Французская Гвиана", "Кайенна");
+        counCapi.put("Тринидад и Тобаго", "Порт-оф-Спейн");
+
 
         for(String oneKey: counCapi.keySet()){
             countries.add(oneKey);
