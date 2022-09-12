@@ -15,20 +15,31 @@ public class RollerFactory
 	public static Roller<Item> getMudRoller(Random random)
 	{
 		List<Item> cheap_items = new ArrayList<>();
+		List<Item> common_items = new ArrayList<>();
 		for (Item item : itemDAO.getAllFromCollection())
 		{
 			if (item.getRarity() == ItemRarity.Cheap)
 			{
 				cheap_items.add(item);
+			}else if(item.getRarity() == ItemRarity.Common){
+				common_items.add(item);
 			}
 		}
 		cheap_items.add(null);
-		Item[] items = cheap_items.toArray(new Item[0]);
-		int[] weights = new int[items.length];
-		Arrays.fill(weights, 1);
-		weights[weights.length - 1] = 4 * (weights.length - 1);
+		common_items.add(null);
 
-		return new Roller<>(items, weights, random);
+		Item[] items_cheap = cheap_items.toArray(new Item[0]);
+		Item[] items_common = common_items.toArray(new Item[0]);
+
+		int[] weights_cheap = new int[items_cheap.length];
+		int[] weights_common = new int[items_common.length];
+
+		Arrays.fill(weights_cheap, 1);
+		Arrays.fill(weights_common, 1);
+		weights_cheap[weights_cheap.length - 1] = 4 * (weights_cheap.length - 1);
+		weights_common[weights_common.length - 1] = 17 * (weights_common.length - 1);
+
+		return new Roller<>(items_cheap, weights_cheap, random);
 	}
 
 	public static Roller<Integer> getMoneyRoller(Random random)

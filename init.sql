@@ -3,6 +3,7 @@ create table if not exists players
     id integer primary key,
     xp integer default 0,
     'level' integer default 0,
+    needle integer default 0,
     name text unique,
     balance integer default 0,
     registered integer not null default 0
@@ -133,8 +134,6 @@ insert or ignore into items (name, rarity, cost) values
 
 
 
-
-
 create table if not exists inventory
 (
     id integer primary key,
@@ -159,7 +158,7 @@ create table if not exists stats
 
 create view if not exists player as
     select
-        id, name, xp, level, balance, registered as R,
+        id, name, xp, level, balance, needle, registered as R,
         find_expiration as FIND, pockets_expiration as POCKETS,
         coinWins as W, coinLosses as L, coffee, tea, bonus, trees
     from

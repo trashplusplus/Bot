@@ -89,6 +89,9 @@ public class BotCommandProcessor
 		res.put("/recipes", bot::command_recipes);
 		res.put(RECIPES_BUTTON, bot::command_recipes);
 
+		res.put("/give", bot::command_give);
+		res.put("/donate", bot::command_donate);
+		res.put(DONATE_BUTTON, bot::command_donate);
 
 
 		return res;
@@ -122,4 +125,5 @@ public class BotCommandProcessor
 	public static final String DRINKS_BUTTON = "\uD83E\uDDC3 Напитки";
 	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
 	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
+	public static final String DONATE_BUTTON = "\uD83D\uDC8E Донат";
 }

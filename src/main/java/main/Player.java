@@ -8,12 +8,14 @@ public class Player
 	private final long id;
 	private final Inventory inventory;
 	public Money balance;
+	public Long needle;
 	private String username;
 	private int level;
 	private int xp;
 	private State state;
 	public Long findExpiration = null;
 	public Long pocketsExpiration = null;
+
 
 	public Stats stats;
 
@@ -35,11 +37,11 @@ public class Player
 
 	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), new Stats(), host);
+		this(id, 0, 1, "player" + id, 0, 0, State.awaitingNickname, new Inventory(), new Stats(), host);
 
 	}
 
-	public Player(long id, int xp, int level, String username, long balance, State state, Inventory inventory, Stats stats, Bot host)
+	public Player(long id, int xp, int level, String username, long balance, long needle, State state, Inventory inventory, Stats stats, Bot host)
 	{
 		this.id = id;
 		this.username = username;
@@ -50,6 +52,7 @@ public class Player
 		this.xp = xp;
 		this.level = level;
 		this.host = host;
+		this.needle = needle;
 	}
 
 	public State getState()
@@ -146,8 +149,8 @@ public class Player
 		touch,
 		checkAwaitingNickname,
 		capitalGame,
-		craftAwaitingID
-
+		craftAwaitingID,
+		giveID
 	}
 
 	@Override
