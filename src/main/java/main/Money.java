@@ -68,7 +68,7 @@ public class Money
 		return Objects.hash(value);
 	}
 
-	static class MoneyException extends Exception
+	public static class MoneyException extends Exception
 	{
 		public MoneyException()
 		{

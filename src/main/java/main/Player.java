@@ -1,5 +1,8 @@
 package main;
 
+import commands.BaseState;
+import commands.State;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -18,6 +21,8 @@ public class Player
 	public Stats stats;
 
 	public int page = 0;
+
+	public commands.State st;
 
 
 	Bot host;
@@ -50,6 +55,7 @@ public class Player
 		this.xp = xp;
 		this.level = level;
 		this.host = host;
+		st = new BaseState(host, this);
 	}
 
 	public State getState()

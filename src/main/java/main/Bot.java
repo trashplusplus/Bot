@@ -1,6 +1,12 @@
 package main;
 
 import ability.Cooldown;
+import commands.BaseState;
+import commands.Command;
+import commands.me.MeCommand;
+import commands.pay.PayCommand;
+import commands.sell.SellCommand;
+import commands.touch.TouchCommand;
 import database.dao.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -22,6 +28,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -193,14 +200,42 @@ public class Bot extends TelegramLongPollingBot
 			}
 			else
 			{
-				if (!text.equals(CANCEL_BUTTON))
+				if (player.st instanceof BaseState)
 				{
-					state_processor.get(player.getState()).accept(player, message);
+					Command cmd;
+					//Map<String, Supplier<Command>> map = new HashMap<>();
+					//map.put("/me", () -> new MeCommand());
+					//map.put("/sell", () -> new SellCommand(inventoryDAO));
+					//map.put("/pay", () -> new PayCommand(playerDAO));
+					//map.put("/touch", () -> new TouchCommand(inventoryDAO, playerDAO));
+					switch (text)
+					{
+						case "/me":
+							cmd = new MeCommand();
+							break;
+						case "/sell":
+							cmd = new SellCommand(inventoryDAO);
+							break;
+						case "/pay":
+							cmd = new PayCommand(playerDAO);
+							break;
+						default:
+							sendMsg(id, "Иди нахуй");
+							return;
+					}
+					cmd.consume(this, player);
 				}
 				else
 				{
-					player.setState(Player.State.awaitingCommands);
-					sendMsg(id, "Выберите действие");
+					if (text.equals("/cancel"))
+					{
+						player.st = new BaseState(this, player);
+						sendMsg(id, "Заебал, чего тебе?");
+					}
+					else
+					{
+						player.st.process(text);
+					}
 				}
 			}
 		}
