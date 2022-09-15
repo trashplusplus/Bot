@@ -8,6 +8,13 @@ import java.util.Random;
 
 public class Capitalgame extends Command
 {
+	main.Capitalgame capitalgame;
+
+	public Capitalgame(main.Capitalgame capitalgame)
+	{
+		this.capitalgame = capitalgame;
+	}
+
 	@Override
 	public void consume(Bot host, Player player)
 	{
@@ -18,9 +25,9 @@ public class Capitalgame extends Command
 		else
 		{
 			Random ran = new Random();
-			int random = ran.nextInt(host.capitalgame.getCountries().size());
+			int random = ran.nextInt(capitalgame.getCountries().size());
 
-			String country = host.capitalgame.getCountry(random);
+			String country = capitalgame.getCountry(random);
 
 			player.state = new CapitalgameState(host, player, country, player.state.base);
 			host.sendMsg(player.getId(), player.state.hint);

@@ -2,7 +2,6 @@ package main;
 
 import commands.BaseState;
 
-import java.util.Date;
 import java.util.Objects;
 
 public class Player
@@ -13,20 +12,12 @@ public class Player
 	private String username;
 	private int level;
 	private int xp;
-	//private State state;
 	public Long findExpiration = null;
 	public Long pocketsExpiration = null;
-
 	public Stats stats;
 	public int page = 0;
-
 	public commands.State state;
-
-	Bot host;
-
-
-	public Date sellfish = null;
-
+	public final Bot host;
 
 	public Player(long id, Bot host)
 	{
@@ -71,7 +62,8 @@ public class Player
 		return balance;
 	}
 
-	public Stats getStats(){
+	public Stats getStats()
+	{
 		return stats;
 	}
 
@@ -82,15 +74,18 @@ public class Player
 		host.level_up_notification(this);
 	}
 
-	public void ach_treeHard(){
+	public void ach_treeHard()
+	{
 		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Зеленый лес*", 15000);
 	}
 
-	public void ach_coffee(){
+	public void ach_coffee()
+	{
 		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Джон Коффи*", 7500);
 	}
 
-	public void ach_tea(){
+	public void ach_tea()
+	{
 		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Гринфилд*", 7500);
 	}
 
@@ -109,29 +104,6 @@ public class Player
 	public int getXp()
 	{
 		return xp;
-	}
-
-	public enum State
-	{
-		awaitingNickname,
-		awaitingSellArguments,
-		awaitingCommands,
-		awaitingChangeNickname,
-		coinDash,
-		shopPlaceGood_awaitingID,
-		shopPlaceGood_awaitingCost,
-		payAwaitingNickname,
-		payAwaitingAmount,
-		shopBuy,
-		awaitingCoffee,
-		awaitingCoffeeNote,
-		awaitingTea,
-		awaitingTeaNote,
-		touch,
-		checkAwaitingNickname,
-		capitalGame,
-		craftAwaitingID
-
 	}
 
 	@Override

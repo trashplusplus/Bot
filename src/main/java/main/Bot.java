@@ -44,10 +44,10 @@ public class Bot extends TelegramLongPollingBot
 
 	ScheduledFuture<?> sf_timers;
 	ScheduledFuture<?> sf_find;
-	private final long expStepS = 5L;
+	public final long expStepS = 5L;
 	ScheduledFuture<?> sf_pockets;
 	ScheduledFuture<?> sf_dump;
-	private final long dump_timer_s = 120L;
+	public final long dump_timer_s = 120L;
 
 	public final long findCooldown = 20L * 60L * 1000L;
 	public final long pocketsCooldown = 30L * 1000L;
@@ -70,7 +70,7 @@ public class Bot extends TelegramLongPollingBot
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, this);
 		token = init_token();
-		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller);
+		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller, capitalgame);
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit

@@ -55,7 +55,7 @@ public class CommandProcessor
 
 	public Map<String, Supplier<Command>> map;
 
-	public CommandProcessor(ItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller)
+	public CommandProcessor(ItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
@@ -141,8 +141,8 @@ public class CommandProcessor
 		map.put("/check", () -> new Check(playerDAO));
 		map.put(CHECK_BUTTON, () -> new Check(playerDAO));
 
-		map.put("/capitalgame", () -> new Capitalgame());
-		map.put(CAPITALGAME_BUTTON, () -> new Capitalgame());
+		map.put("/capitalgame", () -> new Capitalgame(capitalgame));
+		map.put(CAPITALGAME_BUTTON, () -> new Capitalgame(capitalgame));
 
 		map.put("/previous", () -> new Previous());
 		map.put(PREVIOUS_BUTTON, () -> new Previous());
