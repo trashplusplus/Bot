@@ -49,8 +49,8 @@ public class Shopbuy extends Command
 				sb.append("\n");
 
 				host.sendMsg(player_id, sb.toString());
-				player.st = new ShopbuyState(host, player, shopDAO, inventoryDAO);
-				host.sendMsg(player_id, player.st.hint);
+				player.state = new ShopbuyState(host, player, shopDAO, inventoryDAO);
+				host.sendMsg(player_id, player.state.hint);
 			}
 		}
 		else
@@ -105,7 +105,7 @@ class ShopbuyState extends State
 					inventoryDAO.putItem(player.getId(), item.getId());
 					player.getInventory().putItem(item);
 
-					player.st = player.st.base;
+					player.state = player.state.base;
 
 					host.sendMsg(player.getId(), String.format("\uD83C\uDF6D Предмет `%s` успешно куплен", item));
 					host.sendMsg(seller.getId(), String.format("\uD83D\uDCC8 Ваш предмет `%s` купил игрок `%s` | + %s", item.getTitle(), player.getUsername(), new Money(itemCost)));

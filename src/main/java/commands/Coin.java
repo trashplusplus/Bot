@@ -18,8 +18,8 @@ public class Coin extends Command
 			if (player.balance.value > 0)
 			{
 				host.sendMsg(player_id, "\uD83D\uDCB0 Ваш баланс: " + player.getMoney());
-				player.st = new CoinState(player, host);
-				host.sendMsg(player_id, player.st.hint);
+				player.state = new CoinState(player, host);
+				host.sendMsg(player_id, player.state.hint);
 			}
 			else
 			{
@@ -95,7 +95,7 @@ class CoinState extends State
 			player.stats.coinLosses++;
 		}
 
-		player.st = player.st.base;
+		player.state = player.state.base;
 		host.sendMsg(player_id, "Ваш баланс: " + player.balance + " \uD83D\uDCB2");
 	}
 

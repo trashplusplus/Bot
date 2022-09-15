@@ -27,8 +27,8 @@ public class Rename extends Command
 		Item i = itemDAO.getByNameFromCollection("\uD83D\uDCDD Тег");
 		if (player.getInventory().getItems().contains(i))
 		{
-			player.st = new RenameState(playerDAO, itemDAO, inventoryDAO, player, host);
-			host.sendMsg(id, player.st.hint);
+			player.state = new RenameState(playerDAO, itemDAO, inventoryDAO, player, host);
+			host.sendMsg(id, player.state.hint);
 		}
 		else
 		{
@@ -68,7 +68,7 @@ class RenameState extends State
 		{
 			if (playerDAO.get_by_name(nickname) == null)
 			{
-				player.st = player.st.base;
+				player.state = player.state.base;
 				player.setUsername(nickname);
 				inventoryDAO.delete(player.getId(), tag.getId(), 1);
 				player.getInventory().removeItem(tag_idx);

@@ -30,8 +30,8 @@ public class Tea extends Command
 		}
 		else
 		{
-			player.st = new TeaState1(host, player, cost, itemDAO, playerDAO, player.st.base);
-			host.sendMsg(player.getId(), player.st.hint);
+			player.state = new TeaState1(host, player, cost, itemDAO, playerDAO, player.state.base);
+			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
 }
@@ -65,8 +65,8 @@ class TeaState1 extends State
 			Player receiver = playerDAO.get_by_name(name);
 			if (receiver != null)
 			{
-				sender.st = new TeaState2(host, sender, receiver, cost, itemDAO, this, base);
-				host.sendMsg(player_id, sender.st.hint);
+				sender.state = new TeaState2(host, sender, receiver, cost, itemDAO, this, base);
+				host.sendMsg(player_id, sender.state.hint);
 			}
 			else
 			{
@@ -112,7 +112,7 @@ class TeaState2 extends State
 				sender.balance.transfer(-cost);
 
 				receiver.stats.tea++;
-				sender.st = base;
+				sender.state = base;
 				host.sendMsg(sender_id, "\uD83C\uDF3F Чай отправлен");
 				if (receiver.getStats().tea == 75)
 				{

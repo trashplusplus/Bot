@@ -33,14 +33,12 @@ public class PlayerDAO implements IPlayerDAO
 		PreparedStatement ps = null;
 		try
 		{
-			ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance, registered) values (?, ?, ?, ?, ?, ?);");
+			ps = connection.prepareStatement("insert into players (id, xp, 'level', name, balance) values (?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setInt(2, player.getXp());
 			ps.setInt(3, player.getLevel());
 			ps.setString(4, player.getUsername());
 			ps.setLong(5, player.balance.value);
-			//ps.setInt(6, player.getState() == Player.State.awaitingNickname ? 0 : 1);
-			ps.setInt(6, 1);
 			ps.execute();
 			statsDAO.put(player.getStats(), player.getId());
 			abilityDAO.put(player.getId());
@@ -324,15 +322,13 @@ public class PlayerDAO implements IPlayerDAO
 				//st.execute("begin transaction");
 
 				String update_players =
-						"update players set xp = ?, 'level' = ?, name = ?, balance = ?, registered = ? where id = ?;";
+						"update players set xp = ?, 'level' = ?, name = ?, balance = ? where id = ?;";
 				ps = connection.prepareStatement(update_players);
 				ps.setInt(1, player.getXp());
 				ps.setInt(2, player.getLevel());
 				ps.setString(3, player.getUsername());
 				ps.setLong(4, player.balance.value);
-				//ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
-				ps.setInt(5, 1);
-				ps.setLong(6, id);
+				ps.setLong(5, id);
 				ps.execute();
 
 				String update_stats =
@@ -443,8 +439,6 @@ public class PlayerDAO implements IPlayerDAO
 		int xp = rs.getInt("xp");
 		int level = rs.getInt("level");
 		long balance = rs.getLong("balance");
-		//Player.State state = rs.getInt("registered") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
-		Player.State state = rs.getInt("R") == 1 ? Player.State.awaitingCommands : Player.State.awaitingNickname;
 		//Long findExpiration = read_ts(rs, "find_expiration");
 		Long findExpiration = read_ts(rs, "FIND");
 		//Long pocketsExpiration = read_ts(rs, "pockets_expiration");
@@ -459,7 +453,7 @@ public class PlayerDAO implements IPlayerDAO
 		int trees = rs.getInt("trees");
 		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees);
 		Inventory inventory = inventoryDAO.get(id);
-		Player player = new Player(id, xp, level, username, balance, state, inventory, stats, host);
+		Player player = new Player(id, xp, level, username, balance, inventory, stats, host);
 		player.findExpiration = findExpiration;
 		player.pocketsExpiration = pocketsExpiration;
 		return player;

@@ -29,7 +29,7 @@ public class Shopplace extends Command
 		}
 		else
 		{
-			player.st = new ShopplaceState1(host, player, itemDAO, inventoryDAO, shopDAO, player.st.base);
+			player.state = new ShopplaceState1(host, player, itemDAO, inventoryDAO, shopDAO, player.state.base);
 			Inventory inventory = player.getInventory();
 
 			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
@@ -40,7 +40,7 @@ public class Shopplace extends Command
 			}
 			sb.append("=====================\n");
 			host.sendMsg(player_id, sb.toString());
-			host.sendMsg(player_id, player.st.hint);
+			host.sendMsg(player_id, player.state.hint);
 		}
 	}
 }
@@ -79,8 +79,8 @@ class ShopplaceState1 extends State
 			{
 				throw new BackpackException(itemID);
 			}
-			player.st = new ShopplaceState2(host, player, inventoryDAO,shopDAO, itemID, this, base);
-			host.sendMsg(id, player.st.hint);
+			player.state = new ShopplaceState2(host, player, inventoryDAO,shopDAO, itemID, this, base);
+			host.sendMsg(id, player.state.hint);
 		}
 		catch (NumberFormatException ex)
 		{
@@ -103,8 +103,8 @@ class ShopplaceState1 extends State
 			}
 			else
 			{
-				player.st = new ShopplaceState2(host, player, inventoryDAO, shopDAO, ex.backpackID, this, base);
-				host.sendMsg(player.getId(), player.st.hint);
+				player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, ex.backpackID, this, base);
+				host.sendMsg(player.getId(), player.state.hint);
 			}
 		}
 	}
@@ -143,7 +143,7 @@ class ShopplaceState2 extends State
 				ShopItem shopItem = new ShopItem(inventory.getItem(item_id), (int) cost, player);  // todo rework ShopItem
 				shopDAO.put(shopItem);
 
-				player.st = base;
+				player.state = base;
 				host.sendMsg(player_id, String.format("Товар `%s` выставлен на продажу", inventory.getItem(item_id).getTitle()));
 				inventory.removeItem(item_id);
 

@@ -21,8 +21,9 @@ import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import static commands.CommandProcessor.*;
 
 
 public class Bot extends TelegramLongPollingBot
@@ -75,11 +76,11 @@ public class Bot extends TelegramLongPollingBot
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, dump_timer_s, dump_timer_s, TimeUnit.SECONDS);
 		base_paginator = new KeyboardPaginator()
-				.first(CommandProcessor.INV_BUTTON, CommandProcessor.HELP_BUTTON, CommandProcessor.ME_BUTTON, CommandProcessor.FIND_BUTTON, CommandProcessor.MUD_BUTTON, CommandProcessor.POCKETS_BUTTON, CommandProcessor.DROP_BUTTON, CommandProcessor.SHOPSHOW_BUTTON, CommandProcessor.SELL_BUTTON)
-				.then(CommandProcessor.TOP_BUTTON, CommandProcessor.FISH_BUTTON, CommandProcessor.COIN_BUTTON, "/важная кнопк", CommandProcessor.CAPITALGAME_BUTTON, CommandProcessor.CASE_BUTTON, CommandProcessor.FOREST_BUTTON, CommandProcessor.TEA_BUTTON, CommandProcessor.COFFEE_BUTTON)
-				.last(CommandProcessor.PAY_BUTTON, CommandProcessor.INFO_BUTTON, CommandProcessor.RENAME_BUTTON, CommandProcessor.SHOPPLACE_BUTTON, CommandProcessor.CHECK_BUTTON, CommandProcessor.SELLFISH_BUTTON, CommandProcessor.RECIPES_BUTTON);
-		back_cancel_paginator = new KeyboardPaginator().collect(CommandProcessor.BACK_BUTTON, CommandProcessor.CANCEL_BUTTON);
-		cancel_paginator = new KeyboardPaginator().collect(CommandProcessor.CANCEL_BUTTON);
+				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
+				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
+				.last(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, RECIPES_BUTTON);
+		back_cancel_paginator = new KeyboardPaginator().collect(BACK_BUTTON, CANCEL_BUTTON);
+		cancel_paginator = new KeyboardPaginator().collect(CANCEL_BUTTON);
 
 		capitalgame.init();
 	}
@@ -124,13 +125,13 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			if (player.st instanceof BaseState || player.st == null)
+			if (player.state instanceof BaseState || player.state == null)
 			{
 				replyKeyboardMarkup.setKeyboard(base_paginator.get(player.page));
 			}
 			else
 			{
-				if (player.st.previous == null)
+				if (player.state.previous == null)
 				{
 					replyKeyboardMarkup.setKeyboard(cancel_paginator.get(0));
 				}
@@ -176,12 +177,12 @@ public class Bot extends TelegramLongPollingBot
 				}
 				else
 				{
-					if (player.st == null)
+					if (player.state == null)
 					{
-						player.st = new BaseState(this, player);
+						player.state = new BaseState(this, player);
 					}
 
-					if (player.st instanceof BaseState)
+					if (player.state instanceof BaseState)
 					{
 						try
 						{
@@ -196,17 +197,17 @@ public class Bot extends TelegramLongPollingBot
 					}
 					else
 					{
-						if (text.equals("/cancel") || text.equals(CommandProcessor.CANCEL_BUTTON))
+						if (text.equals("/cancel") || text.equals(CANCEL_BUTTON))
 						{
-							player.st = new BaseState(this, player);
-							sendMsg(id, player.st.hint);
+							player.state = new BaseState(this, player);
+							sendMsg(id, player.state.hint);
 						}
-						else if (text.equals("/back") || text.equals(CommandProcessor.BACK_BUTTON))
+						else if (text.equals("/back") || text.equals(BACK_BUTTON))
 						{
-							if (player.st.previous != null)
+							if (player.state.previous != null)
 							{
-								player.st = player.st.previous;
-								sendMsg(id, player.st.hint);
+								player.state = player.state.previous;
+								sendMsg(id, player.state.hint);
 							}
 							else
 							{
@@ -215,7 +216,7 @@ public class Bot extends TelegramLongPollingBot
 						}
 						else
 						{
-							player.st.process(text);
+							player.state.process(text);
 						}
 					}
 				}

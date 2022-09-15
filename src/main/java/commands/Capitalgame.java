@@ -22,8 +22,8 @@ public class Capitalgame extends Command
 
 			String country = host.capitalgame.getCountry(random);
 
-			player.st = new CapitalgameState(host, player, country, player.st.base);
-			host.sendMsg(player.getId(), player.st.hint);
+			player.state = new CapitalgameState(host, player, country, player.state.base);
+			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
 }
@@ -51,7 +51,7 @@ class CapitalgameState extends State
 
 		long id = player.getId();
 
-		player.st = base;
+		player.state = base;
 		if (!arg.equals(host.capitalgame.getCapital(country)))
 		{
 			host.sendMsg(id, "❌ Неправильно");

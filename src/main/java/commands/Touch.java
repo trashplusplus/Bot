@@ -19,8 +19,8 @@ public class Touch extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		player.st = new TouchState(inventoryDAO, playerDAO, host);
-		host.sendMsg(player.getId(), player.st.hint);
+		player.state = new TouchState(inventoryDAO, playerDAO, host);
+		host.sendMsg(player.getId(), player.state.hint);
 	}
 }
 

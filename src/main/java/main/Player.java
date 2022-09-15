@@ -1,7 +1,6 @@
 package main;
 
 import commands.BaseState;
-import commands.State;
 
 import java.util.Date;
 import java.util.Objects;
@@ -19,49 +18,33 @@ public class Player
 	public Long pocketsExpiration = null;
 
 	public Stats stats;
-
 	public int page = 0;
 
-	public commands.State st;
-
+	public commands.State state;
 
 	Bot host;
 
-	// < commands args
-	// > commands args
 
 	public Date sellfish = null;
 
 
 	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0, State.awaitingNickname, new Inventory(), new Stats(), host);
-
+		this(id, 0, 1, "player" + id, 0, new Inventory(), new Stats(), host);
 	}
 
-	public Player(long id, int xp, int level, String username, long balance, State state, Inventory inventory, Stats stats, Bot host)
+	public Player(long id, int xp, int level, String username, long balance, Inventory inventory, Stats stats, Bot host)
 	{
 		this.id = id;
 		this.username = username;
 		this.balance = new Money(balance);
-		//this.state = state;
 		this.stats = stats;
 		this.inventory = inventory;
 		this.xp = xp;
 		this.level = level;
 		this.host = host;
-		st = new BaseState(host, this);
+		state = new BaseState(host, this);
 	}
-
-	//public State getState()
-	//{
-	//	return state;
-	//}
-
-	//public void setState(State state)
-	//{
-	//	this.state = state;
-	//}
 
 	public long getId()
 	{

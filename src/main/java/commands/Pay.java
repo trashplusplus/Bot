@@ -23,8 +23,8 @@ public class Pay extends Command
 		}
 		else
 		{
-			player.st = new PayState1(player, player.st.base, playerDAO, host);
-			host.sendMsg(player.getId(), player.st.hint);
+			player.state = new PayState1(player, player.state.base, playerDAO, host);
+			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
 }
@@ -54,8 +54,8 @@ class PayState1 extends State
 			Player acceptor = playerDAO.get_by_name(arg);
 			if (acceptor != null)
 			{
-				invoker.st = new PayState2(invoker, host, acceptor, this, base);
-				host.sendMsg(player_id, invoker.st.hint);
+				invoker.state = new PayState2(invoker, host, acceptor, this, base);
+				host.sendMsg(player_id, invoker.state.hint);
 			}
 			else
 			{
@@ -99,7 +99,7 @@ class PayState2 extends State
 			{
 				invoker.balance.transfer(-cost);
 				acceptor.balance.transfer(cost);
-				invoker.st = invoker.st.base;
+				invoker.state = invoker.state.base;
 				host.sendMsg(acceptor.getId(), String.format("\uD83D\uDCB3 Вам начислено %s | Отправитель: `%s` ", new Money(cost), invoker.getUsername()));
 				host.sendMsg(invoker.getId(), "✅ Деньги отправлены");
 			}

@@ -30,8 +30,8 @@ public class Coffee extends Command
 		}
 		else
 		{
-			player.st = new CoffeeState1(host, player, cost, itemDAO, playerDAO, player.st.base);
-			host.sendMsg(player.getId(), player.st.hint);
+			player.state = new CoffeeState1(host, player, cost, itemDAO, playerDAO, player.state.base);
+			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
 }
@@ -65,8 +65,8 @@ class CoffeeState1 extends State
 			Player receiver = playerDAO.get_by_name(name);
 			if (receiver != null)
 			{
-				sender.st = new CoffeeState2(host, sender, receiver, cost, itemDAO, this, base);
-				host.sendMsg(player_id, sender.st.hint);
+				sender.state = new CoffeeState2(host, sender, receiver, cost, itemDAO, this, base);
+				host.sendMsg(player_id, sender.state.hint);
 			}
 			else
 			{
@@ -112,7 +112,7 @@ class CoffeeState2 extends State
 				sender.balance.transfer(-cost);
 
 				receiver.stats.coffee++;
-				sender.st = base;
+				sender.state = base;
 				host.sendMsg(sender_id, "☕ Кофе отправлен");
 				if (receiver.getStats().coffee == 75)
 				{

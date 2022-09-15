@@ -17,8 +17,8 @@ public class Check extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		player.st = new CheckState(host, player, playerDAO, player.st.base);
-		host.sendMsg(player.getId(), player.st.hint);
+		player.state = new CheckState(host, player, playerDAO, player.state.base);
+		host.sendMsg(player.getId(), player.state.hint);
 	}
 }
 
@@ -47,7 +47,7 @@ class CheckState extends State
 		if (anotherPlayer != null)
 		{
 			Inventory inventory = anotherPlayer.getInventory();
-			player.st = base;
+			player.state = base;
 			if (inventory.getInvSize() != 0)
 			{
 				StringBuilder sb = new StringBuilder("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`");

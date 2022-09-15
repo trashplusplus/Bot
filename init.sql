@@ -4,8 +4,7 @@ create table if not exists players
     xp integer default 0,
     'level' integer default 0,
     name text unique,
-    balance integer default 0,
-    registered integer not null default 0
+    balance integer default 0
 );
 
 create table if not exists cooldowns
@@ -159,7 +158,7 @@ create table if not exists stats
 
 create view if not exists player as
     select
-        id, name, xp, level, balance, registered as R,
+        id, name, xp, level, balance,
         find_expiration as FIND, pockets_expiration as POCKETS,
         coinWins as W, coinLosses as L, coffee, tea, bonus, trees
     from

@@ -15,8 +15,8 @@ public class Sell extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		player.st = new SellState(player, player.st.base, host, inventoryDAO);
-		host.sendMsg(player.getId(), player.st.hint);
+		player.state = new SellState(player, player.state.base, host, inventoryDAO);
+		host.sendMsg(player.getId(), player.state.hint);
 	}
 }
 
@@ -52,7 +52,7 @@ class SellState extends State
 				host.sendMsg(player_id, "✅ Предмет продан | + " + item.getCost());
 				//invoker.st = new SellState(invoker, base, host, inventoryDAO);
 				rebuild_hint();
-				host.sendMsg(player_id, invoker.st.hint);
+				host.sendMsg(player_id, invoker.state.hint);
 			}
 			else
 			{
