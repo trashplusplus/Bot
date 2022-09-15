@@ -18,7 +18,6 @@ public class Check extends Command
 	public void consume(Bot host, Player player)
 	{
 		player.st = new CheckState(host, player, playerDAO, player.st.base);
-		host.sendMsg(player.getId(), "\uD83D\uDC41 Введите ник игрока, чей инвентарь Вы хотите просмотреть: ");
 	}
 }
 
@@ -34,7 +33,7 @@ class CheckState extends State
 		this.player = player;
 		this.playerDAO = playerDAO;
 		this.base = base;
-		hint = "?";
+		hint = "\uD83D\uDC41 Введите ник игрока, чей инвентарь Вы хотите просмотреть: ";
 	}
 
 	@Override

@@ -20,7 +20,6 @@ public class Coin extends Command
 			{
 				host.sendMsg(player_id, "\uD83D\uDCB0 Ваш баланс: " + player.getMoney());
 				player.st = new CoinState(player, host);
-				host.sendMsg(player_id, "\uD83C\uDFB0 Введите ставку: ");
 			}
 			else
 			{
@@ -43,6 +42,7 @@ class CoinState extends State
 	{
 		this.player = player;
 		this.host = host;
+		hint = "\uD83C\uDFB0 Введите ставку: ";
 	}
 
 	@Override
@@ -62,9 +62,7 @@ class CoinState extends State
 
 				host.sendMsg(player_id, text.get(ran));
 
-				Cooldown kd = new Cooldown(2, () -> coin_dash_callback(player, i_dash));
 				STPE.stpe.schedule(() -> coin_dash_callback(player, i_dash), 2L, TimeUnit.SECONDS);
-				kd.startCooldown();
 			}
 			else
 			{

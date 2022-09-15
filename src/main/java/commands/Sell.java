@@ -16,7 +16,7 @@ public class Sell extends Command
 	public void consume(Bot host, Player player)
 	{
 		player.st = new SellState1(player, player.st.base, host, inventoryDAO);
-		host.sendMsg(player.getId(), player.st.hint);
+		//host.sendMsg(player.getId(), player.st.hint);
 	}
 }
 

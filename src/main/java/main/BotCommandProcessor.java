@@ -115,7 +115,7 @@ public class BotCommandProcessor
 	public static final String TEA_BUTTON = "\uD83C\uDF3F Чай";
 	public static final String FOREST_BUTTON = "\uD83C\uDF33 Садить деревья";
 	public static final String CASE_BUTTON = "\uD83D\uDD11 Кейсы";
-	public static final String CHANGENICKNAME_BUTTON = "\uD83D\uDC80 Сменить ник";
+	public static final String RENAME_BUTTON = "\uD83D\uDC80 Сменить ник";
 	public static final String SHOPPLACE_BUTTON = "\uD83D\uDED2 Разместить товар";
 	public static final String CHECK_BUTTON = "\uD83D\uDC41 Осмотреть игрока";
 	public static final String CAPITALGAME_BUTTON = "\uD83C\uDDFA\uD83C\uDDE6 Столицы";
