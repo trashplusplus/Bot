@@ -39,7 +39,8 @@ public class PlayerDAO implements IPlayerDAO
 			ps.setInt(3, player.getLevel());
 			ps.setString(4, player.getUsername());
 			ps.setLong(5, player.balance.value);
-			ps.setInt(6, player.getState() == Player.State.awaitingNickname ? 0 : 1);
+			//ps.setInt(6, player.getState() == Player.State.awaitingNickname ? 0 : 1);
+			ps.setInt(6, 1);
 			ps.execute();
 			statsDAO.put(player.getStats(), player.getId());
 			abilityDAO.put(player.getId());
@@ -329,7 +330,8 @@ public class PlayerDAO implements IPlayerDAO
 				ps.setInt(2, player.getLevel());
 				ps.setString(3, player.getUsername());
 				ps.setLong(4, player.balance.value);
-				ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
+				//ps.setInt(5, player.getState() == Player.State.awaitingNickname ? 0 : 1);
+				ps.setInt(5, 1);
 				ps.setLong(6, id);
 				ps.execute();
 

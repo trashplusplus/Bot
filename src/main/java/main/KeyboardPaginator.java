@@ -1,5 +1,6 @@
 package main;
 
+import commands.CommandProcessor;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
@@ -41,19 +42,45 @@ public class KeyboardPaginator
 
 		return this;
 	}
+
+	public KeyboardPaginator collect(String... buttons)
+	{
+		int rows = 3;
+		int columns = 3;
+		int bpp = rows * columns;  // buttons per page
+		int length = buttons.length;
+
+		if (length <= bpp)  // 1 page
+		{
+			pages.add(KeyboardPage.builder().add_buttons(buttons).build());
+			size = 1;
+			return this;
+		}
+		else  // >1 page
+		{
+			first(Arrays.stream(buttons).limit(bpp).toArray(String[]::new));  // 1 page
+			int consumed = bpp;
+
+			while (consumed < length - bpp)  // intermediate pages
+			{
+				then(Arrays.stream(buttons).skip(consumed).limit(bpp).toArray(String[]::new));
+				consumed += bpp;
+			}
+
+			last(Arrays.stream(buttons).skip(consumed).toArray(String[]::new));  // -1 page
+			size = pages.size();
+			return this;
+		}
+	}
 }
 
 class KeyboardPage
 {
-	List<KeyboardRow> markup;
-	boolean has_previous = false;
-	boolean has_next = false;
-	int rows = 3;
-	int max_columns = 3;
-
-	KeyboardPage()
-	{
-	}
+	private List<KeyboardRow> markup;
+	private boolean has_previous = false;
+	private boolean has_next = false;
+	private int rows = 3;
+	private int max_columns = 3;
 
 	List<KeyboardRow> markup()
 	{
@@ -65,18 +92,18 @@ class KeyboardPage
 		return new KeyboardPageBuilder();
 	}
 
-	static class KeyboardPageBuilder
+	public static class KeyboardPageBuilder
 	{
-		KeyboardPage page;
-		List<String> buttons;
+		private KeyboardPage page;
+		private List<String> buttons;
 
-		KeyboardPageBuilder()
+		private KeyboardPageBuilder()
 		{
 			page = new KeyboardPage();
 			buttons = new ArrayList<>();
 		}
 
-		KeyboardPage build()
+		public KeyboardPage build()
 		{
 			page.markup = new ArrayList<>();
 			boolean new_row = true;
@@ -144,31 +171,31 @@ class KeyboardPage
 			if (page.has_previous)
 			{
 				//row.add("/previous");
-				row.add(BotCommandProcessor.PREVIOUS_BUTTON);
+				row.add(CommandProcessor.PREVIOUS_BUTTON);
 			}
 			if (page.has_next)
 			{
 				//row.add("/next");
-				row.add(BotCommandProcessor.NEXT_BUTTON);
+				row.add(CommandProcessor.NEXT_BUTTON);
 			}
 			page.markup.add(row);
 
 			return page;
 		}
 
-		KeyboardPageBuilder has_previous()
+		public KeyboardPageBuilder has_previous()
 		{
 			page.has_previous = true;
 			return this;
 		}
 
-		KeyboardPageBuilder has_next()
+		 public KeyboardPageBuilder has_next()
 		{
 			page.has_next = true;
 			return this;
 		}
 
-		KeyboardPageBuilder add_buttons(String... buttons)
+		 public KeyboardPageBuilder add_buttons(String... buttons)
 		{
 			this.buttons.addAll(Arrays.stream(buttons).collect(Collectors.toList()));
 			return this;

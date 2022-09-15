@@ -1,10 +1,7 @@
 package commands;
 
 import main.Bot;
-import main.BotCommandProcessor;
 import main.Player;
-
-import java.util.function.Consumer;
 
 public class BaseState extends State
 {
@@ -22,13 +19,5 @@ public class BaseState extends State
 
 	@Override
 	public void process(String arg)  // todo
-	{
-		FI<Bot, Player, String> fi = null;  // get(arg);
-		fi.foo(host,player,arg);
-	}
-
-	interface FI<A, B, C>
-	{
-		void foo(A a, B b, C c);
-	}
+	{}
 }

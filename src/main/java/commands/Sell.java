@@ -15,45 +15,24 @@ public class Sell extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		player.st = new SellState1(player, player.st.base, host, inventoryDAO);
-		//host.sendMsg(player.getId(), player.st.hint);
+		player.st = new SellState(player, player.st.base, host, inventoryDAO);
+		host.sendMsg(player.getId(), player.st.hint);
 	}
 }
 
-class SellState1 extends State
+class SellState extends State
 {
 	Player invoker;
 	Bot host;
 	InventoryDAO inventoryDAO;
 
-	public SellState1(Player invoker, BaseState base, Bot host, InventoryDAO inventoryDAO)
+	public SellState(Player invoker, BaseState base, Bot host, InventoryDAO inventoryDAO)
 	{
 		this.invoker = invoker;
 		this.base = base;
 		this.host = host;
 		this.inventoryDAO = inventoryDAO;
-
-		Inventory inventory = invoker.getInventory();
-		if (inventory.getInvSize() > 0)
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("\uD83E\uDDF6 Предметы, доступные к продаже:\n");
-			stringBuilder.append("\n");
-			stringBuilder.append("============================\n");
-			for (int i = 0; i < inventory.getInvSize(); i++)
-			{
-				stringBuilder.append(String.format("Предмет |%d| : %s\n", i, inventory.getItem(i).toString()));
-			}
-
-			stringBuilder.append("============================\n");
-			stringBuilder.append("\n");
-			stringBuilder.append("Введите номер предмета, который хотите продать:\n");
-			hint = stringBuilder.toString();
-		}
-		else
-		{
-			hint = "⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ";
-		}
+		rebuild_hint();
 	}
 
 	@Override
@@ -71,7 +50,8 @@ class SellState1 extends State
 				inventory.removeItem(sell_id);
 				inventoryDAO.delete(player_id, item.getId(), 1);
 				host.sendMsg(player_id, "✅ Предмет продан | + " + item.getCost());
-				invoker.st = new SellState1(invoker, base, host, inventoryDAO);
+				//invoker.st = new SellState(invoker, base, host, inventoryDAO);
+				rebuild_hint();
 				host.sendMsg(player_id, invoker.st.hint);
 			}
 			else
@@ -93,6 +73,31 @@ class SellState1 extends State
 		{
 			e.printStackTrace();
 			host.sendMsg(player_id, e.getMessage());
+		}
+	}
+
+	private void rebuild_hint()
+	{
+		Inventory inventory = invoker.getInventory();
+		if (inventory.getInvSize() > 0)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("\uD83E\uDDF6 Предметы, доступные к продаже:\n");
+			stringBuilder.append("\n");
+			stringBuilder.append("============================\n");
+			for (int i = 0; i < inventory.getInvSize(); i++)
+			{
+				stringBuilder.append(String.format("Предмет |%d| : %s\n", i, inventory.getItem(i).toString()));
+			}
+
+			stringBuilder.append("============================\n");
+			stringBuilder.append("\n");
+			stringBuilder.append("Введите номер предмета, который хотите продать:\n");
+			hint = stringBuilder.toString();
+		}
+		else
+		{
+			hint = "⚠\t Ваш инвентарь пуст. Нет доступных вещей для продажи ";
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class Capitalgame extends Command
 			String country = host.capitalgame.getCountry(random);
 
 			player.st = new CapitalgameState(host, player, country, player.st.base);
-			host.sendMsg(player.getId(), "\uD83E\uDDE9 Столица страны: " + country);
+			host.sendMsg(player.getId(), player.st.hint);
 		}
 	}
 }
@@ -40,7 +40,7 @@ class CapitalgameState extends State
 		this.player = player;
 		this.country = country;
 		this.base = base;
-		hint = "?";
+		hint = "\uD83E\uDDE9 Столица страны: " + country;
 	}
 
 	@Override

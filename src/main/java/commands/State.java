@@ -1,5 +1,7 @@
 package commands;
 
+import java.util.List;
+
 public abstract class State
 {
 	public State previous;
@@ -8,13 +10,6 @@ public abstract class State
 
 	public State()
 	{}
-
-	//public State(State previous, State base, String hint)
-	//{
-	//	this.previous = previous;
-	//	this.base = base;
-	//	this.hint = hint;
-	//}
 
 	abstract public void process(String arg);
 }

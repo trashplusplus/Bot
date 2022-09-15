@@ -14,7 +14,7 @@ public class Player
 	private String username;
 	private int level;
 	private int xp;
-	private State state;
+	//private State state;
 	public Long findExpiration = null;
 	public Long pocketsExpiration = null;
 
@@ -44,7 +44,7 @@ public class Player
 		this.id = id;
 		this.username = username;
 		this.balance = new Money(balance);
-		this.state = state;
+		//this.state = state;
 		this.stats = stats;
 		this.inventory = inventory;
 		this.xp = xp;
@@ -53,15 +53,15 @@ public class Player
 		st = new BaseState(host, this);
 	}
 
-	public State getState()
-	{
-		return state;
-	}
+	//public State getState()
+	//{
+	//	return state;
+	//}
 
-	public void setState(State state)
-	{
-		this.state = state;
-	}
+	//public void setState(State state)
+	//{
+	//	this.state = state;
+	//}
 
 	public long getId()
 	{

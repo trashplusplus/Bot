@@ -40,7 +40,7 @@ public class Shopplace extends Command
 			}
 			sb.append("=====================\n");
 			host.sendMsg(player_id, sb.toString());
-			host.sendMsg(player_id, "Введите ID предмета, который хотите продать\n");
+			host.sendMsg(player_id, player.st.hint);
 		}
 	}
 }
@@ -61,7 +61,7 @@ class ShopplaceState1 extends State
 		this.inventoryDAO = inventoryDAO;
 		this.shopDAO = shopDAO;
 		this.base = base;
-		hint = "Введите номер предмета [hint]";
+		hint = "Введите ID предмета, который хотите продать:";
 	}
 
 	@Override
@@ -80,7 +80,7 @@ class ShopplaceState1 extends State
 				throw new BackpackException(itemID);
 			}
 			player.st = new ShopplaceState2(host, player, inventoryDAO,shopDAO, itemID, this, base);
-			host.sendMsg(id, "Введите стоимость товара: ");
+			host.sendMsg(id, player.st.hint);
 		}
 		catch (NumberFormatException ex)
 		{
@@ -99,12 +99,12 @@ class ShopplaceState1 extends State
 			if (ii.equals(backpack))
 			{
 				host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", backpack.getTitle()));
-				player.setState(Player.State.awaitingCommands);
+				//player.setState(Player.State.awaitingCommands); todo
 			}
 			else
 			{
 				player.st = new ShopplaceState2(host, player, inventoryDAO, shopDAO, ex.backpackID, this, base);
-				host.sendMsg(player.getId(), "Введите стоимость товара: ");
+				host.sendMsg(player.getId(), player.st.hint);
 			}
 		}
 	}
@@ -127,7 +127,7 @@ class ShopplaceState2 extends State
 		this.item_id = item_id;
 		this.previous = previous;
 		this.base = base;
-		hint = "Введите стоимость [hint]";
+		hint = "Введите стоимость товара:";
 	}
 
 	@Override

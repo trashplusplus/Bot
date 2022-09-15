@@ -31,7 +31,7 @@ public class Coffee extends Command
 		else
 		{
 			player.st = new CoffeeState1(host, player, cost, itemDAO, playerDAO, player.st.base);
-			host.sendMsg(player.getId(), String.format("☕(%s) Введите ник игрока: ", new Money(cost)));
+			host.sendMsg(player.getId(), player.st.hint);
 		}
 	}
 }
@@ -52,7 +52,7 @@ class CoffeeState1 extends State
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
 		this.base = base;
-		hint = "Введите имя получателя [hint]";
+		hint = String.format("☕(%s) Введите ник игрока: ", new Money(cost));
 	}
 
 	@Override
@@ -66,7 +66,7 @@ class CoffeeState1 extends State
 			if (receiver != null)
 			{
 				sender.st = new CoffeeState2(host, sender, receiver, cost, itemDAO, this, base);
-				host.sendMsg(player_id, "Введите сообщение для игрока (48 символов): ");
+				host.sendMsg(player_id, sender.st.hint);
 			}
 			else
 			{
@@ -97,7 +97,7 @@ class CoffeeState2 extends State
 		this.itemDAO = itemDAO;
 		this.previous = previous;
 		this.base = base;
-		hint = "Введите сообщение для игрока [hint]";
+		hint = "Введите сообщение для игрока (48 символов): ";
 	}
 
 	@Override

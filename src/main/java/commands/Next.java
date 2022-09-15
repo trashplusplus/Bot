@@ -8,7 +8,7 @@ public class Next extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		if (player.page < host.paginator.size - 1)
+		if (player.page < host.base_paginator.size - 1)
 		{
 			player.page++;
 		}

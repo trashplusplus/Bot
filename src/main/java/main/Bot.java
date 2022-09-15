@@ -1,6 +1,8 @@
 package main;
 
-import commands.*;
+import commands.BaseState;
+import commands.Command;
+import commands.CommandProcessor;
 import database.dao.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,8 +23,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-
-import static main.BotCommandProcessor.*;
 
 
 public class Bot extends TelegramLongPollingBot
@@ -53,14 +53,12 @@ public class Bot extends TelegramLongPollingBot
 
 	private final String token;
 
-	public KeyboardPaginator paginator;
+	public KeyboardPaginator base_paginator;
+	public KeyboardPaginator back_cancel_paginator;
+	public KeyboardPaginator cancel_paginator;
 
 	public CommandProcessor command_processor;
 
-	//Map<Long, Player> active_players;
-
-	Map<Player.State, BiConsumer<Player, Message>> state_processor;
-	//Map<String, Consumer<Player>> command_processor;
 
 	public Bot(Connection connection) throws FileNotFoundException
 	{
@@ -71,17 +69,17 @@ public class Bot extends TelegramLongPollingBot
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, this);
 		token = init_token();
-		state_processor = BotStateProcessor.get_map(this);
-		//command_processor = BotCommandProcessor.get_map(this);
 		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller);
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, dump_timer_s, dump_timer_s, TimeUnit.SECONDS);
-		paginator = new KeyboardPaginator()
-				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
-				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
-				.last(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, RECIPES_BUTTON);
+		base_paginator = new KeyboardPaginator()
+				.first(CommandProcessor.INV_BUTTON, CommandProcessor.HELP_BUTTON, CommandProcessor.ME_BUTTON, CommandProcessor.FIND_BUTTON, CommandProcessor.MUD_BUTTON, CommandProcessor.POCKETS_BUTTON, CommandProcessor.DROP_BUTTON, CommandProcessor.SHOPSHOW_BUTTON, CommandProcessor.SELL_BUTTON)
+				.then(CommandProcessor.TOP_BUTTON, CommandProcessor.FISH_BUTTON, CommandProcessor.COIN_BUTTON, "/важная кнопк", CommandProcessor.CAPITALGAME_BUTTON, CommandProcessor.CASE_BUTTON, CommandProcessor.FOREST_BUTTON, CommandProcessor.TEA_BUTTON, CommandProcessor.COFFEE_BUTTON)
+				.last(CommandProcessor.PAY_BUTTON, CommandProcessor.INFO_BUTTON, CommandProcessor.RENAME_BUTTON, CommandProcessor.SHOPPLACE_BUTTON, CommandProcessor.CHECK_BUTTON, CommandProcessor.SELLFISH_BUTTON, CommandProcessor.RECIPES_BUTTON);
+		back_cancel_paginator = new KeyboardPaginator().collect(CommandProcessor.BACK_BUTTON, CommandProcessor.CANCEL_BUTTON);
+		cancel_paginator = new KeyboardPaginator().collect(CommandProcessor.CANCEL_BUTTON);
 
 		capitalgame.init();
 	}
@@ -111,7 +109,6 @@ public class Bot extends TelegramLongPollingBot
 	{
 		long id = Long.parseLong(sendMessage.getChatId());
 		Player player = playerDAO.get_by_id(id);
-		//инициаллизация клавиатуры
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 		replyKeyboardMarkup.setSelective(true);
 		replyKeyboardMarkup.setResizeKeyboard(true);
@@ -127,36 +124,20 @@ public class Bot extends TelegramLongPollingBot
 		}
 		else
 		{
-			Player.State state = player.getState();
-			if (state == Player.State.awaitingCommands)
+			if (player.st instanceof BaseState || player.st == null)
 			{
-				replyKeyboardMarkup.setKeyboard(paginator.get(player.page));
+				replyKeyboardMarkup.setKeyboard(base_paginator.get(player.page));
 			}
 			else
 			{
-				KeyboardRow row = new KeyboardRow();
-				switch (state)
+				if (player.st.previous == null)
 				{
-					case awaitingTeaNote:
-					case awaitingCoffeeNote:
-					case shopPlaceGood_awaitingCost:
-					case payAwaitingAmount:
-						//row.add(new KeyboardButton("/back"));
-					case shopBuy:
-					case coinDash:
-					case awaitingTea:
-					case awaitingCoffee:
-					case awaitingSellArguments:
-					case awaitingChangeNickname:
-					case shopPlaceGood_awaitingID:
-					case payAwaitingNickname:
-					default:
-						row.add(new KeyboardButton(CANCEL_BUTTON));
-						break;
+					replyKeyboardMarkup.setKeyboard(cancel_paginator.get(0));
 				}
-				List<KeyboardRow> rows = new ArrayList<>();
-				rows.add(row);
-				replyKeyboardMarkup.setKeyboard(rows);
+				else
+				{
+					replyKeyboardMarkup.setKeyboard(back_cancel_paginator.get(0));
+				}
 			}
 		}
 		sendMessage.setReplyMarkup(replyKeyboardMarkup);
@@ -165,65 +146,88 @@ public class Bot extends TelegramLongPollingBot
 	@Override
 	public void onUpdateReceived(Update update)
 	{
-		Message message = update.getMessage();
-
-		if (message != null && message.hasText())
+		try
 		{
-			long id = message.getChatId();
-			String text = message.getText();
+			Message message = update.getMessage();
 
-			Player player = playerDAO.get_by_id(id);
-
-			System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
-
-			if (player == null)
+			if (message != null && message.hasText())
 			{
-				if (text.equals("/start") || text.equals("⭐ Начать"))
-				{
-					player = new Player(id, this);
-					playerDAO.put(player);
+				long id = message.getChatId();
+				String text = message.getText();
 
-					sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
-					sendMsg(id, "Введите ник: ");
+				Player player = playerDAO.get_by_id(id);
+
+				System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
+
+				if (player == null)
+				{
+					if (text.equals("/start") || text.equals("⭐ Начать"))
+					{
+						player = new Player(id, this);
+						playerDAO.put(player);
+
+						sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
+						sendMsg(id, "Введите ник: ");
+					}
+					else
+					{
+						sendMsg(id, "⭐ Для регистрации введите команду /start");
+					}
 				}
 				else
 				{
-					sendMsg(id, "⭐ Для регистрации введите команду /start");
+					if (player.st == null)
+					{
+						player.st = new BaseState(this, player);
+					}
+
+					if (player.st instanceof BaseState)
+					{
+						try
+						{
+							Command cmd = command_processor.get(text);
+							cmd.consume(this, player);
+						}
+						catch (NullPointerException ex)
+						{
+							ex.printStackTrace();
+							sendMsg(id, "Неизвестная команда");
+						}
+					}
+					else
+					{
+						if (text.equals("/cancel") || text.equals(CommandProcessor.CANCEL_BUTTON))
+						{
+							player.st = new BaseState(this, player);
+							sendMsg(id, player.st.hint);
+						}
+						else if (text.equals("/back") || text.equals(CommandProcessor.BACK_BUTTON))
+						{
+							if (player.st.previous != null)
+							{
+								player.st = player.st.previous;
+								sendMsg(id, player.st.hint);
+							}
+							else
+							{
+								sendMsg(id, "Эту команду нельзя использовать в данном контексте");
+							}
+						}
+						else
+						{
+							player.st.process(text);
+						}
+					}
 				}
 			}
 			else
 			{
-				if (player.st instanceof BaseState)
-				{
-					Command cmd = command_processor.get(text);
-					if (cmd != null)
-					{
-						cmd.consume(this, player);
-					}
-					else
-					{
-						sendMsg(id, "Неизвестная команда");
-					}
-				}
-				else
-				{
-					if (text.equals("/cancel"))
-					{
-						player.st = new BaseState(this, player);
-						//sendMsg(id, "Заебал, чего тебе?");
-					}
-					else
-					{
-						player.st.process(text);
-					}
-				}
-
-				sendMsg(id, player.st.hint);
+				System.out.println(message);
 			}
 		}
-		else
+		catch (Throwable t)
 		{
-			System.out.println(message);
+			t.printStackTrace();
 		}
 	}
 

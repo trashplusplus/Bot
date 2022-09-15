@@ -1,6 +1,5 @@
 package commands;
 
-import ability.Cooldown;
 import main.*;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ public class Coin extends Command
 			{
 				host.sendMsg(player_id, "\uD83D\uDCB0 Ваш баланс: " + player.getMoney());
 				player.st = new CoinState(player, host);
+				host.sendMsg(player_id, player.st.hint);
 			}
 			else
 			{

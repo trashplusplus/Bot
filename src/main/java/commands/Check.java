@@ -18,6 +18,7 @@ public class Check extends Command
 	public void consume(Bot host, Player player)
 	{
 		player.st = new CheckState(host, player, playerDAO, player.st.base);
+		host.sendMsg(player.getId(), player.st.hint);
 	}
 }
 

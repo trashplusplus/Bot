@@ -50,7 +50,7 @@ public class Shopbuy extends Command
 
 				host.sendMsg(player_id, sb.toString());
 				player.st = new ShopbuyState(host, player, shopDAO, inventoryDAO);
-				host.sendMsg(player_id, "Введите ID товара, который вы хотите купить: ");
+				host.sendMsg(player_id, player.st.hint);
 			}
 		}
 		else
@@ -73,6 +73,7 @@ class ShopbuyState extends State
 		this.player = player;
 		this.shopDAO = shopDAO;
 		this.inventoryDAO = inventoryDAO;
+		hint = "Введите ID товара, который вы хотите купить: ";
 	}
 
 	@Override

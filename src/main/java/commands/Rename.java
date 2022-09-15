@@ -28,7 +28,7 @@ public class Rename extends Command
 		if (player.getInventory().getItems().contains(i))
 		{
 			player.st = new RenameState(playerDAO, itemDAO, inventoryDAO, player, host);
-			host.sendMsg(id, "Введите никнейм, на который вы хотите сменить: ");
+			host.sendMsg(id, player.st.hint);
 		}
 		else
 		{
@@ -52,6 +52,7 @@ class RenameState extends State
 		this.inventoryDAO = inventoryDAO;
 		this.player = player;
 		this.host = host;
+		hint = "Введите желаемое имя:";
 	}
 
 	@Override
@@ -65,22 +66,16 @@ class RenameState extends State
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
 		if (nickname.matches(usernameTemplate))
 		{
-			try
+			if (playerDAO.get_by_name(nickname) == null)
 			{
-				if (playerDAO.get_by_name(nickname) == null)
-				{
-					player.setUsername(nickname);
-					inventoryDAO.delete(player.getId(), tag.getId(), 1);
-					player.getInventory().removeItem(tag_idx);
-					host.sendMsg(player_id, "Ваш никнейм успешно изменен на `" + player.getUsername() + "`");
-					player.st = player.st.base;
-				}
-				else
-					throw new RuntimeException();  // todo
+				player.st = player.st.base;
+				player.setUsername(nickname);
+				inventoryDAO.delete(player.getId(), tag.getId(), 1);
+				player.getInventory().removeItem(tag_idx);
+				host.sendMsg(player_id, "Ваш никнейм успешно изменен на `" + player.getUsername() + "`");
 			}
-			catch (RuntimeException e)
+			else
 			{
-				e.printStackTrace();
 				host.sendMsg(player_id, "Игрок с таким ником уже есть");
 			}
 		}
