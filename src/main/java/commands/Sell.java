@@ -1,11 +1,26 @@
-package commands.sell;
+package commands;
 
-import commands.BaseState;
-import commands.State;
 import database.dao.InventoryDAO;
 import main.*;
 
-public class SellState1 extends State
+public class Sell extends Command
+{
+	InventoryDAO inventoryDAO;
+
+	public Sell(InventoryDAO inventoryDAO)
+	{
+		this.inventoryDAO = inventoryDAO;
+	}
+
+	@Override
+	public void consume(Bot host, Player player)
+	{
+		player.st = new SellState1(player, player.st.base, host, inventoryDAO);
+		host.sendMsg(player.getId(), player.st.hint);
+	}
+}
+
+class SellState1 extends State
 {
 	Player invoker;
 	Bot host;
@@ -81,3 +96,4 @@ public class SellState1 extends State
 		}
 	}
 }
+

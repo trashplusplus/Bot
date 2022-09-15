@@ -6,11 +6,11 @@ import java.util.Random;
 
 public class CoinGame {
 
-    private final int dash;
+    private final long dash;
     private Random randomCoin;
 
 
-    CoinGame(int dash){
+    public CoinGame(long dash){
         this.dash = dash;
     }
 
@@ -22,7 +22,7 @@ public class CoinGame {
     }
 
 
-    public void coinWin(Player player, int money)
+    public void coinWin(Player player, long money)
     {
         try {
             player.balance.transfer(money);
@@ -32,7 +32,7 @@ public class CoinGame {
 
     }
 
-    public void coinLose(Player player, int money)
+    public void coinLose(Player player, long money)
     {
         try {
             player.balance.transfer(-money);

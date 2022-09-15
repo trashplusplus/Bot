@@ -21,7 +21,7 @@ public class BaseState extends State
 	}
 
 	@Override
-	public void process(String arg)
+	public void process(String arg)  // todo
 	{
 		FI<Bot, Player, String> fi = null;  // get(arg);
 		fi.foo(host,player,arg);

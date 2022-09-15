@@ -1,18 +1,16 @@
-package commands.touch;
+package commands;
 
-import commands.Command;
-import commands.State;
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
 import main.Bot;
 import main.Player;
 
-public class TouchCommand extends Command
+public class Touch extends Command
 {
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
 
-	public TouchCommand(InventoryDAO inventoryDAO, IPlayerDAO playerDAO)
+	public Touch(InventoryDAO inventoryDAO, IPlayerDAO playerDAO)
 	{
 		this.inventoryDAO = inventoryDAO;
 		this.playerDAO = playerDAO;
@@ -21,19 +19,24 @@ public class TouchCommand extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		player.st = new TouchState(inventoryDAO, playerDAO);
+		player.st = new TouchState(inventoryDAO, playerDAO, host);
+		host.sendMsg(player.getId(), player.st.hint);
 	}
 }
 
-class TouchState extends State
+class TouchState extends State  // todo
 {
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
+	Bot host;
 
-	public TouchState(InventoryDAO inventoryDAO, IPlayerDAO playerDAO)
+	public TouchState(InventoryDAO inventoryDAO, IPlayerDAO playerDAO, Bot host)
 	{
 		this.inventoryDAO = inventoryDAO;
 		this.playerDAO = playerDAO;
+		this.host = host;
+
+		hint = "Введите номер предмета, который хотите осмотреть";
 	}
 
 	@Override

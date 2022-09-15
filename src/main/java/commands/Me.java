@@ -1,4 +1,4 @@
-package commands.me;
+package commands;
 
 import commands.Command;
 import main.Achievements;
@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 
-public class MeCommand extends Command
+public class Me extends Command
 {
 	@Override
 	public void consume(Bot host, Player player)

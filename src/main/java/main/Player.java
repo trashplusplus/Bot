@@ -28,11 +28,6 @@ public class Player
 	Bot host;
 
 	// < commands args
-	public Player payment_acceptor = null;
-	public Integer to_place_item = null;
-	public Player coffee_acceptor = null;
-	public Player tea_acceptor = null;
-	public String countryKey = null;
 	// > commands args
 
 	public Date sellfish = null;

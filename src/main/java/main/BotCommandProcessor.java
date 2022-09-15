@@ -8,7 +8,7 @@ public class BotCommandProcessor
 {
 	public static Map<String, Consumer<Player>> get_map(Bot bot)
 	{
-		Map<String, Consumer<Player>> res = new HashMap<>();
+		Map<String, Consumer<Player>> res = new HashMap<>();/*
 
 		res.put("/help", bot::command_help);
 		res.put("\uD83C\uDF3A Помощь", bot::command_help);
@@ -87,7 +87,7 @@ public class BotCommandProcessor
 		res.put(DRINKS_BUTTON, bot::command_drinks);
 
 		res.put("/recipes", bot::command_recipes);
-		res.put(RECIPES_BUTTON, bot::command_recipes);
+		res.put(RECIPES_BUTTON, bot::command_recipes);*/
 
 
 

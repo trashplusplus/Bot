@@ -9,9 +9,9 @@ public class Recipe {
     List<Item> energyRecipe = new ArrayList<>();
     List<Item> caseRecipe = new ArrayList<>();
 
-    List<Item> allRecipes = new ArrayList<>();
+    public List<Item> allRecipes = new ArrayList<>();
 
-    Recipe(){
+    public Recipe(){
         energyRecipe.add(itemDAO.getByNameFromCollection("Стиральный порошок"));
         energyRecipe.add(itemDAO.getByNameFromCollection("Бутылка"));
         energyRecipe.add(itemDAO.getByNameFromCollection("Банан"));
