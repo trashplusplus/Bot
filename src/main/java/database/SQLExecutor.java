@@ -33,7 +33,6 @@ public class SQLExecutor
 				{
 					break;
 				}
-				System.out.printf("Executing\n\t%s\n", sql_statement);
 				Statement statement = connection.createStatement();
 				statement.execute(sql_statement);
 			}
