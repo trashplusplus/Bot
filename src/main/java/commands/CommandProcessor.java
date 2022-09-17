@@ -154,9 +154,13 @@ public class CommandProcessor
 		map.put("/next", () -> new Next());
 		map.put(NEXT_BUTTON, () -> new Next());
 
-		map.put("/recipes", () -> new Recipes());
+		map.put("/recipes", () -> new Recipes(inventoryDAO));
+		map.put(RECIPES_BUTTON, () -> new Recipes(inventoryDAO));
 
-		map.put(RECIPES_BUTTON, () -> new Recipes());
+		map.put("/donate", () -> new Donate());
+		map.put(DONATE_BUTTON, () -> new Donate());
+
+		map.put("/boost", () -> new Boost());
 
 	}
 
