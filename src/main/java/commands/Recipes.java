@@ -8,6 +8,13 @@ import java.util.Map;
 
 public class Recipes extends Command  // big todo
 {
+	InventoryDAO inventoryDAO;
+
+	public Recipes(InventoryDAO inventoryDAO)
+	{
+		this.inventoryDAO = inventoryDAO;
+	}
+
 	@Override
 	public void consume(Bot host, Player player)
 	{
@@ -30,6 +37,7 @@ public class Recipes extends Command  // big todo
 
 			sb.append("========================\n" +
 					"Чтобы скрафтить предмет введите его ID:");
+			player.state = new RecipesState(host, player, inventoryDAO, player.state.base);
 			host.sendMsg(id, sb.toString());
 		}
 		else
@@ -45,11 +53,13 @@ class RecipesState extends State
 	Player player;
 	InventoryDAO inventoryDAO;
 
-	public RecipesState(Bot host, Player player, InventoryDAO inventoryDAO)
+	public RecipesState(Bot host, Player player, InventoryDAO inventoryDAO, BaseState base)
 	{
 		this.host = host;
 		this.player = player;
 		this.inventoryDAO = inventoryDAO;
+		this.base = base;
+		hint = "Введите номер рецепта:";
 	}
 
 	@Override
@@ -65,7 +75,7 @@ class RecipesState extends State
 			Item craftName = recipe.choice(craft_id);
 			List<Item> ingredients = recipe.recipes.get(craftName);
 
-			player.state = player.state.base;
+			player.state = base;
 			if (recipe.hasRecipe(inventory, ingredients))
 			{
 				for (Item i : ingredients)
