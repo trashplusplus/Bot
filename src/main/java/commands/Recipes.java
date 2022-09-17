@@ -12,7 +12,6 @@ public class Recipes extends Command  // big todo
 	public void consume(Bot host, Player player)
 	{
 		long id = player.getId();
-
 		Recipe recipe = new Recipe();
 
 		if (recipe.recipes != null && !recipe.recipes.isEmpty())
