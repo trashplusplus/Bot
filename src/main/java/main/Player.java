@@ -36,6 +36,7 @@ public class Player
 		this.xp = xp;
 		this.level = level;
 		this.host = host;
+		this.needle = needle;
 		state = new BaseState(host, this);
 	}
 

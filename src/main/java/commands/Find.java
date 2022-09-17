@@ -39,8 +39,16 @@ public class Find extends Command
 		{
 			if (player.findExpiration != null && player.findExpiration > now_ts)
 			{
-				host.sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s",
-						PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+				if(player.donateRandomer < 2){
+					host.sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s",
+							PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+					player.donateRandomer++;
+				}else{
+					host.sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s\n Вы можете сбросить время ожидания за 2\uD83E\uDDF7 командой /boost",
+							PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+					player.donateRandomer = 0;
+				}
+
 			}
 			else
 			{

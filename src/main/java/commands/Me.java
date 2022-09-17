@@ -25,6 +25,7 @@ public class Me extends Command
 			String sb = "*Информация о персонаже*\n\n" + "Здесь показывается вся Ваша статистика и достижения\n\n" +
 					"⭐ Ваш ник: " + player.getUsername() + "\n\n" +
 					"\uD83D\uDCB0 Ваш баланс: " + player.getMoney() + "\n\n" +
+					"\uD83D\uDC8E Ваши булавки: " + player.needle + "\uD83E\uDDF7 \n\n" +
 					"\uD83C\uDF20 Ваш GameID: " + player_id + "\n\n" +
 					String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP) \n", player.getLevel(), player.getXp()) +
 					"\uD83C\uDF3F Выпито кружек чая: " + player.stats.tea + "\n" +
