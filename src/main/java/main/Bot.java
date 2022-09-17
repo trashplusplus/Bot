@@ -270,6 +270,7 @@ public class Bot extends TelegramLongPollingBot
 
 	public void on_closing()
 	{
+
 		System.out.println("Exiting...");
 		sf_dump.cancel(false);
 		sf_find.cancel(false);

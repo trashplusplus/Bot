@@ -14,6 +14,7 @@ import java.sql.SQLException;
 public class AppRunner
 {
 	public static void main(String[] args)
+
 	{
 		try
 		{
@@ -22,6 +23,7 @@ public class AppRunner
 			Bot bot = new Bot(SQLSession.sqlConnection);
 			telegramBotsApi.registerBot(bot);
 			Runtime.getRuntime().addShutdownHook(new Thread(bot::on_closing));
+
 		}
 		catch (TelegramApiException ex)
 		{

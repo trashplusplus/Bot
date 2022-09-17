@@ -28,7 +28,7 @@ public class Forest extends Command
 			Item flashlight = itemDAO.getByNameFromCollection("\uD83D\uDD26 Поисковый фонарь");
 			Item seedling = itemDAO.getByNameFromCollection("Саженец");
 			int seedling_index = player.getInventory().getItems().indexOf(seedling);
-			Achievements a = new Achievements(player);
+			//Achievements a = new Achievements(player);
 			if (player.getInventory().getItems().contains(flashlight))
 			{
 				if (seedling_index != -1)  // player has seedling

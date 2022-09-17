@@ -22,7 +22,7 @@ public class Tea extends Command
 	public void consume(Bot host, Player player)
 	{
 		Item cup = itemDAO.getByNameFromCollection("☕ Чашка 'Египет'");
-		long cost = player.getInventory().getItems().contains(cup) ? 200L : 500L;
+		long cost = player.getInventory().getItems().contains(cup) ? 700L : 1200L;
 
 		if (player.getMoney().value < cost)
 		{
@@ -97,7 +97,7 @@ class TeaState2 extends State
 		this.itemDAO = itemDAO;
 		this.previous = previous;
 		this.base = base;
-		hint = "Введите сообщение для игрока (48 символов):";
+		hint = "Введите сообщение для игрока (256 символов):";
 	}
 
 	@Override
@@ -107,7 +107,7 @@ class TeaState2 extends State
 		long receiver_id = receiver.getId();
 		try
 		{
-			if (note.length() <= 48)
+			if (note.length() <= 256)
 			{
 				sender.balance.transfer(-cost);
 
@@ -123,7 +123,7 @@ class TeaState2 extends State
 			}
 			else
 			{
-				host.sendMsg(sender_id, "Сообщение больше, чем 48 символов");
+				host.sendMsg(sender_id, "Сообщение больше, чем 256 символов");
 			}
 		}
 		catch (Money.MoneyException ex)
