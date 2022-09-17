@@ -29,6 +29,7 @@ public class CommandProcessor
 	public static final String SELLFISH_BUTTON = "\uD83E\uDD88 Сдать рыбу";
 	public static final String FISH_BUTTON = "🐡 Рыбачить";
 	public static final String PREVIOUS_BUTTON = "◀️ Назад";
+	public static final String BACK_BUTTON = "\uD83D\uDD19 Назад";
 	public static final String NEXT_BUTTON = "▶️ Вперед";
 	public static final String INFO_BUTTON = "ℹ️Как играть";
 	public static final String PAY_BUTTON = "\uD83D\uDCB3 Передать деньги";
@@ -43,7 +44,6 @@ public class CommandProcessor
 	public static final String DRINKS_BUTTON = "\uD83E\uDDC3 Напитки";
 	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
 	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
-	public static final String BACK_BUTTON = "< Назад";
 	public static final String DONATE_BUTTON = "\uD83D\uDC8E Донат";
 	ItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
@@ -68,6 +68,9 @@ public class CommandProcessor
 		this.pockets_roller = pockets_roller;
 
 		map = new HashMap<>();
+
+		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
+
 		map.put("/me", () -> new Me());
 		map.put(ME_BUTTON, () -> new Me());
 
@@ -152,7 +155,9 @@ public class CommandProcessor
 		map.put(NEXT_BUTTON, () -> new Next());
 
 		map.put("/recipes", () -> new Recipes());
+
 		map.put(RECIPES_BUTTON, () -> new Recipes());
+
 	}
 
 	public Command get(String command)

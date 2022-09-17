@@ -192,7 +192,7 @@ public class Bot extends TelegramLongPollingBot
 						catch (NullPointerException ex)
 						{
 							ex.printStackTrace();
-							sendMsg(id, "Неизвестная команда");
+							sendMsg(id, "⚠ Неизвестная команда");
 						}
 					}
 					else
@@ -230,15 +230,6 @@ public class Bot extends TelegramLongPollingBot
 		{
 			t.printStackTrace();
 		}
-	}
-
-
-	public SendPhoto getPhoto(String path, Player player)
-	{
-		SendPhoto photo = new SendPhoto();
-		photo.setPhoto(new InputFile(new File(path)));
-		photo.setChatId(player.getId());
-		return photo;
 	}
 
 
