@@ -29,7 +29,7 @@ public class Capitalgame extends Command
 
 			String country = capitalgame.getCountry(random);
 
-			player.state = new CapitalgameState(host, player, country, player.state.base);
+			player.state = new CapitalgameState(host, player, country, player.state.base, capitalgame);
 			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
@@ -40,12 +40,14 @@ class CapitalgameState extends State
 	Bot host;
 	Player player;
 	String country;
+	main.Capitalgame capitalgame;
 
-	public CapitalgameState(Bot host, Player player, String country, BaseState base)
+	public CapitalgameState(Bot host, Player player, String country, BaseState base, main.Capitalgame capitalgame)
 	{
 		this.host = host;
 		this.player = player;
 		this.country = country;
+		this.capitalgame = capitalgame;
 		this.base = base;
 		hint = "\uD83E\uDDE9 Столица страны: " + country;
 	}
@@ -53,19 +55,17 @@ class CapitalgameState extends State
 	@Override
 	public void process(String arg)
 	{
-		Random ran = new Random();
-		int money = ran.nextInt(2000);
-
 		long id = player.getId();
 
 		player.state = base;
-		if (!arg.equals(host.capitalgame.getCapital(country)))
+		if (!main.Capitalgame.capitalizeString(arg).equals(capitalgame.getCapital(country)))
 		{
 			host.sendMsg(id, "❌ Неправильно");
 		}
 		else
 		{
-			host.sendMsg(id, "\uD83C\uDFC6 Правильно | + $" + money);
+			long money = new Random().nextInt(2000);
+			host.sendMsg(id, "\uD83C\uDFC6 Правильно | +" + new Money(money));
 			try
 			{
 				player.getMoney().transfer(money);

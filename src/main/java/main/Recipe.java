@@ -10,9 +10,9 @@ import static main.RollerFactory.itemDAO;
 public class Recipe
 {
 
-	Map<Item, List<Item>> recipes = new HashMap<>();
+	public Map<Item, List<Item>> recipes = new HashMap<>();
 
-	Recipe()
+	public Recipe()
 	{
 		createRecipe("Энергетик", "Стиральный порошок", "Банан", "Бутылка");
 		createRecipe("\uD83D\uDCE6 Кейс Gift", "Отвертка", "Подшипник");

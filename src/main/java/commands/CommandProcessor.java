@@ -153,6 +153,9 @@ public class CommandProcessor
 
 		map.put("/recipes", () -> new Recipes());
 		map.put(RECIPES_BUTTON, () -> new Recipes());
+
+		map.put("/donate", () -> new Donate());
+		map.put(DONATE_BUTTON, () -> new Donate());
 	}
 
 	public Command get(String command)
