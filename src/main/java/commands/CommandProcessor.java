@@ -156,6 +156,8 @@ public class CommandProcessor
 
 		map.put("/donate", () -> new Donate());
 		map.put(DONATE_BUTTON, () -> new Donate());
+
+		map.put("/boost", () -> new Boost());
 	}
 
 	public Command get(String command)
