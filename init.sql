@@ -7,6 +7,7 @@ create table if not exists players
     balance integer default 0
 );
 
+
 create table if not exists cooldowns
 (
     player_id integer primary key references players (id) on update cascade on delete cascade,
@@ -17,6 +18,7 @@ create table if not exists cooldowns
 create index if not exists find_ex_id on cooldowns (find_expiration);
 create index if not exists pockets_ex_id on cooldowns (pockets_expiration);
 
+
 create table if not exists items
 (
     id integer primary key,
@@ -24,6 +26,7 @@ create table if not exists items
     rarity text not null,
     cost integer
 );
+
 
 create table if not exists shop
 (
@@ -37,7 +40,6 @@ create table if not exists shop
 );
 
 
-
 create table if not exists shop_expiration
 (
     shop_id integer references shop (id) on delete cascade on update cascade,
@@ -45,6 +47,7 @@ create table if not exists shop_expiration
 );
 
 create index if not exists exp_index on shop_expiration (exp_date);
+
 
 insert or ignore into items (name, rarity, cost) values
     ('Лопата','Cheap',200),
@@ -129,11 +132,6 @@ insert or ignore into items (name, rarity, cost) values
     ('Веревка', 'Common', 320);
 
 
-
-
-
-
-
 create table if not exists inventory
 (
     id integer primary key,
@@ -143,6 +141,7 @@ create table if not exists inventory
     foreign key (player_id) references players (id) on delete cascade,
     foreign key (item_id) references items (id) on update cascade on delete cascade
 );
+
 
 create table if not exists stats
 (
@@ -156,6 +155,7 @@ create table if not exists stats
 );
 
 
+drop view if exists player;
 create view if not exists player as
     select
         id, name, xp, level, balance,
