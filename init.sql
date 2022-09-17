@@ -152,7 +152,8 @@ create table if not exists stats
     coinLosses integer default 0,
     coffee integer default 0,
     tea integer default 0,
-    trees integer default 0
+    trees integer default 0,
+    capitals integer default 0
 );
 
 
@@ -161,7 +162,7 @@ create view if not exists player as
     select
         id, name, xp, level, balance, needle,
         find_expiration as FIND, pockets_expiration as POCKETS,
-        coinWins as W, coinLosses as L, coffee, tea, bonus, trees
+        coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals
     from
     (
         players

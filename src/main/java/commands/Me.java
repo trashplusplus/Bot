@@ -32,7 +32,8 @@ public class Me extends Command
 					"☕️ Выпито кружек кофе: " + player.stats.coffee + "\n" +
 					"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins + "\n" +
 					"\uD83D\uDCC9 Проигрыши в монетке: " + player.stats.coinLosses + "\n" +
-					"\uD83C\uDF31 Посажено деревьев: " + player.stats.trees + "\n\n";
+					"\uD83C\uDF31 Посажено деревьев: " + player.stats.trees + "\n" +
+					"\uD83C\uDDFA\uD83C\uDDE6 Отгадано столиц: " + player.stats.capitals + "\n\n";
 
 			Achievements a = new Achievements(player);
 

@@ -454,7 +454,8 @@ public class PlayerDAO implements IPlayerDAO
 		int coffee = rs.getInt("coffee");
 		int tea = rs.getInt("tea");
 		int trees = rs.getInt("trees");
-		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees);
+		int capitals = rs.getInt("capitals");
+		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals);
 		Inventory inventory = inventoryDAO.get(id);
 		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, host);
 		player.findExpiration = findExpiration;

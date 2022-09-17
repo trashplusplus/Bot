@@ -66,6 +66,8 @@ class CapitalgameState extends State
 		{
 			long money = new Random().nextInt(2000);
 			host.sendMsg(id, "\uD83C\uDFC6 Правильно | +" + new Money(money));
+			player.stats.capitals++;
+
 			try
 			{
 				player.getMoney().transfer(money);
