@@ -1,8 +1,12 @@
 package commands;
 
 import main.Bot;
+import main.Item;
 import main.Player;
 import main.Recipe;
+
+import java.util.List;
+import java.util.Map;
 
 public class Recipes extends Command  // big todo
 {
@@ -10,22 +14,24 @@ public class Recipes extends Command  // big todo
 	public void consume(Bot host, Player player)
 	{
 		long id = player.getId();
-		StringBuilder sb = new StringBuilder("*Рецепты*\n");
-		sb.append("Здесь можно скрафтить полезные вещи, используя менее ценные предметы\n\n");
-		sb.append("Предметы, доступные для крафта: \n");
+		StringBuilder sb = new StringBuilder("*Рецепты*\n" +
+				"Здесь можно скрафтить полезные вещи, используя менее ценные предметы\n\n" +
+				"Предметы, доступные для крафта: \n");
 		Recipe recipe = new Recipe();
 
-		if (recipe.allRecipes != null)
+		if (recipe.recipes != null)
 		{
-			sb.append("\n");
-			sb.append("========================\n");
-			for (int i = 0; i < recipe.allRecipes.size(); i++)
-			{
-				sb.append(String.format("Рецепт |%d|: %s\n", i, recipe.allRecipes.get(i).getTitle()));
+			sb.append("\n========================\n");
+			int i = 0;
+
+			for(Map.Entry<Item, List<Item>> entry : recipe.recipes.entrySet()){
+				String craftName = entry.getKey().getTitle();
+				sb.append(String.format("Рецепт |%d|: %s\n", i, craftName));
+				i++;
 			}
-			sb.append("========================\n");
-			sb.append("Чтобы скрафтить предмет введите его ID: ");
-			// todo
+
+			sb.append("========================\n" +
+					"Чтобы скрафтить предмет введите его ID:");
 			host.sendMsg(id, sb.toString());
 		}
 		else

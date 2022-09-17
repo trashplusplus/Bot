@@ -15,6 +15,7 @@ public class Player
 	private int xp;
 	public Long findExpiration = null;
 	public Long pocketsExpiration = null;
+	public int donateRandomer = 0;
 	public Stats stats;
 	public int page = 0;
 	public commands.State state;

@@ -136,7 +136,6 @@ public class Bot extends TelegramLongPollingBot
 					replyKeyboardMarkup.setKeyboard(cancel_paginator.get(0));
 				}
 				else
-
 				{
 					replyKeyboardMarkup.setKeyboard(back_cancel_paginator.get(0));
 				}
