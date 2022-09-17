@@ -78,7 +78,7 @@ public class Bot extends TelegramLongPollingBot
 		base_paginator = new KeyboardPaginator()
 				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
 				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
-				.last(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, RECIPES_BUTTON);
+				.last(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, RECIPES_BUTTON, DONATE_BUTTON);
 		back_cancel_paginator = new KeyboardPaginator().collect(BACK_BUTTON, CANCEL_BUTTON);
 		cancel_paginator = new KeyboardPaginator().collect(CANCEL_BUTTON);
 
@@ -136,10 +136,12 @@ public class Bot extends TelegramLongPollingBot
 					replyKeyboardMarkup.setKeyboard(cancel_paginator.get(0));
 				}
 				else
+
 				{
 					replyKeyboardMarkup.setKeyboard(back_cancel_paginator.get(0));
 				}
 			}
+
 		}
 		sendMessage.setReplyMarkup(replyKeyboardMarkup);
 	}
@@ -181,7 +183,6 @@ public class Bot extends TelegramLongPollingBot
 					{
 						player.state = new BaseState(this, player);
 					}
-
 					if (player.state instanceof BaseState)
 					{
 						try
@@ -259,7 +260,7 @@ public class Bot extends TelegramLongPollingBot
 		List<Long> expires = abilityDAO.expireFind();
 		for (long id : expires)
 		{
-			System.out.printf("Find expiration notification fired for player id%d\n", id);
+			System.out.printf("Find expiration notification fired for player %s\n", playerDAO.get_by_id(id).getUsername());
 			sendMsg(id, "⭐ Вы снова можете искать редкие предметы!");
 			playerDAO.get_by_id(id).findExpiration = null;
 		}

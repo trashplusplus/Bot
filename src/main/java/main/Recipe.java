@@ -1,34 +1,57 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static main.RollerFactory.itemDAO;
 
-public class Recipe {
-    List<Item> energyRecipe = new ArrayList<>();
-    List<Item> caseRecipe = new ArrayList<>();
+public class Recipe
+{
 
-    public List<Item> allRecipes = new ArrayList<>();
+	Map<Item, List<Item>> recipes = new HashMap<>();
 
-    public Recipe(){
-        energyRecipe.add(itemDAO.getByNameFromCollection("Стиральный порошок"));
-        energyRecipe.add(itemDAO.getByNameFromCollection("Бутылка"));
-        energyRecipe.add(itemDAO.getByNameFromCollection("Банан"));
+	Recipe()
+	{
+		createRecipe("Энергетик", "Стиральный порошок", "Банан", "Бутылка");
+		createRecipe("\uD83D\uDCE6 Кейс Gift", "Отвертка", "Подшипник");
+		createRecipe("\uD83D\uDD11 Ключ от кейса", "Ожерелье");
+	}
 
-        caseRecipe.add(itemDAO.getByNameFromCollection("Отвертка"));
-        caseRecipe.add(itemDAO.getByNameFromCollection("Подшипник"));
+	public void createRecipe(String resultProduct, String... ingredients)
+	{
+
+		Item resultProductToItem = itemDAO.getByNameFromCollection(resultProduct);
+		List<Item> ingredientsToItem = new ArrayList<>();
+
+		for (int i = 0; i < ingredients.length; i++)
+		{
+			ingredientsToItem.add(itemDAO.getByNameFromCollection(ingredients[i]));
+		}
+
+		recipes.put(resultProductToItem, ingredientsToItem);
+	}
+
+	public Item choice(int index)
+	{
+		List<Item> ingredientsToItem = new ArrayList<>();
+
+		for (Map.Entry<Item, List<Item>> entry : recipes.entrySet())
+		{
+			Item key = entry.getKey();
+			ingredientsToItem.add(key);
+		}
+		return ingredientsToItem.get(index);
+	}
 
 
-        allRecipes.add(itemDAO.getByNameFromCollection("Энергетик"));
-        allRecipes.add(itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift"));
-    }
-
-
-    public boolean hasRecipe(Inventory inventory, List<Item> ingredients){
-        if(inventory.getItems().containsAll(ingredients)){
-            return true;
-        }
-        return false;
-    }
+	public boolean hasRecipe(Inventory inventory, List<Item> ingredients)
+	{
+		if (inventory.getItems().containsAll(ingredients))
+		{
+			return true;
+		}
+		return false;
+	}
 }

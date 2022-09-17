@@ -9,6 +9,7 @@ public class Player
 	private final long id;
 	private final Inventory inventory;
 	public Money balance;
+	public Long needle;
 	private String username;
 	private int level;
 	private int xp;
@@ -21,10 +22,10 @@ public class Player
 
 	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0, new Inventory(), new Stats(), host);
+		this(id, 0, 1, "player" + id, 0L, 0L, new Inventory(), new Stats(), host);
 	}
 
-	public Player(long id, int xp, int level, String username, long balance, Inventory inventory, Stats stats, Bot host)
+	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Stats stats, Bot host)
 	{
 		this.id = id;
 		this.username = username;
@@ -105,6 +106,7 @@ public class Player
 	{
 		return xp;
 	}
+
 
 	@Override
 	public boolean equals(Object o)

@@ -44,6 +44,7 @@ public class CommandProcessor
 	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
 	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
 	public static final String BACK_BUTTON = "< Назад";
+	public static final String DONATE_BUTTON = "\uD83D\uDC8E Донат";
 	ItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
