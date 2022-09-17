@@ -131,9 +131,6 @@ insert or ignore into items (name, rarity, cost) values
     ('Веревка', 'Common', 320);
 
 
-
-
-
 create table if not exists inventory
 (
     id integer primary key,

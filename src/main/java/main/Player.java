@@ -15,7 +15,7 @@ public class Player
 	private State state;
 	public Long findExpiration = null;
 	public Long pocketsExpiration = null;
-
+	public int donateRandomer = 0;
 
 	public Stats stats;
 

@@ -150,6 +150,7 @@ public class Bot extends TelegramLongPollingBot
 					case awaitingChangeNickname:
 					case shopPlaceGood_awaitingID:
 					case payAwaitingNickname:
+
 					default:
 						row.add(new KeyboardButton(CANCEL_BUTTON));
 						break;
@@ -1318,8 +1319,17 @@ public class Bot extends TelegramLongPollingBot
 		{
 			if (player.findExpiration != null && player.findExpiration > now_ts)
 			{
-				sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s",
-						PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+				if(player.donateRandomer > 3){
+					sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s\n\uD83D\uDC8E Время можно сбросить за 2\uD83E\uDDF7 командой /boost",
+							PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+					player.donateRandomer = 0;
+				}else{
+					sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s",
+							PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+					player.donateRandomer++;
+				}
+
+
 			}
 			else
 			{
@@ -1340,6 +1350,15 @@ public class Bot extends TelegramLongPollingBot
 		}
 	}
 
+	public void command_boost(Player player){
+		if(player.needle >= 2){
+			sendMsg(player.getId(),"\uD83D\uDC8E Вы сбросили время ожидания");
+			player.needle -= 2;
+			player.findExpiration = 0L;
+		}else{
+			sendMsg(player.getId(), "\uD83D\uDC8E Недостаточно булавок. Чтобы купить их введите команду /donate");
+		}
+	}
 
 	public void command_mud(Player player)
 	{
@@ -1832,6 +1851,7 @@ public class Bot extends TelegramLongPollingBot
 			sendMsg(id, "У вас нет кейсов");
 		}
 	}
+
 
 	public void command_pay(Player player)
 	{

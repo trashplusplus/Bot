@@ -12,7 +12,7 @@ public class Recipe {
 
         createRecipe("Энергетик", "Стиральный порошок", "Банан", "Бутылка");
         createRecipe("\uD83D\uDCE6 Кейс Gift", "Отвертка", "Подшипник");
-        createRecipe("\uD83D\uDD11 Ключ от кейса", "Ожерелье");
+
     }
 
     public void createRecipe(String resultProduct, String...ingredients){

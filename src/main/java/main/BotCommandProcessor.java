@@ -92,6 +92,7 @@ public class BotCommandProcessor
 		res.put("/give", bot::command_give);
 		res.put("/donate", bot::command_donate);
 		res.put(DONATE_BUTTON, bot::command_donate);
+		res.put("/boost", bot::command_boost);
 
 
 		return res;
