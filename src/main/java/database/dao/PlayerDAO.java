@@ -237,7 +237,7 @@ public class PlayerDAO implements IPlayerDAO
 		List<Player> players = new ArrayList<>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String query = String.format("select * from player where R = 1 order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
+		String query = String.format("select * from player order by %s %s limit ?;", field_name, ascending ? "asc" : "desc");
 		try
 		{
 			ps = connection.prepareStatement(query);

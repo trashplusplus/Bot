@@ -159,7 +159,7 @@ create table if not exists stats
 drop view if exists player;
 create view if not exists player as
     select
-        id, name, xp, level, balance, needle
+        id, name, xp, level, balance, needle,
         find_expiration as FIND, pockets_expiration as POCKETS,
         coinWins as W, coinLosses as L, coffee, tea, bonus, trees
     from
