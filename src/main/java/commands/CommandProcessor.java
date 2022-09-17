@@ -137,7 +137,7 @@ public class CommandProcessor
 
 		map.put("/open", () -> new Open(itemDAO, inventoryDAO));
 
-		map.put("/touch", () -> new Touch(inventoryDAO, playerDAO));
+		map.put("/touch", () -> new Touch(inventoryDAO, itemDAO, playerDAO));
 
 		map.put("/check", () -> new Check(playerDAO));
 		map.put(CHECK_BUTTON, () -> new Check(playerDAO));
