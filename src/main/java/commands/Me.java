@@ -22,7 +22,7 @@ public class Me extends Command
 			photo.setPhoto(new InputFile(new File(".\\pics\\me.jpg")));
 			photo.setChatId(player_id);
 
-			String sb = "*Информация о персонаже*\n\n" + "Здесь показывается вся Ваша статистика и достижения\n\n" +
+			String s = "*Информация о персонаже*\n\n" + "Здесь показывается вся Ваша статистика и достижения\n\n" +
 					"⭐ Ваш ник: " + player.getUsername() + "\n\n" +
 					"\uD83D\uDCB0 Ваш баланс: " + player.getMoney() + "\n\n" +
 					"\uD83D\uDC8E Ваши булавки: " + player.needle + "\uD83E\uDDF7 \n\n" +
@@ -37,7 +37,7 @@ public class Me extends Command
 			Achievements a = new Achievements(player);
 
 			host.execute(photo);
-			host.sendMsg(player_id, sb + a.getTeaAch() + a.getCoffeeAch() + a.getTreesAch());
+			host.sendMsg(player_id, s + a.getTeaAch() + a.getCoffeeAch() + a.getTreesAch());
 		}
 		catch (TelegramApiException e)
 		{

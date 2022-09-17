@@ -6,7 +6,7 @@ import main.*;
 import java.util.List;
 import java.util.Map;
 
-public class Recipes extends Command  // big todo
+public class Recipes extends Command
 {
 	InventoryDAO inventoryDAO;
 
