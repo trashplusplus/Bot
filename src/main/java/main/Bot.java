@@ -48,6 +48,8 @@ public class Bot extends TelegramLongPollingBot
 	ScheduledFuture<?> sf_pockets;
 	ScheduledFuture<?> sf_dump;
 	public final long dump_timer_s = 120L;
+	ScheduledFuture<?> sf_remove_unregistered;
+	public final long remove_unregistered_s = 10L;
 
 	public final long findCooldown = 20L * 60L * 1000L;
 	public final long pocketsCooldown = 30L * 1000L;
@@ -59,6 +61,9 @@ public class Bot extends TelegramLongPollingBot
 	public KeyboardPaginator cancel_paginator;
 
 	public CommandProcessor command_processor;
+
+	Map<Long, Long> unregistered_players;
+	Long unregistered_cache_duration_s = 10L * 60L;
 
 
 	public Bot(Connection connection) throws FileNotFoundException
@@ -75,6 +80,8 @@ public class Bot extends TelegramLongPollingBot
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, dump_timer_s, dump_timer_s, TimeUnit.SECONDS);
+		unregistered_players = new HashMap<>();
+		sf_remove_unregistered = STPE.stpe.scheduleAtFixedRate(this::remove_unregistered, unregistered_cache_duration_s, remove_unregistered_s, TimeUnit.SECONDS);
 		base_paginator = new KeyboardPaginator()
 				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
 				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
@@ -117,11 +124,12 @@ public class Bot extends TelegramLongPollingBot
 
 		if (player == null)
 		{
-			List<KeyboardRow> rows = new ArrayList<>();
-			KeyboardRow row = new KeyboardRow();
-			row.add(new KeyboardButton("⭐ Начать"));
-			rows.add(row);
-			replyKeyboardMarkup.setKeyboard(rows);
+			//List<KeyboardRow> rows = new ArrayList<>();
+			//KeyboardRow row = new KeyboardRow();
+			//row.add(new KeyboardButton("⭐ Начать"));
+			//rows.add(row);
+			//replyKeyboardMarkup.setKeyboard(rows);
+			return;
 		}
 		else
 		{
@@ -163,17 +171,35 @@ public class Bot extends TelegramLongPollingBot
 
 				if (player == null)
 				{
-					if (text.equals("/start") || text.equals("⭐ Начать"))
+					if (unregistered_players.containsKey(id))
 					{
-						player = new Player(id, this);
-						playerDAO.put(player);
-
-						sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle");
-						sendMsg(id, "Введите ник: ");
+						String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";
+						if (text.matches(usernameTemplate))
+						{
+							// check name
+							if (playerDAO.get_by_name(text) == null)
+							{
+								// create player
+								player = new Player(id, this);
+								player.setUsername(text);
+								playerDAO.put(player);
+								sendMsg(id, "Спасибо за регистрацию, приятной игры :)");
+								unregistered_players.remove(id);
+							}
+							else
+							{
+								sendMsg(id, "Это имя уже занято, введите другое:");
+							}
+						}
+						else
+						{
+							sendMsg(id, "Некорректный ник :S");
+						}
 					}
 					else
 					{
-						sendMsg(id, "⭐ Для регистрации введите команду /start");
+						unregistered_players.put(id, System.currentTimeMillis() + unregistered_cache_duration_s);
+						sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle\nВведите имя для своего персонажа:");
 					}
 				}
 				else
@@ -265,6 +291,22 @@ public class Bot extends TelegramLongPollingBot
 			cpd.dump();
 			System.out.printf("Active players:\n%s\n", cpd.cached_players().stream().map(Player::getUsername).collect(Collectors.toList()));
 			System.out.println("Database dumped");
+		}
+	}
+
+	public void remove_unregistered()
+	{
+		long now_ts = System.currentTimeMillis();
+		Iterator<Long> iter = unregistered_players.keySet().iterator();
+		while (iter.hasNext())
+		{
+			Long id = iter.next();
+			long ts = unregistered_players.get(id);
+			if (now_ts >= ts)
+			{
+				iter.remove();
+				System.out.printf("Removed id %d from unregistered cache \n", id);
+			}
 		}
 	}
 
