@@ -23,17 +23,12 @@ public class Me extends Command
 			photo.setChatId(player_id);
 
 			String s = "*Информация о персонаже*\n\n" + "Здесь показывается вся Ваша статистика и достижения\n\n" +
-					"⭐ Ваш ник: " + player.getUsername() + "\n\n" +
+					"⭐ Ваш ник: " + player.getFormattedUsername() + "\n\n" +
 					"\uD83D\uDCB0 Ваш баланс: " + player.getMoney() + "\n\n" +
 					"\uD83D\uDC8E Ваши булавки: " + player.needle + "\uD83E\uDDF7 \n\n" +
 					"\uD83C\uDF20 Ваш GameID: " + player_id + "\n\n" +
-					String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP) \n", player.getLevel(), player.getXp()) +
-					"\uD83C\uDF3F Выпито кружек чая: " + player.stats.tea + "\n" +
-					"☕️ Выпито кружек кофе: " + player.stats.coffee + "\n" +
-					"\uD83C\uDFC6 Победы в монетке: " + player.stats.coinWins + "\n" +
-					"\uD83D\uDCC9 Проигрыши в монетке: " + player.stats.coinLosses + "\n" +
-					"\uD83C\uDF31 Посажено деревьев: " + player.stats.trees + "\n" +
-					"\uD83C\uDDFA\uD83C\uDDE6 Отгадано столиц: " + player.stats.capitals + "\n\n";
+					String.format("\uD83D\uDC7E Ваш уровень: %d (%d XP) \n\n", player.getLevel(), player.getXp());
+
 
 			Achievements a = new Achievements(player);
 

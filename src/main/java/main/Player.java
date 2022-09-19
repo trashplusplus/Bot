@@ -21,6 +21,8 @@ public class Player
 	public commands.State state;
 	public final Bot host;
 
+	public Item status;
+
 	public Player(long id, Bot host)
 	{
 		this(id, 0, 1, "player" + id, 0L, 0L, new Inventory(), new Stats(), host);
@@ -47,6 +49,13 @@ public class Player
 
 	public String getUsername()
 	{
+		return username;
+	}
+	public String getFormattedUsername(){
+		if(status != null){
+
+			return username + "\\[" + status.getTitle() + "]";
+		}
 		return username;
 	}
 
