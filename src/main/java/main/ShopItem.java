@@ -15,7 +15,7 @@ public class ShopItem
 		this.seller = seller;
 	}
 
-	public ShopItem(Item item, int cost, Player seller)
+	public ShopItem(Item item, long cost, Player seller)
 	{
 		this(-1, item, cost, seller);
 	}

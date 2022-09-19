@@ -140,7 +140,7 @@ class ShopplaceState2 extends State
 			if (cost > 0L)
 			{
 				Inventory inventory = player.getInventory();
-				ShopItem shopItem = new ShopItem(inventory.getItem(item_id), (int) cost, player);  // todo rework ShopItem
+				ShopItem shopItem = new ShopItem(inventory.getItem(item_id), cost, player);
 				shopDAO.put(shopItem);
 
 				player.state = base;
