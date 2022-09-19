@@ -334,7 +334,7 @@ public class PlayerDAO implements IPlayerDAO
 				ps.execute();
 
 				String update_stats =
-						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea, trees) values (?, ?, ?, ?, ?, ?, ?);";
+						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea, trees, capitals) values (?, ?, ?, ?, ?, ?, ?, ?);";
 				ps = connection.prepareStatement(update_stats);
 				Stats stats = player.stats;
 				ps.setLong(1, id);
@@ -344,6 +344,7 @@ public class PlayerDAO implements IPlayerDAO
 				ps.setInt(5, stats.coffee);
 				ps.setInt(6, stats.tea);
 				ps.setInt(7, stats.trees);
+				ps.setInt(8, stats.capitals);
 				ps.execute();
 
 				String update_cooldowns =
