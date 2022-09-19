@@ -17,18 +17,18 @@ public class ShopDAO
 {
 	private final Connection connection;
 	ItemDAO item;
-	PlayerDAO playerDAO;
+	IPlayerDAO playerDAO;
 
 	Bot host;
 
 	private static final long shopItemDuration = 24L * 60L * 60L * 1000L;
 
-	public ShopDAO(Connection connection, Bot host)
+	public ShopDAO(Connection connection, Bot host, IPlayerDAO playerDAO)
 	{
 		this.connection = connection;
 		item = new ItemDAO(this.connection);
 		this.host = host;
-		playerDAO = new PlayerDAO(connection, host);
+		this.playerDAO = playerDAO;
 	}
 
 	public void put(ShopItem shopItem)
