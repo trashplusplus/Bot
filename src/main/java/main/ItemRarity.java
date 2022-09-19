@@ -6,7 +6,8 @@ public enum ItemRarity
 	Common,
 	Rare,
 	Gift,
-	Limited;
+	Limited,
+	Status;
 
 	@Override
 	public String toString()

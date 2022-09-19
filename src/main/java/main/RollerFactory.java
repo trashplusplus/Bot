@@ -68,7 +68,7 @@ public class RollerFactory
 			switch (items[i].getRarity())
 			{
 				case Cheap:
-					weights[i] = 1;
+					weights[i] = 2;
 					break;
 				case Common:
 					weights[i] = 4;
@@ -80,6 +80,7 @@ public class RollerFactory
 					weights[i] = 2;
 					break;
 				case Limited:
+				case Status:
 					weights[i] = 0;
 					break;
 				default:

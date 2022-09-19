@@ -119,7 +119,7 @@ class TeaState2 extends State
 					receiver.ach_tea();
 				}
 				sender.addXp(1);
-				host.sendMsg(receiver_id, String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая с сообщением: `%s`", sender.getUsername(), note));
+				host.sendMsg(receiver_id, String.format("\uD83C\uDF3F Игрок `%s` угостил вас кружечкой чая с сообщением: `%s`", sender.getFormattedUsername(), note));
 			}
 			else
 			{

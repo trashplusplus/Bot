@@ -130,7 +130,9 @@ insert or ignore into items (name, rarity, cost) values
     ('Курточка', 'Common', 850),
     ('Петарда', 'Cheap', 15),
     ('Тетрадь', 'Cheap', 10),
-    ('Веревка', 'Common', 320);
+    ('Веревка', 'Common', 320),
+    ('⚡', 'Status', 1000),
+    ('💫', 'Status', 1000);
 
 
 create table if not exists inventory

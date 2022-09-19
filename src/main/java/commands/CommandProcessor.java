@@ -71,6 +71,7 @@ public class CommandProcessor
 
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
+		map.put("/stats", () -> new Stats());
 
 		map.put("/me", () -> new Me());
 		map.put(ME_BUTTON, () -> new Me());
