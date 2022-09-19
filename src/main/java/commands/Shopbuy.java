@@ -94,6 +94,7 @@ class ShopbuyState extends State
 				{
 					inventoryDAO.putItem(player.getId(), item.getId());
 					player.getInventory().putItem(item);
+					player.state = player.state.base;
 					host.sendMsg(player.getId(), String.format("Ваш товар %s снят с продажи", item));
 					shopDAO.delete(userInput);
 				}
