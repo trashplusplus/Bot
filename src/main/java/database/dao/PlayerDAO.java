@@ -461,6 +461,7 @@ public class PlayerDAO implements IPlayerDAO
 		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, host);
 		player.findExpiration = findExpiration;
 		player.pocketsExpiration = pocketsExpiration;
+		player.level_reached.subscribe(player.host::level_up_handler);
 		return player;
 	}
 

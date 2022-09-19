@@ -317,6 +317,24 @@ public class Bot extends TelegramLongPollingBot
 		System.out.println("Goodbye!");
 	}
 
+	public void level_up_handler(Object sender, int level)
+	{
+		Player player = (Player) sender;
+		long fee = 1375L * level;
+		sendMsg(player.getId(), String.format("\uD83C\uDF88 Поздравляем! Вы перешли на новый уровень (Уровень %d)" +
+						"\n\uD83C\uDF81 Бонус за переход на новый уровень +%s",
+				level, new Money(fee)));
+		try
+		{
+			player.balance.transfer(fee);
+		}
+		catch (Money.MoneyException e)
+		{
+			e.printStackTrace();
+			sendMsg(player.getId(), e.getMessage());
+		}
+	}
+
 	public void level_up_notification(Player player)
 	{
 		long fee = 1375L * player.getLevel();

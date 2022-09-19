@@ -8,6 +8,8 @@ public class Inventory
 {
 	private final List<Item> inventory = new ArrayList<>();
 
+	public Event<Item> inventory_updated = new Event<>(this);
+
 	public Inventory()
 	{
 	}
@@ -35,14 +37,21 @@ public class Inventory
 
 	public void removeItem(int index)
 	{
-		inventory.remove(index);
+		Item removed_item = inventory.remove(index);
+		on_inventory_updated(removed_item);
 	}
 
 
 	public boolean putItem(Item item)
 	{
 		inventory.add(item);
+		on_inventory_updated(item);
 
 		return true;
+	}
+
+	void on_inventory_updated(Item item)
+	{
+		inventory_updated.raise(item);
 	}
 }

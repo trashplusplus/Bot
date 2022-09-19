@@ -20,8 +20,9 @@ public class Player
 	public int page = 0;
 	public commands.State state;
 	public final Bot host;
-
 	public Item status;
+	
+	public Event<Integer> level_reached = new Event<>(this);
 
 	public Player(long id, Bot host)
 	{
@@ -89,9 +90,12 @@ public class Player
 
 	public void levelUp()
 	{
-		xp -= 10 * level++;
-		// back-notify the owner
-		host.level_up_notification(this);
+		while (xp > 10 * level)
+		{
+			xp -= 10 * level++;
+			on_level_reached(level);
+		}
+		//host.level_up_notification(this);
 	}
 
 	public void ach_treeHard()
@@ -140,5 +144,10 @@ public class Player
 	public int hashCode()
 	{
 		return Objects.hash(id);
+	}
+
+	void on_level_reached(int level)
+	{
+		level_reached.raise(level);
 	}
 }
