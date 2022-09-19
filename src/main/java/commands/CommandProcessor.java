@@ -70,6 +70,7 @@ public class CommandProcessor
 		map = new HashMap<>();
 
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
+		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
 
 		map.put("/me", () -> new Me());
 		map.put(ME_BUTTON, () -> new Me());

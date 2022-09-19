@@ -27,14 +27,14 @@ public class Top extends Command
 		{
 			if (pl.getInventory().getItems().contains(itemDAO.getByNameFromCollection("\uD83E\uDDDA\u200D♀ Фея")))
 			{
-				players_list.append(String.format("Игрок `%s` \\[\uD83E\uDDDA\u200D♀] | %s | %d LVL", pl.getUsername(), pl.balance, pl.getLevel()));
+				players_list.append(String.format("Игрок `%s` \\[\uD83E\uDDDA\u200D♀] | %s | %d Ур.", pl.getUsername(), pl.balance, pl.getLevel()));
 				players_list.append("\n");
 				players_list.append("========================");
 				players_list.append("\n");
 			}
 			else
 			{
-				players_list.append(String.format("Игрок `%s` | %s | %d LVL", pl.getUsername(), pl.balance, pl.getLevel()));
+				players_list.append(String.format("Игрок `%s` | %s | %d Ур", pl.getUsername(), pl.balance, pl.getLevel()));
 				players_list.append("\n");
 				players_list.append("========================");
 				players_list.append("\n");
