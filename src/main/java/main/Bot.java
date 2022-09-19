@@ -71,7 +71,7 @@ public class Bot extends TelegramLongPollingBot
 		playerDAO = new CachedPlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
 		itemDAO = new ItemDAO(connection);
-		shopDAO = new ShopDAO(connection, this);
+		shopDAO = new ShopDAO(connection, this, playerDAO);
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, this);
 		token = init_token();
