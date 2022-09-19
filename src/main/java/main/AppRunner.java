@@ -48,7 +48,6 @@ public class AppRunner
 
 	private static void initDB() throws SQLException, IOException
 	{
-		//Connection connection = DriverManager.getConnection("jdbc:sqlite:data.db");
 		SQLExecutor executor = new SQLExecutor(new File("init.sql"), SQLSession.sqlConnection);
 		executor.execute();
 	}

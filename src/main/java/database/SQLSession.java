@@ -14,7 +14,6 @@ public class SQLSession
 		try
 		{
 			sqlConnection = DriverManager.getConnection(db_url);
-			System.out.println("Successfully connected to database\nAuto commit: " + sqlConnection.getAutoCommit());
 		}
 		catch (SQLException e)
 		{
