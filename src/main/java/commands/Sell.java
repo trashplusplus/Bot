@@ -42,17 +42,25 @@ class SellState extends State
 		try
 		{
 			Inventory inventory = invoker.getInventory();
-			int sell_id = Integer.parseInt(arg);
+			int sell_id = Integer.parseInt(arg) - 1;
 			Item item = inventory.getItem(sell_id);
 			if (item.getRarity() != ItemRarity.Limited)
 			{
-				invoker.balance.transfer(item.getCost().value);
-				inventory.removeItem(sell_id);
-				inventoryDAO.delete(player_id, item.getId(), 1);
-				host.sendMsg(player_id, "✅ Предмет продан | + " + item.getCost());
-				//invoker.st = new SellState(invoker, base, host, inventoryDAO);
-				rebuild_hint();
-				host.sendMsg(player_id, invoker.state.hint);
+				if (item.getTitle().equals("Рюкзак")
+						&& inventory.getInvSize() >= 20
+						&& inventory.getItems().stream().filter(e -> e.getTitle().equals("Рюкзак")).count() < 2)
+				{
+					host.sendMsg(player_id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", "\uD83C\uDF92 Рюкзак"));
+				}
+				else
+				{
+					invoker.balance.transfer(item.getCost().value);
+					inventory.removeItem(sell_id);
+					inventoryDAO.delete(player_id, item.getId(), 1);
+					host.sendMsg(player_id, String.format("✅ Предмет %s продан | +%s", item.getTitle(), item.getCost()));
+					rebuild_hint();
+					host.sendMsg(player_id, invoker.state.hint);
+				}
 			}
 			else
 			{
@@ -83,14 +91,7 @@ class SellState extends State
 		{
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("\uD83E\uDDF6 Предметы, доступные к продаже:\n");
-			stringBuilder.append("\n");
-			stringBuilder.append("============================\n");
-			for (int i = 0; i < inventory.getInvSize(); i++)
-			{
-				stringBuilder.append(String.format("Предмет |%d| : %s\n", i, inventory.getItem(i).toString()));
-			}
-
-			stringBuilder.append("============================\n");
+			stringBuilder.append("\n").append(inventory.repr());
 			stringBuilder.append("\n");
 			stringBuilder.append("Введите номер предмета, который хотите продать:\n");
 			hint = stringBuilder.toString();

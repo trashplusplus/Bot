@@ -51,15 +51,8 @@ class CheckState extends State
 			if (inventory.getInvSize() != 0)
 			{
 				StringBuilder sb = new StringBuilder("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`");
-				sb.append("\n");
-				sb.append("========================\n");
-				for (int i = 0; i < inventory.getInvSize(); i++)
-				{
-					sb.append(String.format("Предмет |%d| : %s\n", i, inventory.getItem(i).toString()));
-				}
-				sb.append("========================\n");
-				//sendMsg(message, "\u26BD");
-				sb.append("\uD83D\uDC41 Всего предметов: ").append(inventory.getInvSize());
+				sb.append("\n").append(inventory.repr());
+				sb.append("\n\uD83D\uDC41 Всего предметов: ").append(inventory.getInvSize());
 				host.sendMsg(player_id, sb.toString());
 			}
 			else

@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Player
 {
 	private final long id;
-	private final Inventory inventory;
+	public final Inventory inventory;
 	public Money balance;
 	public Long needle;
 	private String username;

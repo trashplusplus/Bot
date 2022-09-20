@@ -1,7 +1,7 @@
 package commands;
 
-import database.dao.InventoryDAO;
 import database.dao.CachedItemDAO;
+import database.dao.InventoryDAO;
 import database.dao.ShopDAO;
 import main.*;
 
@@ -32,15 +32,8 @@ public class Shopplace extends Command
 			player.state = new ShopplaceState1(host, player, itemDAO, inventoryDAO, shopDAO, player.state.base);
 			Inventory inventory = player.getInventory();
 
-			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
-			sb.append("=====================\n");
-			for (int i = 0; i < inventory.getInvSize(); i++)
-			{
-				sb.append(String.format("Предмет | %d |: ", i)).append(inventory.getItem(i)).append("\n");
-			}
-			sb.append("=====================\n");
+			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n").append(inventory.repr()).append('\n').append(player.state.hint);
 			host.sendMsg(player_id, sb.toString());
-			host.sendMsg(player_id, player.state.hint);
 		}
 	}
 }
@@ -70,23 +63,18 @@ class ShopplaceState1 extends State
 		long id = player.getId();
 		try
 		{
-			int itemID = Integer.parseInt(arg);
-			if (itemID >= player.getInventory().getInvSize())
+			int itemID = Integer.parseInt(arg) - 1;
+			Item i = player.getInventory().getItem(itemID);
+			if (i.getTitle().equals("Рюкзак")
+					&& player.inventory.getInvSize() >= 20
+					&& player.inventory.getItems().stream().filter(e -> e.getTitle().equals("Рюкзак")).count() < 2)
 			{
-				throw new IndexOutOfBoundsException();
+				host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", "\uD83C\uDF92 Рюкзак"));
 			}
-			else if (player.getInventory().getInvSize() > 20)
+			else
 			{
-				Item i = player.getInventory().getItem(itemID);
-				if (i.getTitle().equals("\uD83C\uDF92 Рюкзак"))
-				{
-					host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", "\uD83C\uDF92 Рюкзак"));
-				}
-				else
-				{
-					player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, itemID, this, base);
-					host.sendMsg(id, player.state.hint);
-				}
+				player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, itemID, this, base);
+				host.sendMsg(id, player.state.hint);
 			}
 		}
 		catch (NumberFormatException ex)
