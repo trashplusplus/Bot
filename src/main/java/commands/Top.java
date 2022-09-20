@@ -35,10 +35,18 @@ public class Top extends Command
 					players_list.append("\n");
 
 				}else{
-					players_list.append(String.format("Игрок `%s` | %s | %d Ур.", pl.getFormattedUsername(), pl.balance, pl.getLevel()));
-					players_list.append("\n");
-					players_list.append("========================");
-					players_list.append("\n");
+					if(pl.status != null){
+						players_list.append(String.format("Игрок `%s`\\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));
+						players_list.append("\n");
+						players_list.append("========================");
+						players_list.append("\n");
+					}else{
+						players_list.append(String.format("Игрок `%s` | %s | %d Ур.", pl.getUsername(), pl.balance, pl.getLevel()));
+						players_list.append("\n");
+						players_list.append("========================");
+						players_list.append("\n");
+					}
+
 				}
 			top1++;
 

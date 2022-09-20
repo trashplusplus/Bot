@@ -21,7 +21,7 @@ public class Player
 	public commands.State state;
 	public final Bot host;
 
-	public String status;
+	public Item status;
 
 	public Player(long id, Bot host)
 	{
@@ -52,10 +52,14 @@ public class Player
 		return username;
 	}
 	public String getFormattedUsername(){
-		if(status != null){
-
-			return username + "\\[" + status + "]";
+		if(inventory.getItems().contains(status)){
+			if(status != null){
+				return username + "\\[" + status.getEmoji() + "]";
+			}
+		}else{
+			status = null;
 		}
+
 		return username;
 	}
 
@@ -77,6 +81,10 @@ public class Player
 	public Stats getStats()
 	{
 		return stats;
+	}
+
+	public String getStatus(){
+		return status.getEmoji();
 	}
 
 	public void levelUp()
