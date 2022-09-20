@@ -13,7 +13,7 @@ public class PlayerDAO implements IPlayerDAO
 	private final InventoryDAO inventoryDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
-	private final ItemDAO itemDAO;
+	private final CachedItemDAO cachedItemDAO;
 
 	Bot host;
 
@@ -23,7 +23,7 @@ public class PlayerDAO implements IPlayerDAO
 		inventoryDAO = new InventoryDAO(connection);
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, host);
-		itemDAO = new ItemDAO(connection);
+		cachedItemDAO = new CachedItemDAO(connection);
 		this.host = host;
 	}
 
@@ -449,7 +449,7 @@ public class PlayerDAO implements IPlayerDAO
 		int level = rs.getInt("level");
 		long balance = rs.getLong("balance");
 		long needle = rs.getLong("needle");
-		Item emojiStatus = itemDAO.get(rs.getInt("emojiStatus"));
+		Item emojiStatus = cachedItemDAO.get_by_id(rs.getInt("emojiStatus"));
 		//Long findExpiration = read_ts(rs, "find_expiration");
 		Long findExpiration = read_ts(rs, "FIND");
 		//Long pocketsExpiration = read_ts(rs, "pockets_expiration");
