@@ -95,7 +95,7 @@ class ShopplaceState1 extends State
 		catch (BackpackException ex)
 		{
 			Item ii = player.getInventory().getItem(ex.backpackID);
-			Item backpack = itemDAO.getByName("\uD83C\uDF92 Рюкзак");
+			Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
 			if (ii.equals(backpack))
 			{
 				host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", backpack.getTitle()));
@@ -144,7 +144,7 @@ class ShopplaceState2 extends State
 				shopDAO.put(shopItem);
 
 				player.state = base;
-				host.sendMsg(player_id, String.format("Товар `%s` выставлен на продажу", inventory.getItem(item_id).getTitle()));
+				host.sendMsg(player_id, String.format("Товар `%s` выставлен на продажу", inventory.getItem(item_id).getEmojiTitle()));
 				inventory.removeItem(item_id);
 
 				inventoryDAO.delete(player_id, shopItem.getItem().getId(), 1);

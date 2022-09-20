@@ -109,7 +109,7 @@ class ShopbuyState extends State
 					player.state = player.state.base;
 
 					host.sendMsg(player.getId(), String.format("\uD83C\uDF6D Предмет `%s` успешно куплен", item));
-					host.sendMsg(seller.getId(), String.format("\uD83D\uDCC8 Ваш предмет `%s` купил игрок `%s` | + %s", item.getTitle(), player.getUsername(), new Money(itemCost)));
+					host.sendMsg(seller.getId(), String.format("\uD83D\uDCC8 Ваш предмет `%s` купил игрок `%s` | + %s", item.getEmojiTitle(), player.getUsername(), new Money(itemCost)));
 					seller.addXp(3);
 
 					shopDAO.delete(userInput);

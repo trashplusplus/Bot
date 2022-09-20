@@ -80,8 +80,9 @@ public class ItemDAO {
 		String title = rs.getString(2);
 		ItemRarity rarity = ItemRarity.valueOf(rs.getString(3));
 		long cost = rs.getLong(4);
+		String emoji = rs.getString(5);
 
-		return new Item(id, title, rarity, cost);
+		return new Item(id, title, rarity, cost, emoji);
 	}
 
 	public void loadItems(){

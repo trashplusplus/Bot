@@ -6,6 +6,7 @@ public class ShopItem
 	Item item;
 	Money cost;
 	Player seller;
+	String emoji;
 
 	public ShopItem(int id, Item item, long cost, Player seller)
 	{
@@ -42,6 +43,6 @@ public class ShopItem
 
 	@Override
 	public String toString(){
-		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %s | Продавец: `%s` \n", item.getTitle(), cost, seller.getUsername());
+		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %s | Продавец: `%s` \n", item.getEmojiTitle(), cost, seller.getUsername());
 	}
 }

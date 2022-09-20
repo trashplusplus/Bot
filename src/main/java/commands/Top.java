@@ -1,5 +1,6 @@
 package commands;
 
+import database.dao.CachedPlayerDAO;
 import database.dao.IPlayerDAO;
 import database.dao.ItemDAO;
 import database.dao.PlayerDAO;

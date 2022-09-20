@@ -8,6 +8,7 @@ public class Item
 	private final String title;
 	private final ItemRarity rarity;
 	private final Money cost;
+	private String emoji;
 
 	public Item(long id, String title, ItemRarity rarity, long cost)
 	{
@@ -15,6 +16,16 @@ public class Item
 		this.title = title;
 		this.rarity = rarity;
 		this.cost = new Money(cost);
+		this.emoji = "";
+	}
+
+	public Item(long id, String title, ItemRarity rarity, long cost, String emoji)
+	{
+		this.id = id;
+		this.title = title;
+		this.rarity = rarity;
+		this.cost = new Money(cost);
+		this.emoji = emoji;
 	}
 
 	public ItemRarity getRarity()
@@ -27,9 +38,12 @@ public class Item
 		return cost;
 	}
 
-	public String getTitle()
-	{
+	public String getTitle(){
 		return title;
+	}
+
+	public String getEmojiTitle(){
+		return emoji + title;
 	}
 
 	public long getId()
@@ -37,10 +51,13 @@ public class Item
 		return id;
 	}
 
+	public String getEmoji(){
+		return emoji;
+	}
 	@Override
 	public String toString()
 	{
-		return String.format("|%s|%s|%s|", title, rarity.toString(), cost);
+		return String.format("|%s|%s|%s|", emoji + title, rarity.toString(), cost);
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public class Coffee extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		Item cup = itemDAO.getByNameFromCollection("☕ Чашка 'Египет'");
+		Item cup = itemDAO.getByNameFromCollection("Чашка 'Египет'");
 		long cost = player.getInventory().getItems().contains(cup) ? 200L : 500L;
 
 		if (player.getMoney().value < cost)

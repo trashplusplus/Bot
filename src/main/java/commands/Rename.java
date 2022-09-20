@@ -24,7 +24,7 @@ public class Rename extends Command
 	public void consume(Bot host, Player player)
 	{
 		long id = player.getId();
-		Item i = itemDAO.getByNameFromCollection("\uD83D\uDCDD Тег");
+		Item i = itemDAO.getByNameFromCollection("Тег");
 		if (player.getInventory().getItems().contains(i))
 		{
 			player.state = new RenameState(playerDAO, itemDAO, inventoryDAO, player, host);
@@ -32,7 +32,7 @@ public class Rename extends Command
 		}
 		else
 		{
-			host.sendMsg(id, String.format("Для смены ника нужен предмет `%s`\n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getTitle()));
+			host.sendMsg(id, String.format("Для смены ника нужен предмет `%s`\n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getEmojiTitle()));
 		}
 	}
 }
@@ -60,7 +60,7 @@ class RenameState extends State
 	{
 		long player_id = player.getId();
 		String nickname = arg;
-		Item tag = itemDAO.getByNameFromCollection("\uD83D\uDCDD Тег");
+		Item tag = itemDAO.getByNameFromCollection("Тег");
 		int tag_idx = player.getInventory().getItems().indexOf(tag);
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";

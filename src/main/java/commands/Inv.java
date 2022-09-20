@@ -19,7 +19,7 @@ public class Inv extends Command
 	public void consume(Bot host, Player player)
 	{
 		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;

@@ -66,8 +66,8 @@ class StatusID extends State{
             Item statusItem = itemDAO.getByNameFromCollection(player.getInventory().getItem(itemID).getTitle());
 
             if(statusItem.getRarity().equals(ItemRarity.Status)){
-                player.status = statusItem;
-                host.sendMsg(id, String.format("Статус `%s` успешно установлен", statusItem.getTitle()));
+                player.status = statusItem.getEmoji();
+                host.sendMsg(id, String.format("Статус `%s` успешно установлен", statusItem.getEmojiTitle()));
                 player.state = base;
             }
 

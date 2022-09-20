@@ -53,7 +53,7 @@ class Give1 extends State{
         long player_id = invoker.getId();
         try{
             Item item = itemDAO.getByNameFromCollection(arg);
-            host.sendMsg(player_id, String.format("Предмет `%s` добавлен в Ваш инвентарь", item.getTitle()));
+            host.sendMsg(player_id, String.format("Предмет `%s` добавлен в Ваш инвентарь", item.getEmojiTitle()));
             inventoryDAO.putItem(player_id, item.getId());
             invoker.getInventory().putItem(item);
         }catch (RuntimeException e){

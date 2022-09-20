@@ -25,7 +25,7 @@ public class Forest extends Command
 		long fee = r.nextInt(3500);
 		try
 		{
-			Item flashlight = itemDAO.getByNameFromCollection("\uD83D\uDD26 Поисковый фонарь");
+			Item flashlight = itemDAO.getByNameFromCollection("Поисковый фонарь");
 			Item seedling = itemDAO.getByNameFromCollection("Саженец");
 			int seedling_index = player.getInventory().getItems().indexOf(seedling);
 			//Achievements a = new Achievements(player);

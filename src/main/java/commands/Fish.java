@@ -23,9 +23,9 @@ public class Fish extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		Item i = itemDAO.getByNameFromCollection("\uD83D\uDC1FУдочка");
+		Item i = itemDAO.getByNameFromCollection("Удочка");
 		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
 
 		if (player.getInventory().getItems().contains(backpack))
 		{

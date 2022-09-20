@@ -24,8 +24,8 @@ public class Open extends Command
 	{
 		Random ran = new Random();
 		long id = player.getId();
-		Item _case = itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift");
-		Item _key = itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса");
+		Item _case = itemDAO.getByNameFromCollection("Кейс Gift");
+		Item _key = itemDAO.getByNameFromCollection("Ключ от кейса");
 
 		List<Item> loot;
 
