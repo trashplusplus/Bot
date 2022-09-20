@@ -81,7 +81,7 @@ public class CachedPlayerDAO implements IPlayerDAO
 		{
 			players.put(player, true);
 		}
-		return players.keySet().stream().sorted((p1, p2) -> (int) (p2.balance.value - p1.balance.value)).limit(limit).collect(Collectors.toList());
+		return players.keySet().stream().sorted((p1, p2) -> -Long.compare(p1.balance.value, p2.balance.value)).limit(limit).collect(Collectors.toList());
 	}
 
 	@Override
