@@ -1,19 +1,17 @@
 package commands;
 
-import database.dao.CachedPlayerDAO;
 import database.dao.IPlayerDAO;
-import database.dao.ItemDAO;
-import database.dao.PlayerDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Player;
 
 public class Top extends Command
 {
 	IPlayerDAO playerDAO;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	int top1;
 
-	public Top(IPlayerDAO playerDAO, ItemDAO itemDAO)
+	public Top(IPlayerDAO playerDAO, CachedItemDAO itemDAO)
 	{
 		this.playerDAO = playerDAO;
 		this.itemDAO = itemDAO;

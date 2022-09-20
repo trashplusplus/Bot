@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -10,10 +10,10 @@ import main.Roller;
 public class Fish extends Command
 {
 	Roller<Item> fish_roller;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Fish(Roller<Item> fish_roller, ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Fish(Roller<Item> fish_roller, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.fish_roller = fish_roller;
 		this.itemDAO = itemDAO;

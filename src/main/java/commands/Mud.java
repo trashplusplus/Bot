@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -10,10 +10,10 @@ import main.Roller;
 public class Mud extends Command
 {
 	Roller<Item> mud_roller;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Mud(Roller<Item> mud_roller, ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Mud(Roller<Item> mud_roller, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.mud_roller = mud_roller;
 		this.itemDAO = itemDAO;

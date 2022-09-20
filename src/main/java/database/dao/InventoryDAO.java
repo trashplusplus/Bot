@@ -9,12 +9,12 @@ import java.sql.*;
 public class InventoryDAO
 {
 	private Connection connection;
-	private ItemDAO itemDAO;
+	private CachedItemDAO itemDAO;
 
 	public InventoryDAO(Connection connection)
 	{
 		this.connection = connection;
-		itemDAO = new ItemDAO(connection);
+		itemDAO = new CachedItemDAO(connection);
 	}
 
 	public InventoryDAO()

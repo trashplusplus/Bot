@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.*;
 
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 
 public class Open extends Command
 {
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Open(ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Open(CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
