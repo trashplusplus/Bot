@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.*;
 
 import java.util.concurrent.TimeUnit;
@@ -9,10 +9,10 @@ import java.util.concurrent.TimeUnit;
 public class Find extends Command
 {
 	Roller<Item> find_roller;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Find(Roller<Item> find_roller, ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Find(Roller<Item> find_roller, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.find_roller = find_roller;
 		this.itemDAO = itemDAO;

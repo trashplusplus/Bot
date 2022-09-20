@@ -1,16 +1,15 @@
 package main;
 
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class StatusList {
-    ItemDAO itemDAO;
+    CachedItemDAO itemDAO;
     Set<Item> status = new HashSet<>();
 
-    public StatusList(ItemDAO itemDAO){
+    public StatusList(CachedItemDAO itemDAO){
         this.itemDAO = itemDAO;
 
         status.add(get("\uD83E\uDDDA\u200D♀ Фея"));

@@ -2,7 +2,7 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -10,10 +10,10 @@ import main.Player;
 public class Rename extends Command
 {
 	IPlayerDAO playerDAO;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Rename(IPlayerDAO playerDAO, ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Rename(IPlayerDAO playerDAO, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.playerDAO = playerDAO;
 		this.itemDAO = itemDAO;
@@ -40,12 +40,12 @@ public class Rename extends Command
 class RenameState extends State
 {
 	IPlayerDAO playerDAO;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	Player player;
 	Bot host;
 
-	public RenameState(IPlayerDAO playerDAO, ItemDAO itemDAO, InventoryDAO inventoryDAO, Player player, Bot host)
+	public RenameState(IPlayerDAO playerDAO, CachedItemDAO itemDAO, InventoryDAO inventoryDAO, Player player, Bot host)
 	{
 		this.playerDAO = playerDAO;
 		this.itemDAO = itemDAO;

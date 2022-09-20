@@ -1,7 +1,7 @@
 package main;
 
 import database.SQLSession;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class RollerFactory
 {
-	static final ItemDAO itemDAO = new ItemDAO(SQLSession.sqlConnection);
+	static final CachedItemDAO itemDAO = new CachedItemDAO(SQLSession.sqlConnection);
 
 	public static Roller<Item> getMudRoller(Random random)
 	{

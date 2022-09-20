@@ -6,13 +6,9 @@ import commands.CommandProcessor;
 import database.dao.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
@@ -30,7 +26,7 @@ public class Bot extends TelegramLongPollingBot
 {
 	private final IPlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
-	private final ItemDAO itemDAO;
+	private final CachedItemDAO itemDAO;
 	private final ShopDAO shopDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
@@ -70,7 +66,7 @@ public class Bot extends TelegramLongPollingBot
 	{
 		playerDAO = new CachedPlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
-		itemDAO = new ItemDAO(connection);
+		itemDAO = new CachedItemDAO(connection);
 		shopDAO = new ShopDAO(connection, this, playerDAO);
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, this);
@@ -312,7 +308,6 @@ public class Bot extends TelegramLongPollingBot
 
 	public void on_closing()
 	{
-
 		System.out.println("Exiting...");
 		sf_dump.cancel(false);
 		sf_find.cancel(false);

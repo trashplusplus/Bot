@@ -1,17 +1,17 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import database.dao.ShopDAO;
 import main.*;
 
 public class Shopbuy extends Command
 {
 	ShopDAO shopDAO;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Shopbuy(ShopDAO shopDAO, ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Shopbuy(ShopDAO shopDAO, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.shopDAO = shopDAO;
 		this.itemDAO = itemDAO;

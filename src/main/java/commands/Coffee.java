@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.IPlayerDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Money;
@@ -9,10 +9,10 @@ import main.Player;
 
 public class Coffee extends Command
 {
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public Coffee(ItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Coffee(CachedItemDAO itemDAO, IPlayerDAO playerDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
@@ -41,10 +41,10 @@ class CoffeeState1 extends State
 	Bot host;
 	Player sender;
 	long cost;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public CoffeeState1(Bot host, Player sender, long cost, ItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
+	public CoffeeState1(Bot host, Player sender, long cost, CachedItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -86,9 +86,9 @@ class CoffeeState2 extends State
 	Player sender;
 	Player receiver;
 	long cost;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 
-	public CoffeeState2(Bot host, Player sender, Player receiver, long cost, ItemDAO itemDAO, State previous, BaseState base)
+	public CoffeeState2(Bot host, Player sender, Player receiver, long cost, CachedItemDAO itemDAO, State previous, BaseState base)
 	{
 		this.host = host;
 		this.sender = sender;

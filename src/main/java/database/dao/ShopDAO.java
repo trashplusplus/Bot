@@ -16,7 +16,7 @@ import java.util.List;
 public class ShopDAO
 {
 	private final Connection connection;
-	ItemDAO item;
+	CachedItemDAO item;
 	IPlayerDAO playerDAO;
 
 	Bot host;
@@ -26,7 +26,7 @@ public class ShopDAO
 	public ShopDAO(Connection connection, Bot host, IPlayerDAO playerDAO)
 	{
 		this.connection = connection;
-		item = new ItemDAO(this.connection);
+		item = new CachedItemDAO(this.connection);
 		this.host = host;
 		this.playerDAO = playerDAO;
 	}

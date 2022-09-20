@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.IPlayerDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Money;
@@ -9,10 +9,10 @@ import main.Player;
 
 public class Tea extends Command
 {
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public Tea(ItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Tea(CachedItemDAO itemDAO, IPlayerDAO playerDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
@@ -41,10 +41,10 @@ class TeaState1 extends State
 	Bot host;
 	Player sender;
 	long cost;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public TeaState1(Bot host, Player sender, long cost, ItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
+	public TeaState1(Bot host, Player sender, long cost, CachedItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -86,9 +86,9 @@ class TeaState2 extends State
 	Player sender;
 	Player receiver;
 	long cost;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 
-	public TeaState2(Bot host, Player sender, Player receiver, long cost, ItemDAO itemDAO, State previous, BaseState base)
+	public TeaState2(Bot host, Player sender, Player receiver, long cost, CachedItemDAO itemDAO, State previous, BaseState base)
 	{
 		this.host = host;
 		this.sender = sender;

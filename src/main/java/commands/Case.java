@@ -1,6 +1,6 @@
 package commands;
 
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -12,9 +12,9 @@ import java.io.File;
 
 public class Case extends Command
 {
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 
-	public Case(ItemDAO itemDAO)
+	public Case(CachedItemDAO itemDAO)
 	{
 		this.itemDAO = itemDAO;
 	}

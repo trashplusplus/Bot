@@ -1,15 +1,14 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.*;
-import org.glassfish.grizzly.compression.lzma.impl.Base;
 
 public class Status extends Command{
 
     InventoryDAO invDAO;
-    ItemDAO itemDAO;
-    Status(InventoryDAO invDAO, ItemDAO itemDAO){
+    CachedItemDAO itemDAO;
+    Status(InventoryDAO invDAO, CachedItemDAO itemDAO){
         this.invDAO = invDAO;
         this.itemDAO = itemDAO;
     }
@@ -47,11 +46,11 @@ class StatusID extends State{
 
     Bot host;
     Player player;
-    ItemDAO itemDAO;
+    CachedItemDAO itemDAO;
     InventoryDAO inventoryDAO;
 
 
-    StatusID(Bot host, Player player, ItemDAO itemDAO, InventoryDAO inventoryDAO, BaseState base){
+    StatusID(Bot host, Player player, CachedItemDAO itemDAO, InventoryDAO inventoryDAO, BaseState base){
         this.host = host;
         this.player = player;
         this.itemDAO = itemDAO;

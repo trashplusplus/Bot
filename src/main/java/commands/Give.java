@@ -2,18 +2,17 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
-import main.Inventory;
 import main.Item;
 import main.Player;
 
 public class Give extends Command{
 
-    ItemDAO itemDAO;
+    CachedItemDAO itemDAO;
     InventoryDAO inventoryDAO;
 
-    public Give(ItemDAO itemDAO, InventoryDAO inventoryDAO){
+    public Give(CachedItemDAO itemDAO, InventoryDAO inventoryDAO){
         this.itemDAO = itemDAO;
         this.inventoryDAO = inventoryDAO;
     }
@@ -36,10 +35,10 @@ class Give1 extends State{
     Player invoker;
     IPlayerDAO playerDAO;
     Bot host;
-    ItemDAO itemDAO;
+    CachedItemDAO itemDAO;
     InventoryDAO inventoryDAO;
 
-    public Give1(Player invoker, BaseState base, Bot host, ItemDAO itemDAO, InventoryDAO inventoryDAO){
+    public Give1(Player invoker, BaseState base, Bot host, CachedItemDAO itemDAO, InventoryDAO inventoryDAO){
         this.invoker = invoker;
         this.base = base;
         this.itemDAO = itemDAO;

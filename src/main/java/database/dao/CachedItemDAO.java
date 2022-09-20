@@ -6,12 +6,14 @@ import main.ItemRarity;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class ItemDAO {
+public class CachedItemDAO implements IItemDAO
+{
 	private final Connection connection;
 	private final List<Item> allItems = new ArrayList<>();
 
-	public ItemDAO(Connection connection) {
+	public CachedItemDAO(Connection connection) {
 		this.connection = connection;
 		loadItems();
 	}
@@ -110,6 +112,36 @@ public class ItemDAO {
 	}
 
 	public List<Item> getAllFromCollection(){
+		return allItems;
+	}
+
+	@Override
+	public Item get_by_id(long id)
+	{
+		return allItems.stream().filter(i -> i.getId() == id).findAny().orElse(null);
+	}
+
+	@Override
+	public Item get_by_name(String name)
+	{
+		return allItems.stream().filter(i -> i.getTitle().equals(name)).findAny().orElse(null);
+	}
+
+	@Override
+	public List<Item> get_by_name_pattern(String re_pattern)
+	{
+		return allItems.stream().filter(i -> i.getTitle().matches(re_pattern)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Item> get_by_rarity(ItemRarity rarity)
+	{
+		return allItems.stream().filter(i -> i.getRarity() == rarity).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Item> get_all()
+	{
 		return allItems;
 	}
 }

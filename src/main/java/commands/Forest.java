@@ -1,17 +1,17 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.*;
 
 import java.util.Random;
 
 public class Forest extends Command
 {
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Forest(ItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Forest(CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;

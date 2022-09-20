@@ -2,7 +2,7 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
-import database.dao.ItemDAO;
+import database.dao.CachedItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -14,10 +14,10 @@ import java.util.Random;
 public class Touch extends Command
 {
 	InventoryDAO inventoryDAO;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public Touch(InventoryDAO inventoryDAO, ItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Touch(InventoryDAO inventoryDAO, CachedItemDAO itemDAO, IPlayerDAO playerDAO)
 	{
 		this.inventoryDAO = inventoryDAO;
 		this.itemDAO = itemDAO;
@@ -35,12 +35,12 @@ public class Touch extends Command
 class TouchState extends State
 {
 	InventoryDAO inventoryDAO;
-	ItemDAO itemDAO;
+	CachedItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 	Bot host;
 	Player player;
 
-	public TouchState(InventoryDAO inventoryDAO, ItemDAO itemDAO, IPlayerDAO playerDAO, Bot host, Player player, BaseState base)
+	public TouchState(InventoryDAO inventoryDAO, CachedItemDAO itemDAO, IPlayerDAO playerDAO, Bot host, Player player, BaseState base)
 	{
 		this.inventoryDAO = inventoryDAO;
 		this.itemDAO = itemDAO;
