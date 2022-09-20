@@ -5,6 +5,7 @@ import main.Player;
 
 import java.sql.Connection;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CachedPlayerDAO implements IPlayerDAO
 {
@@ -75,7 +76,12 @@ public class CachedPlayerDAO implements IPlayerDAO
 	@Override
 	public List<Player> get_top(String field_name, boolean ascending, long limit)
 	{
-		return databaseDAO.get_top(field_name, ascending, limit);
+		List<Player> db_top = databaseDAO.get_top(field_name, ascending, limit);
+		for (Player player : db_top)
+		{
+			players.put(player, true);
+		}
+		return players.keySet().stream().sorted((p1, p2) -> (int) (p2.balance.value - p1.balance.value)).limit(limit).collect(Collectors.toList());
 	}
 
 	@Override
