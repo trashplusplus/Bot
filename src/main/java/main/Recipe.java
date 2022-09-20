@@ -15,7 +15,7 @@ public class Recipe
 	public Recipe()
 	{
 		createRecipe("Энергетик", "Стиральный порошок", "Банан", "Бутылка");
-		createRecipe("\uD83D\uDCE6 Кейс Gift", "Отвертка", "Подшипник");
+		createRecipe("Кейс Gift", "Отвертка", "Подшипник");
 	}
 
 	public void createRecipe(String resultProduct, String... ingredients)

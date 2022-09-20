@@ -34,8 +34,8 @@ public class Case extends Command
 
 			StringBuilder sb = new StringBuilder("*Открытие кейсов*\n\n");
 
-			Item _case = itemDAO.getByNameFromCollection("\uD83D\uDCE6 Кейс Gift");
-			Item _key = itemDAO.getByNameFromCollection("\uD83D\uDD11 Ключ от кейса");
+			Item _case = itemDAO.getByNameFromCollection("Кейс Gift");
+			Item _key = itemDAO.getByNameFromCollection("Ключ от кейса");
 
 			for (Item item : player.getInventory().getItems())
 			{

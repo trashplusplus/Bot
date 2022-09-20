@@ -31,7 +31,7 @@ public class Recipes extends Command
 
 			for (Map.Entry<Item, List<Item>> entry : recipe.recipes.entrySet())
 			{
-				String craftName = entry.getKey().getTitle();
+				String craftName = entry.getKey().getEmojiTitle();
 				sb.append(String.format("Рецепт |%d|: %s\n", i++, craftName));
 			}
 
