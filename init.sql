@@ -134,7 +134,8 @@ insert or ignore into items (name, rarity, cost, emoji) values
     ('Тетрадь', 'Cheap', 10,''),
     ('Веревка', 'Common', 320,''),
     ('Молния', 'Status', 1000,'⚡'),
-    ('Звезда', 'Status', 1000,'💫');
+    ('Звезда', 'Status', 1000,'💫'),
+    ('Статусная Аянами', 'Status', 300000,'💎');
 
 
 create table if not exists inventory

@@ -23,7 +23,7 @@ public class Shopbuy extends Command
 	{
 		long player_id = player.getId();
 		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;

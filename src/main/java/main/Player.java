@@ -56,7 +56,7 @@ public class Player
 	public String getFormattedUsername(){
 		if(inventory.getItems().contains(status)){
 			if(status != null){
-				return username + "\\[" + status.getEmoji() + "]";
+				return username + " \\[" + status.getEmoji() + "]";
 			}
 		}else{
 			status = null;
@@ -64,6 +64,7 @@ public class Player
 
 		return username;
 	}
+
 
 	public void setUsername(String username)
 	{

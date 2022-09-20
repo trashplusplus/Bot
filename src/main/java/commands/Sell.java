@@ -44,7 +44,7 @@ class SellState extends State
 			Inventory inventory = invoker.getInventory();
 			int sell_id = Integer.parseInt(arg);
 			Item item = inventory.getItem(sell_id);
-			if (item.getRarity() != ItemRarity.Limited)
+			if (item.getRarity() != ItemRarity.Limited && item.getRarity() != ItemRarity.Status)
 			{
 				invoker.balance.transfer(item.getCost().value);
 				inventory.removeItem(sell_id);

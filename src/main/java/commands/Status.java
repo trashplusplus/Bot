@@ -29,7 +29,7 @@ public class Status extends Command{
                 }
             }
             sb.append("\nВаш ник: " + player.getFormattedUsername() + "\n");
-            sb.append("\nВведите ID, чтобы установить статус\n");
+            sb.append("\nВведите номер статуса, чтобы его установить\n");
             player.state = new StatusID(host, player, itemDAO, invDAO, player.state.base);
         }else{
             sb.append("\uD83C\uDF38 У вас пока что нет статусов, но они обязательно когда-то появятся :'(");
@@ -65,9 +65,17 @@ class StatusID extends State{
             Item statusItem = itemDAO.getByNameFromCollection(player.getInventory().getItem(itemID).getTitle());
 
             if(statusItem.getRarity().equals(ItemRarity.Status)){
-                player.status = statusItem;
-                host.sendMsg(id, String.format("Статус `%s` успешно установлен", statusItem.getEmojiTitle()));
+                if(player.status != statusItem){
+                    player.status = statusItem;
+                    host.sendMsg(id, String.format("Статус `%s` успешно установлен", statusItem.getEmojiTitle()));
+
+                }else{
+                    player.status = null;
+                    host.sendMsg(id, String.format("Статус `%s` деактивирован", statusItem.getEmojiTitle()));
+                }
+
                 player.state = base;
+
             }
 
         }catch (IndexOutOfBoundsException e){

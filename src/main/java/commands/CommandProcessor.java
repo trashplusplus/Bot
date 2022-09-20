@@ -135,7 +135,7 @@ public class CommandProcessor
 		map.put("/drop", () -> new Drop(inventoryDAO));
 		map.put(DROP_BUTTON, () -> new Drop(inventoryDAO));
 
-		map.put("/bonus", () -> new Bonus());
+		map.put("Пирожок", () -> new Bonus());
 
 		map.put("/case", () -> new Case(itemDAO));
 		map.put(CASE_BUTTON, () -> new Case(itemDAO));

@@ -119,7 +119,13 @@ class CoffeeState2 extends State
 					receiver.ach_coffee();
 				}
 				sender.addXp(1);
-				host.sendMsg(receiver_id, String.format("☕ Игрок `%s` угостил вас кружечкой кофе с сообщением: `%s`", sender.getFormattedUsername(), note));
+
+				if(sender.status != null){
+					host.sendMsg(receiver_id, String.format("\uD83C\uDF3F Игрок `%s` \\[%s] угостил Вас кружечкой ароматного кофе, прошептав на ушко: `%s`", sender.getUsername(), sender.getStatus(), note));
+				}else{
+					host.sendMsg(receiver_id, String.format("☕ Игрок `%s` угостил Вас кружечкой кофе с сообщением: `%s`", sender.getUsername(), note));
+				}
+
 			}
 			else
 			{

@@ -28,7 +28,7 @@ public class Top extends Command
 		{
 				if(top1 == 0){
 					if(pl.status != null){
-						players_list.append(String.format("Игрок \uD83D\uDC51`%s`\\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));
+						players_list.append(String.format("Игрок \uD83D\uDC51`%s` \\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));
 						players_list.append("\n");
 						players_list.append("========================");
 						players_list.append("\n");
@@ -40,7 +40,7 @@ public class Top extends Command
 					}
 				}else{
 					if(pl.status != null){
-						players_list.append(String.format("Игрок `%s`\\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));
+						players_list.append(String.format("Игрок `%s` \\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));
 						players_list.append("\n");
 						players_list.append("========================");
 						players_list.append("\n");

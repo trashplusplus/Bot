@@ -6,6 +6,7 @@ import main.*;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Open extends Command
@@ -13,37 +14,42 @@ public class Open extends Command
 	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
+
 	public Open(CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
+
 	}
 
 	@Override
-	public void consume(Bot host, Player player)
-	{
-		Random ran = new Random();
+	public void consume(Bot host, Player player){
+
 		long id = player.getId();
 		Item _case = itemDAO.getByNameFromCollection("Кейс Gift");
 		Item _key = itemDAO.getByNameFromCollection("Ключ от кейса");
-
 		List<Item> loot;
+		Random ran = new Random();
 
-		loot = itemDAO.getAllFromCollection().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift) ||
-				item.getRarity().equals(ItemRarity.Rare))).collect(Collectors.toList());
-
-		int ranIndex = ran.nextInt(loot.size());
 
 		Inventory inventory = player.getInventory();
 		List<Item> player_items = inventory.getItems();
 		int case_idx = player_items.indexOf(_case);
 		int key_idx = player_items.indexOf(_key);
+
+		loot = itemDAO.getAllFromCollection().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift) ||
+				item.getRarity().equals(ItemRarity.Rare))).collect(Collectors.toList());
+		int ranIndex = ran.nextInt(loot.size());
+
+
+
+
 		if (case_idx != -1)  // player has case
 		{
 			if (key_idx != -1)  // player has key
 			{
 				Item prize = loot.get(ranIndex);
-				host.sendMsg(id, String.format("\uD83C\uDF89 Ура! Вам выпал предмет: `%s`", prize.getTitle()));
+				host.sendMsg(player.getId(), String.format("\uD83C\uDF89 Ура! Вам выпал предмет: `%s`", prize.getTitle()));
 				inventoryDAO.putItem(id, prize.getId());
 				inventory.putItem(prize);
 
@@ -62,5 +68,7 @@ public class Open extends Command
 		{
 			host.sendMsg(id, "У вас нет кейсов");
 		}
+
 	}
+
 }

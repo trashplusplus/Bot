@@ -12,7 +12,7 @@ public class Bonus extends Command
 		long id = player.getId();
 		if (player.getStats().bonus == 0)
 		{
-			host.sendMsg(id, "\uD83C\uDF3A Вы получили бонус | +" + new Money(15000L));
+			host.sendMsg(id, "\uD83C\uDF3A Вы съели пирожок и получили бонус. Вам вкусно | +" + new Money(15000L));
 			try
 			{
 				player.balance.transfer(15000L);
@@ -26,7 +26,7 @@ public class Bonus extends Command
 		}
 		else
 		{
-			host.sendMsg(id, "Вы уже получили свой бонус");
+			host.sendMsg(id, "Вы уже съели свой пирожок");
 		}
 	}
 }
