@@ -21,7 +21,7 @@ public class Player
 	public commands.State state;
 	public final Bot host;
 	public Item status;
-	
+
 	public Event<Integer> level_reached = new Event<>(this);
 
 	public Player(long id, Bot host)

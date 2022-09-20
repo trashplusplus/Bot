@@ -77,10 +77,17 @@ class ShopplaceState1 extends State
 			}
 			else if (player.getInventory().getInvSize() > 20)
 			{
-				throw new BackpackException(itemID);
+				Item i = player.getInventory().getItem(itemID);
+				if (i.getTitle().equals("\uD83C\uDF92 Рюкзак"))
+				{
+					host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", "\uD83C\uDF92 Рюкзак"));
+				}
+				else
+				{
+					player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, itemID, this, base);
+					host.sendMsg(id, player.state.hint);
+				}
 			}
-			player.state = new ShopplaceState2(host, player, inventoryDAO,shopDAO, itemID, this, base);
-			host.sendMsg(id, player.state.hint);
 		}
 		catch (NumberFormatException ex)
 		{
@@ -91,21 +98,6 @@ class ShopplaceState1 extends State
 		{
 			ex.printStackTrace();
 			host.sendMsg(id, "Неверный ID");
-		}
-		catch (BackpackException ex)
-		{
-			Item ii = player.getInventory().getItem(ex.backpackID);
-			Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
-			if (ii.equals(backpack))
-			{
-				host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", backpack.getTitle()));
-				//player.setState(Player.State.awaitingCommands); todo
-			}
-			else
-			{
-				player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, ex.backpackID, this, base);
-				host.sendMsg(player.getId(), player.state.hint);
-			}
 		}
 	}
 }
