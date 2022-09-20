@@ -31,6 +31,10 @@ public class ItemDAO {
 		return item;
 	}
 
+	public Item getByIdFromCollection(int id){
+		return allItems.get(id - 1);
+	}
+
 	public int size() {
 		try {
 			String query = "select count(*) from items;";

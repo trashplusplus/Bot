@@ -1,10 +1,7 @@
 package database.dao;
 
 import database.DatabaseDateMediator;
-import main.Bot;
-import main.Inventory;
-import main.Player;
-import main.Stats;
+import main.*;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -16,6 +13,8 @@ public class PlayerDAO implements IPlayerDAO
 	private final InventoryDAO inventoryDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
+	private final ItemDAO itemDAO;
+
 	Bot host;
 
 	public PlayerDAO(Connection connection, Bot host)
@@ -24,6 +23,7 @@ public class PlayerDAO implements IPlayerDAO
 		inventoryDAO = new InventoryDAO(connection);
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, host);
+		itemDAO = new ItemDAO(connection);
 		this.host = host;
 	}
 
@@ -33,13 +33,14 @@ public class PlayerDAO implements IPlayerDAO
 		PreparedStatement ps = null;
 		try
 		{
-			ps = connection.prepareStatement("insert into players (id, xp, 'level', needle, name, balance) values (?, ?, ?, ?, ?, ?);");
+			ps = connection.prepareStatement("insert into players (id, xp, 'level', needle, name, balance, emojiStatus) values (?, ?, ?, ?, ?, ?, ?);");
 			ps.setLong(1, player.getId());
 			ps.setInt(2, player.getXp());
 			ps.setInt(3, player.getLevel());
 			ps.setLong(4, player.needle);
 			ps.setString(5, player.getUsername());
 			ps.setLong(6, player.balance.value);
+			ps.setLong(7, player.status.getId());
 			ps.execute();
 			statsDAO.put(player.getStats(), player.getId());
 			abilityDAO.put(player.getId());
@@ -323,14 +324,19 @@ public class PlayerDAO implements IPlayerDAO
 				//st.execute("begin transaction");
 
 				String update_players =
-						"update players set xp = ?, 'level' = ?, name = ?, balance = ?, needle = ? where id = ?;";
+						"update players set xp = ?, 'level' = ?, name = ?, balance = ?, needle = ?, emojiStatus = ? where id = ?;";
 				ps = connection.prepareStatement(update_players);
 				ps.setInt(1, player.getXp());
 				ps.setInt(2, player.getLevel());
 				ps.setString(3, player.getUsername());
 				ps.setLong(4, player.balance.value);
 				ps.setLong(5, player.needle);
-				ps.setLong(6, id);
+				if (player.status == null) {
+					ps.setNull(6, Types.BIGINT);
+				} else {
+					ps.setLong(6, player.status.getId());
+				}
+				ps.setLong(7, id);
 				ps.execute();
 
 				String update_stats =
@@ -443,6 +449,7 @@ public class PlayerDAO implements IPlayerDAO
 		int level = rs.getInt("level");
 		long balance = rs.getLong("balance");
 		long needle = rs.getLong("needle");
+		Item emojiStatus = itemDAO.get(rs.getInt("emojiStatus"));
 		//Long findExpiration = read_ts(rs, "find_expiration");
 		Long findExpiration = read_ts(rs, "FIND");
 		//Long pocketsExpiration = read_ts(rs, "pockets_expiration");
@@ -458,7 +465,7 @@ public class PlayerDAO implements IPlayerDAO
 		int capitals = rs.getInt("capitals");
 		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals);
 		Inventory inventory = inventoryDAO.get(id);
-		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, host);
+		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, emojiStatus, host);
 		player.findExpiration = findExpiration;
 		player.pocketsExpiration = pocketsExpiration;
 		return player;

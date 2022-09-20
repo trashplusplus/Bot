@@ -25,10 +25,10 @@ public class Player
 
 	public Player(long id, Bot host)
 	{
-		this(id, 0, 1, "player" + id, 0L, 0L, new Inventory(), new Stats(), host);
+		this(id, 0, 1, "player" + id, 0L, 0L, new Inventory(), new Stats(), null, host);
 	}
 
-	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Stats stats, Bot host)
+	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Stats stats, Item status, Bot host)
 	{
 		this.id = id;
 		this.username = username;
@@ -40,6 +40,8 @@ public class Player
 		this.host = host;
 		this.needle = needle;
 		state = new BaseState(host, this);
+		this.status = status;
+
 	}
 
 	public long getId()

@@ -29,11 +29,17 @@ public class Top extends Command
 		for (Player pl : playerDAO.get_top("balance", false, 10))
 		{
 				if(top1 == 0){
-					players_list.append(String.format("Игрок ⭐ `%s` | %s | %d Ур.", pl.getFormattedUsername(), pl.balance, pl.getLevel()));
-					players_list.append("\n");
-					players_list.append("========================");
-					players_list.append("\n");
-
+					if(pl.status != null){
+						players_list.append(String.format("Игрок \uD83D\uDC51`%s`\\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));
+						players_list.append("\n");
+						players_list.append("========================");
+						players_list.append("\n");
+					}else{
+						players_list.append(String.format("Игрок `%s` | %s | %d Ур.", pl.getUsername(), pl.balance, pl.getLevel()));
+						players_list.append("\n");
+						players_list.append("========================");
+						players_list.append("\n");
+					}
 				}else{
 					if(pl.status != null){
 						players_list.append(String.format("Игрок `%s`\\[%s] | %s | %d Ур.", pl.getUsername(), pl.getStatus(), pl.balance, pl.getLevel()));

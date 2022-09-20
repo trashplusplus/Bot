@@ -5,7 +5,8 @@ create table if not exists players
     'level' integer default 0,
     needle integer default 0,
     name text unique,
-    balance integer default 0
+    balance integer default 0,
+    emojiStatus integer default null
 );
 
 
@@ -163,7 +164,7 @@ create table if not exists stats
 drop view if exists player;
 create view if not exists player as
     select
-        id, name, xp, level, balance, needle,
+        id, name, xp, level, balance, needle, emojiStatus,
         find_expiration as FIND, pockets_expiration as POCKETS,
         coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals
     from
