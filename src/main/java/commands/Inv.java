@@ -1,6 +1,7 @@
 package commands;
 
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Inventory;
 import main.Item;
@@ -8,9 +9,9 @@ import main.Player;
 
 public class Inv extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 
-	public Inv(CachedItemDAO itemDAO)
+	public Inv(IItemDAO itemDAO)
 	{
 		this.itemDAO = itemDAO;
 	}

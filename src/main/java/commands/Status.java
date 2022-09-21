@@ -1,14 +1,14 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.*;
 
 public class Status extends Command{
 
     InventoryDAO invDAO;
-    CachedItemDAO itemDAO;
-    Status(InventoryDAO invDAO, CachedItemDAO itemDAO){
+    IItemDAO itemDAO;
+    Status(InventoryDAO invDAO, IItemDAO itemDAO){
         this.invDAO = invDAO;
         this.itemDAO = itemDAO;
     }
@@ -46,11 +46,11 @@ class StatusID extends State{
 
     Bot host;
     Player player;
-    CachedItemDAO itemDAO;
+    IItemDAO itemDAO;
     InventoryDAO inventoryDAO;
 
 
-    StatusID(Bot host, Player player, CachedItemDAO itemDAO, InventoryDAO inventoryDAO, BaseState base){
+    StatusID(Bot host, Player player, IItemDAO itemDAO, InventoryDAO inventoryDAO, BaseState base){
         this.host = host;
         this.player = player;
         this.itemDAO = itemDAO;
@@ -62,7 +62,7 @@ class StatusID extends State{
         long id = player.getId();
         try{
             int itemID = Integer.parseInt(arg);
-            Item statusItem = itemDAO.getByNameFromCollection(player.getInventory().getItem(itemID).getTitle());
+            Item statusItem = itemDAO.get_by_name(player.getInventory().getItem(itemID).getTitle());
 
             if(statusItem.getRarity().equals(ItemRarity.Status)){
                 player.status = statusItem;

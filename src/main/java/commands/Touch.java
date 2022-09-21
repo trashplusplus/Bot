@@ -2,7 +2,7 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -14,10 +14,10 @@ import java.util.Random;
 public class Touch extends Command
 {
 	InventoryDAO inventoryDAO;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public Touch(InventoryDAO inventoryDAO, CachedItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Touch(InventoryDAO inventoryDAO, IItemDAO itemDAO, IPlayerDAO playerDAO)
 	{
 		this.inventoryDAO = inventoryDAO;
 		this.itemDAO = itemDAO;
@@ -35,12 +35,12 @@ public class Touch extends Command
 class TouchState extends State
 {
 	InventoryDAO inventoryDAO;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 	Bot host;
 	Player player;
 
-	public TouchState(InventoryDAO inventoryDAO, CachedItemDAO itemDAO, IPlayerDAO playerDAO, Bot host, Player player, BaseState base)
+	public TouchState(InventoryDAO inventoryDAO, IItemDAO itemDAO, IPlayerDAO playerDAO, Bot host, Player player, BaseState base)
 	{
 		this.inventoryDAO = inventoryDAO;
 		this.itemDAO = itemDAO;
@@ -65,7 +65,7 @@ class TouchState extends State
 		try
 		{
 			int item_id = Integer.parseInt(arg);
-			Item energy = itemDAO.getByNameFromCollection("Энергетик");
+			Item energy = itemDAO.get_by_name("Энергетик");
 			String responseText = touch.getInfo().get(player.getInventory().getItem(item_id));
 
 			player.state = base;

@@ -5,7 +5,9 @@ import main.ItemRarity;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CachedItemDAO implements IItemDAO
@@ -13,71 +15,30 @@ public class CachedItemDAO implements IItemDAO
 	private final Connection connection;
 	private final List<Item> allItems = new ArrayList<>();
 
-	public CachedItemDAO(Connection connection) {
+	public CachedItemDAO(Connection connection)
+	{
 		this.connection = connection;
 		loadItems();
 	}
 
-	public Item get(long id) {
-		Item item = null;
-		try {
-			PreparedStatement ps = connection.prepareStatement("select * from items where id = ?;");
-			ps.setLong(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				item = form(rs);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return item;
-	}
-
-	public int size() {
-		try {
+	public int size()
+	{
+		try
+		{
 			String query = "select count(*) from items;";
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(query);
 			return rs.getInt(1);
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
 			e.printStackTrace();
 			throw new RuntimeException("SQL Exception", e);
 		}
 	}
 
-	public Item getByName(String name) {
-		Item item = null;
-		try {
-			PreparedStatement ps = connection.prepareStatement("select * from items where name = ?;");
-			ps.setString(1, name);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				item = form(rs);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return item;
-	}
-
-	public List<Item> getAll() {
-		List<Item> res = new ArrayList<>();
-		try {
-			String query = "select * from items;";
-			PreparedStatement ps = connection.prepareStatement(query);
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-				res.add(form(rs));
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-
-		return res;
-	}
-
-	Item form(ResultSet rs) throws SQLException {
+	Item form(ResultSet rs) throws SQLException
+	{
 		long id = rs.getLong(1);
 		String title = rs.getString(2);
 		ItemRarity rarity = ItemRarity.valueOf(rs.getString(3));
@@ -87,44 +48,40 @@ public class CachedItemDAO implements IItemDAO
 		return new Item(id, title, rarity, cost, emoji);
 	}
 
-	public void loadItems(){
-		try {
+	public void loadItems()
+	{
+		try
+		{
 			String query = "select * from items;";
 			PreparedStatement ps = connection.prepareStatement(query);
 			ResultSet rs = ps.executeQuery();
 
-			while (rs.next()) {
-				allItems.add(form(rs));
+			while (rs.next())
+			{
+				Item item = form(rs);
+				allItems.add(item);
+				items_id_index.put(item.getId(), item);
+				items_name_index.put(item.getTitle(), item);
 			}
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex)
+		{
 			ex.printStackTrace();
 		}
-
-	}
-
-	public Item getByNameFromCollection(String title){
-		Item item = null;
-		for(Item i: allItems){
-			if(title.equals(i.getTitle()))
-			item = i;
-		}
-		return item;
-	}
-
-	public List<Item> getAllFromCollection(){
-		return allItems;
 	}
 
 	@Override
 	public Item get_by_id(long id)
 	{
-		return allItems.stream().filter(i -> i.getId() == id).findAny().orElse(null);
+		return items_id_index.get(id);
+		//return allItems.stream().filter(i -> i.getId() == id).findAny().orElse(null);
 	}
 
 	@Override
 	public Item get_by_name(String name)
 	{
-		return allItems.stream().filter(i -> i.getTitle().equals(name)).findAny().orElse(null);
+		return items_name_index.get(name);
+		//return allItems.stream().filter(i -> i.getTitle().equals(name)).findAny().orElse(null);
 	}
 
 	@Override
@@ -144,5 +101,8 @@ public class CachedItemDAO implements IItemDAO
 	{
 		return allItems;
 	}
+
+	Map<Long, Item> items_id_index = new HashMap<>();
+	Map<String, Item> items_name_index = new HashMap<>();
 }
 

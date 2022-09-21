@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.IPlayerDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Item;
 import main.Money;
@@ -9,10 +9,10 @@ import main.Player;
 
 public class Coffee extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public Coffee(CachedItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Coffee(IItemDAO itemDAO, IPlayerDAO playerDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
@@ -21,7 +21,7 @@ public class Coffee extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		Item cup = itemDAO.getByNameFromCollection("Чашка 'Египет'");
+		Item cup = itemDAO.get_by_name("Чашка 'Египет'");
 		long cost = player.getInventory().getItems().contains(cup) ? 200L : 500L;
 
 		if (player.getMoney().value < cost)
@@ -41,10 +41,10 @@ class CoffeeState1 extends State
 	Bot host;
 	Player sender;
 	long cost;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
 
-	public CoffeeState1(Bot host, Player sender, long cost, CachedItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
+	public CoffeeState1(Bot host, Player sender, long cost, IItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -86,9 +86,9 @@ class CoffeeState2 extends State
 	Player sender;
 	Player receiver;
 	long cost;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 
-	public CoffeeState2(Bot host, Player sender, Player receiver, long cost, CachedItemDAO itemDAO, State previous, BaseState base)
+	public CoffeeState2(Bot host, Player sender, Player receiver, long cost, IItemDAO itemDAO, State previous, BaseState base)
 	{
 		this.host = host;
 		this.sender = sender;

@@ -26,7 +26,7 @@ public class Bot extends TelegramLongPollingBot
 {
 	private final IPlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
-	private final CachedItemDAO itemDAO;
+	private final IItemDAO itemDAO;
 	private final ShopDAO shopDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;

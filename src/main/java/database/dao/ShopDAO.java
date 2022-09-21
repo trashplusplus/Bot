@@ -202,7 +202,7 @@ public class ShopDAO
 	private ShopItem form(ResultSet rs) throws SQLException
 	{
 		int id = rs.getInt("id");
-		Item item = this.item.get(rs.getLong("item_id"));
+		Item item = this.item.get_by_id(rs.getLong("item_id"));
 		long cost = rs.getLong("cost");
 		Player seller = playerDAO.get_by_id(rs.getLong("seller_id"));
 		return new ShopItem(id, item, cost, seller);

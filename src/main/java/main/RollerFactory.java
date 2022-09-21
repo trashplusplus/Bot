@@ -14,17 +14,9 @@ public class RollerFactory
 
 	public static Roller<Item> getMudRoller(Random random)
 	{
-		List<Item> cheap_items = new ArrayList<>();
-		List<Item> common_items = new ArrayList<>();
-		for (Item item : itemDAO.getAllFromCollection())
-		{
-			if (item.getRarity() == ItemRarity.Cheap)
-			{
-				cheap_items.add(item);
-			}else if(item.getRarity() == ItemRarity.Common){
-				common_items.add(item);
-			}
-		}
+		List<Item> cheap_items = itemDAO.get_by_rarity(ItemRarity.Cheap);
+		List<Item> common_items = itemDAO.get_by_rarity(ItemRarity.Common);  // ?
+
 		cheap_items.add(null);
 		common_items.add(null);
 
@@ -60,7 +52,7 @@ public class RollerFactory
 
 	public static Roller<Item> getFindRoller(Random random)
 	{
-		Item[] items = itemDAO.getAllFromCollection().toArray(new Item[0]);
+		Item[] items = itemDAO.get_all().toArray(new Item[0]);
 		int[] weights = new int[items.length];
 
 		for (int i = 0; i < items.length; i++)
@@ -96,7 +88,7 @@ public class RollerFactory
 		List<Item> item_list = new ArrayList<>();
 		int rares = 0;
 		int cheaps = 0;
-		for (Item item : itemDAO.getAllFromCollection())
+		for (Item item : itemDAO.get_all())
 		{
 			if (item.getRarity() == ItemRarity.Rare)
 			{

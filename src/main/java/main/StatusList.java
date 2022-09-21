@@ -23,7 +23,7 @@ public class StatusList {
 
 
     private Item get(String name){
-        return itemDAO.getByNameFromCollection(name);
+        return itemDAO.get_by_name(name);
     }
 
 }

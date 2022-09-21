@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.*;
 
 import java.util.concurrent.TimeUnit;
@@ -9,10 +9,10 @@ import java.util.concurrent.TimeUnit;
 public class Find extends Command
 {
 	Roller<Item> find_roller;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Find(Roller<Item> find_roller, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Find(Roller<Item> find_roller, IItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.find_roller = find_roller;
 		this.itemDAO = itemDAO;
@@ -23,7 +23,7 @@ public class Find extends Command
 	public void consume(Bot host, Player player)
 	{
 		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("\uD83C\uDF92 Рюкзак");
+		Item backpack = itemDAO.get_by_name("\uD83C\uDF92 Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;

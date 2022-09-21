@@ -1,17 +1,17 @@
 package commands;
 
-import database.dao.CachedItemDAO;
 import database.dao.InventoryDAO;
+import database.dao.IItemDAO;
 import database.dao.ShopDAO;
 import main.*;
 
 public class Shopplace extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	ShopDAO shopDAO;
 
-	public Shopplace(CachedItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO)
+	public Shopplace(IItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
@@ -42,11 +42,11 @@ class ShopplaceState1 extends State
 {
 	Bot host;
 	Player player;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	ShopDAO shopDAO;
 
-	public ShopplaceState1(Bot host, Player player, CachedItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO, BaseState base)
+	public ShopplaceState1(Bot host, Player player, IItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO, BaseState base)
 	{
 		this.host = host;
 		this.player = player;

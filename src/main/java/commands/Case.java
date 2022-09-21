@@ -1,6 +1,6 @@
 package commands;
 
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -12,9 +12,9 @@ import java.io.File;
 
 public class Case extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 
-	public Case(CachedItemDAO itemDAO)
+	public Case(IItemDAO itemDAO)
 	{
 		this.itemDAO = itemDAO;
 	}
@@ -34,8 +34,8 @@ public class Case extends Command
 
 			StringBuilder sb = new StringBuilder("*Открытие кейсов*\n\n");
 
-			Item _case = itemDAO.getByNameFromCollection("Кейс Gift");
-			Item _key = itemDAO.getByNameFromCollection("Ключ от кейса");
+			Item _case = itemDAO.get_by_name("Кейс Gift");
+			Item _key = itemDAO.get_by_name("Ключ от кейса");
 
 			for (Item item : player.getInventory().getItems())
 			{
