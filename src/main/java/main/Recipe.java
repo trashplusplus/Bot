@@ -16,7 +16,7 @@ public class Recipe
 	{
 		createRecipe("Энергетик", "Стиральный порошок", "Банан", "Бутылка");
 		createRecipe("Кейс Gift", "Отвертка", "Подшипник");
-		createRecipe("Статусная Аянами", "Плюшевая Аянами Рей", "Whirr - Feels Like You");
+		createRecipe("Статусная Аянами", "Плюшевая Аянами Рей", "Whirr - Feels Like You", "Рецепт Статусной Аянами");
 	}
 
 	public void createRecipe(String resultProduct, String... ingredients)

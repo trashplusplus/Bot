@@ -45,6 +45,7 @@ public class CommandProcessor
 	public static final String RECIPES_BUTTON = "\uD83E\uDD65 Рецепты";
 	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
 	public static final String DONATE_BUTTON = "\uD83D\uDC8E Донат";
+	public static final String STATUS_BUTTON = "✨ Статусы";
 	CachedItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
@@ -70,8 +71,11 @@ public class CommandProcessor
 		map = new HashMap<>();
 
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
-		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
+
 		map.put("/stats", () -> new Stats());
+
+		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
+		map.put(STATUS_BUTTON, () -> new Status(inventoryDAO, itemDAO));
 
 		map.put("/me", () -> new Me());
 		map.put(ME_BUTTON, () -> new Me());

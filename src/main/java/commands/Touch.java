@@ -73,6 +73,7 @@ class TouchState extends State
 			{
 				if (touch.getMagazines().containsKey(responseText))
 					host.execute(touch.getMagazinePhoto(responseText));
+					player.getInventory().removeItem(item_id);
 				host.sendMsg(id, "\uD83E\uDEA1 " + responseText);
 			}
 			else

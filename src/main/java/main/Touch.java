@@ -111,6 +111,8 @@ public class Touch {
         info.put(itemDAO.getByNameFromCollection("Пакет"), "В теории, в него можно положить хлеб");
         info.put(itemDAO.getByNameFromCollection("Курточка"), "Очень подходит для дождливой погоды");
         info.put(itemDAO.getByNameFromCollection("Петарда"), "У вас в руках корсар-1");
+        info.put(itemDAO.getByNameFromCollection("Статусная Аянами"), "Теперь все знают, что у вас есть Статусная Аянами");
+        info.put(itemDAO.getByNameFromCollection("Рецепт Статусной Аянами"), "Используется для крафта Статусной Аянами в разделе Рецепты");
         info.put(itemDAO.getByNameFromCollection("Тетрадь"), "У вас в руках крутая тетрадка с машинами и голыми девушками, пруфов не будет, поверьте мне наслово");
     }
 
