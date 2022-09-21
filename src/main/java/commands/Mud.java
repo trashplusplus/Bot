@@ -2,10 +2,7 @@ package commands;
 
 import database.dao.InventoryDAO;
 import database.dao.IItemDAO;
-import main.Bot;
-import main.Item;
-import main.Player;
-import main.Roller;
+import main.*;
 
 public class Mud extends Command
 {
@@ -23,26 +20,17 @@ public class Mud extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		int limitSpace;
-		Item backpack = itemDAO.get_by_name("\uD83C\uDF92 Рюкзак");
-		if (player.getInventory().getItems().contains(backpack))
-		{
-			limitSpace = 25;
-		}
-		else
-		{
-			limitSpace = 20;
-		}
-
+		Inventory inventory = player.inventory;
+		int limitSpace = inventory.inventory_capacity;
 
 		long id = player.getId();
-		if (player.getInventory().getInvSize() < limitSpace)
+		if (inventory.getInvSize() < limitSpace)
 		{
 			Item item = mud_roller.roll();
 			if (item != null)
 			{
 				inventoryDAO.putItem(id, item.getId());
-				player.getInventory().putItem(item);
+				inventory.putItem(item);
 				host.sendMsg(id, String.format("Вы нашли в грязи %s", item));
 				player.addXp(1);
 			}

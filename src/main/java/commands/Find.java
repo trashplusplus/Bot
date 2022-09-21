@@ -1,7 +1,7 @@
 package commands;
 
-import database.dao.InventoryDAO;
 import database.dao.IItemDAO;
+import database.dao.InventoryDAO;
 import main.*;
 
 import java.util.concurrent.TimeUnit;
@@ -22,39 +22,29 @@ public class Find extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		int limitSpace;
-		Item backpack = itemDAO.get_by_name("\uD83C\uDF92 Рюкзак");
-		if (player.getInventory().getItems().contains(backpack))
-		{
-			limitSpace = 25;
-		}
-		else
-		{
-			limitSpace = 20;
-		}
+		Inventory inventory = player.inventory;
+		int limitSpace = inventory.inventory_capacity;
 
 		long player_id = player.getId();
 		long now_ts = System.currentTimeMillis();
-		if (player.getInventory().getInvSize() < limitSpace)
+		if (inventory.getInvSize() < limitSpace)
 		{
 			if (player.findExpiration != null && player.findExpiration > now_ts)
 			{
-				if(player.donateRandomer < 2){
-					host.sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s",
-							PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
-					player.donateRandomer++;
-				}else{
-					host.sendMsg(player_id, String.format("\u231B Вы устали, время ожидания:%s\n Вы можете сбросить время ожидания за 2\uD83E\uDDF7 командой /boost",
-							PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
-					player.donateRandomer = 0;
+				StringBuilder sb = new StringBuilder(String.format("\u231B Вы устали, время ожидания:%s",
+						PrettyDate.prettify(player.findExpiration - now_ts, TimeUnit.MILLISECONDS)));
+				player.donateRandomer = (player.donateRandomer + 1) % 3;
+				if (player.donateRandomer == 0)
+				{
+					sb.append("\n Вы можете сбросить время ожидания за 2\uD83E\uDDF7 командой /boost");
 				}
-
+				host.sendMsg(player_id, sb.toString());
 			}
 			else
 			{
 				Item new_item = find_roller.roll();
 				inventoryDAO.putItem(player_id, new_item.getId());
-				player.getInventory().putItem(new_item);
+				inventory.putItem(new_item);
 				host.sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 				player.addXp(5);
 				player.findExpiration = now_ts + host.findCooldown;
