@@ -58,6 +58,10 @@ class SellState extends State
 					inventory.removeItem(sell_id);
 					inventoryDAO.delete(player_id, item.getId(), 1);
 					host.sendMsg(player_id, String.format("✅ Предмет %s продан | +%s", item.getTitle(), item.getCost()));
+					if (inventory.getInvSize() == 0)
+					{
+						invoker.state = base;
+					}
 					rebuild_hint();
 					host.sendMsg(player_id, invoker.state.hint);
 				}
