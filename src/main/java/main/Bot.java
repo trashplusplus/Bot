@@ -176,7 +176,7 @@ public class Bot extends TelegramLongPollingBot
 							if (playerDAO.get_by_name(text) == null)
 							{
 								// create player
-								player = new Player(id, this);
+								player = new Player(id, this, text);
 								player.setUsername(text);
 								playerDAO.put(player);
 								sendMsg(id, "Спасибо за регистрацию, приятной игры :)");

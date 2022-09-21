@@ -24,9 +24,9 @@ public class Player
 
 	public Event<Integer> level_reached = new Event<>(this);
 
-	public Player(long id, Bot host)
+	public Player(long id, Bot host, String name)
 	{
-		this(id, 0, 1, "player" + id, 0L, 0L, new Inventory(), new Stats(), host);
+		this(id, 0, 1, name, 0L, 0L, new Inventory(), new Stats(), host);
 	}
 
 	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Stats stats, Bot host)
