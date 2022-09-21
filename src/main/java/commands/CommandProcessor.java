@@ -1,10 +1,6 @@
 package commands;
 
-import database.dao.IPlayerDAO;
-import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
-import database.dao.ShopDAO;
-import main.AllDayShop;
+import database.dao.*;
 import main.Item;
 import main.Roller;
 
@@ -47,7 +43,7 @@ public class CommandProcessor
 	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
 	public static final String DONATE_BUTTON = "\uD83D\uDC8E Донат";
 	public static final String STATUS_BUTTON = "✨ Статусы";
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
 	ShopDAO shopDAO;
@@ -58,7 +54,7 @@ public class CommandProcessor
 
 	public Map<String, Supplier<Command>> map;
 
-	public CommandProcessor(CachedItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame)
+	public CommandProcessor(IItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;

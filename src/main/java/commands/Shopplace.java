@@ -1,17 +1,17 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import database.dao.ShopDAO;
 import main.*;
 
 public class Shopplace extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	ShopDAO shopDAO;
 
-	public Shopplace(CachedItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO)
+	public Shopplace(IItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
@@ -32,15 +32,8 @@ public class Shopplace extends Command
 			player.state = new ShopplaceState1(host, player, itemDAO, inventoryDAO, shopDAO, player.state.base);
 			Inventory inventory = player.getInventory();
 
-			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n");
-			sb.append("=====================\n");
-			for (int i = 0; i < inventory.getInvSize(); i++)
-			{
-				sb.append(String.format("Предмет | %d |: ", i)).append(inventory.getItem(i)).append("\n");
-			}
-			sb.append("=====================\n");
+			StringBuilder sb = new StringBuilder("Предметы, доступные для продажи \n").append(inventory.repr()).append('\n').append(player.state.hint);
 			host.sendMsg(player_id, sb.toString());
-			host.sendMsg(player_id, player.state.hint);
 		}
 	}
 }
@@ -49,11 +42,11 @@ class ShopplaceState1 extends State
 {
 	Bot host;
 	Player player;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	ShopDAO shopDAO;
 
-	public ShopplaceState1(Bot host, Player player, CachedItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO, BaseState base)
+	public ShopplaceState1(Bot host, Player player, IItemDAO itemDAO, InventoryDAO inventoryDAO, ShopDAO shopDAO, BaseState base)
 	{
 		this.host = host;
 		this.player = player;
@@ -70,17 +63,19 @@ class ShopplaceState1 extends State
 		long id = player.getId();
 		try
 		{
-			int itemID = Integer.parseInt(arg);
-			if (itemID >= player.getInventory().getInvSize())
+			int itemID = Integer.parseInt(arg) - 1;
+			Item i = player.getInventory().getItem(itemID);
+			if (i.getTitle().equals("Рюкзак")
+					&& player.inventory.getInvSize() >= 20
+					&& player.inventory.getItems().stream().filter(e -> e.getTitle().equals("Рюкзак")).count() < 2)
 			{
-				throw new IndexOutOfBoundsException();
+				host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", "\uD83C\uDF92 Рюкзак"));
 			}
-			else if (player.getInventory().getInvSize() > 20)
+			else
 			{
-				throw new BackpackException(itemID);
+				player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, itemID, this, base);
+				host.sendMsg(id, player.state.hint);
 			}
-			player.state = new ShopplaceState2(host, player, inventoryDAO,shopDAO, itemID, this, base);
-			host.sendMsg(id, player.state.hint);
 		}
 		catch (NumberFormatException ex)
 		{
@@ -91,21 +86,6 @@ class ShopplaceState1 extends State
 		{
 			ex.printStackTrace();
 			host.sendMsg(id, "Неверный ID");
-		}
-		catch (BackpackException ex)
-		{
-			Item ii = player.getInventory().getItem(ex.backpackID);
-			Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
-			if (ii.equals(backpack))
-			{
-				host.sendMsg(id, String.format("Избавьтесь от дополнительных слотов, прежде чем продать `%s`", backpack.getTitle()));
-				//player.setState(Player.State.awaitingCommands); todo
-			}
-			else
-			{
-				player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, ex.backpackID, this, base);
-				host.sendMsg(player.getId(), player.state.hint);
-			}
 		}
 	}
 }

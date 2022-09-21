@@ -2,7 +2,7 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -10,10 +10,10 @@ import main.Player;
 public class Rename extends Command
 {
 	IPlayerDAO playerDAO;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Rename(IPlayerDAO playerDAO, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Rename(IPlayerDAO playerDAO, IItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.playerDAO = playerDAO;
 		this.itemDAO = itemDAO;
@@ -24,7 +24,7 @@ public class Rename extends Command
 	public void consume(Bot host, Player player)
 	{
 		long id = player.getId();
-		Item i = itemDAO.getByNameFromCollection("Тег");
+		Item i = itemDAO.get_by_name("Тег");
 		if (player.getInventory().getItems().contains(i))
 		{
 			player.state = new RenameState(playerDAO, itemDAO, inventoryDAO, player, host);
@@ -40,12 +40,12 @@ public class Rename extends Command
 class RenameState extends State
 {
 	IPlayerDAO playerDAO;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	Player player;
 	Bot host;
 
-	public RenameState(IPlayerDAO playerDAO, CachedItemDAO itemDAO, InventoryDAO inventoryDAO, Player player, Bot host)
+	public RenameState(IPlayerDAO playerDAO, IItemDAO itemDAO, InventoryDAO inventoryDAO, Player player, Bot host)
 	{
 		this.playerDAO = playerDAO;
 		this.itemDAO = itemDAO;
@@ -60,7 +60,7 @@ class RenameState extends State
 	{
 		long player_id = player.getId();
 		String nickname = arg;
-		Item tag = itemDAO.getByNameFromCollection("Тег");
+		Item tag = itemDAO.get_by_name("Тег");
 		int tag_idx = player.getInventory().getItems().indexOf(tag);
 		//regex для ника
 		String usernameTemplate = "([А-Яа-яA-Za-z0-9]{3,32})";

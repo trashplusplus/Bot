@@ -1,17 +1,17 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.*;
 
 import java.util.Random;
 
 public class Forest extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Forest(CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Forest(IItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
@@ -25,8 +25,8 @@ public class Forest extends Command
 		long fee = r.nextInt(3500);
 		try
 		{
-			Item flashlight = itemDAO.getByNameFromCollection("Поисковый фонарь");
-			Item seedling = itemDAO.getByNameFromCollection("Саженец");
+			Item flashlight = itemDAO.get_by_name("Поисковый фонарь");
+			Item seedling = itemDAO.get_by_name("Саженец");
 			int seedling_index = player.getInventory().getItems().indexOf(seedling);
 			//Achievements a = new Achievements(player);
 			if (player.getInventory().getItems().contains(flashlight))

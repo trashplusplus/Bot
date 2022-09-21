@@ -26,7 +26,7 @@ public class Bot extends TelegramLongPollingBot
 {
 	private final IPlayerDAO playerDAO;
 	private final InventoryDAO inventoryDAO;
-	private final CachedItemDAO itemDAO;
+	private final IItemDAO itemDAO;
 	private final ShopDAO shopDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
@@ -176,7 +176,7 @@ public class Bot extends TelegramLongPollingBot
 							if (playerDAO.get_by_name(text) == null)
 							{
 								// create player
-								player = new Player(id, this);
+								player = new Player(id, this, text);
 								player.setUsername(text);
 								playerDAO.put(player);
 								sendMsg(id, "Спасибо за регистрацию, приятной игры :)");
@@ -315,6 +315,24 @@ public class Bot extends TelegramLongPollingBot
 		STPE.stpe.shutdown();
 		dump_database();
 		System.out.println("Goodbye!");
+	}
+
+	public void level_up_handler(Object sender, int level)
+	{
+		Player player = (Player) sender;
+		long fee = 1375L * level;
+		sendMsg(player.getId(), String.format("\uD83C\uDF88 Поздравляем! Вы перешли на новый уровень (Уровень %d)" +
+						"\n\uD83C\uDF81 Бонус за переход на новый уровень +%s",
+				level, new Money(fee)));
+		try
+		{
+			player.balance.transfer(fee);
+		}
+		catch (Money.MoneyException e)
+		{
+			e.printStackTrace();
+			sendMsg(player.getId(), e.getMessage());
+		}
 	}
 
 	public void level_up_notification(Player player)

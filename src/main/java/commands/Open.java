@@ -1,7 +1,8 @@
 package commands;
 
+import com.google.common.collect.Streams;
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.*;
 
 import java.util.List;
@@ -11,38 +12,33 @@ import java.util.stream.Collectors;
 
 public class Open extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-
-	public Open(CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Open(IItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
-
 	}
 
 	@Override
 	public void consume(Bot host, Player player){
 
 		long id = player.getId();
-		Item _case = itemDAO.getByNameFromCollection("Кейс Gift");
-		Item _key = itemDAO.getByNameFromCollection("Ключ от кейса");
+		Item _case = itemDAO.get_by_name("Кейс Gift");
+		Item _key = itemDAO.get_by_name("Ключ от кейса");
+
 		List<Item> loot;
 		Random ran = new Random();
 
+		loot = Streams.concat(itemDAO.get_by_rarity(ItemRarity.Gift).stream(), itemDAO.get_by_rarity(ItemRarity.Rare).stream())
+				.collect(Collectors.toList());
+		int ranIndex = ran.nextInt(loot.size());
 
 		Inventory inventory = player.getInventory();
 		List<Item> player_items = inventory.getItems();
 		int case_idx = player_items.indexOf(_case);
 		int key_idx = player_items.indexOf(_key);
-
-		loot = itemDAO.getAllFromCollection().stream().filter((item -> item.getRarity().equals(ItemRarity.Gift) ||
-				item.getRarity().equals(ItemRarity.Rare))).collect(Collectors.toList());
-		int ranIndex = ran.nextInt(loot.size());
-
-
-
 
 		if (case_idx != -1)  // player has case
 		{

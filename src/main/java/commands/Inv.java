@@ -1,6 +1,7 @@
 package commands;
 
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Inventory;
 import main.Item;
@@ -8,9 +9,9 @@ import main.Player;
 
 public class Inv extends Command
 {
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 
-	public Inv(CachedItemDAO itemDAO)
+	public Inv(IItemDAO itemDAO)
 	{
 		this.itemDAO = itemDAO;
 	}
@@ -18,31 +19,13 @@ public class Inv extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
-		if (player.getInventory().getItems().contains(backpack))
-		{
-			limitSpace = 25;
-		}
-		else
-		{
-			limitSpace = 20;
-		}
-
 		long player_id = player.getId();
 		Inventory inventory = player.getInventory();
+		int limitSpace = inventory.inventory_capacity;
 		if (inventory.getInvSize() != 0)
 		{
-			StringBuilder sb = new StringBuilder("\uD83C\uDF81\t Ваш инвентарь: ");
-			sb.append("\n");
-			sb.append("========================\n");
-			for (int i = 0; i < inventory.getInvSize(); i++)
-			{
-				sb.append(String.format("Предмет |%d| : %s\n", i, inventory.getItem(i).toString()));
-			}
-			sb.append("========================\n");
-			//sendMsg(message, "\u26BD");
-			sb.append("\uD83C\uDF81\t Всего предметов: ").append(inventory.getInvSize()).append("/").append(limitSpace);
+			StringBuilder sb = new StringBuilder("\uD83C\uDF81\t Ваш инвентарь: \n").append(inventory.repr());
+			sb.append("\n\uD83C\uDF81\t Всего предметов: ").append(inventory.getInvSize()).append("/").append(limitSpace);
 			host.sendMsg(player_id, sb.toString());
 		}
 		else

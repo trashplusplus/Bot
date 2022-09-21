@@ -1,7 +1,7 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
@@ -10,10 +10,10 @@ import main.Roller;
 public class Fish extends Command
 {
 	Roller<Item> fish_roller;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Fish(Roller<Item> fish_roller, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Fish(Roller<Item> fish_roller, IItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.fish_roller = fish_roller;
 		this.itemDAO = itemDAO;
@@ -23,9 +23,9 @@ public class Fish extends Command
 	@Override
 	public void consume(Bot host, Player player)
 	{
-		Item i = itemDAO.getByNameFromCollection("Удочка");
+		Item i = itemDAO.get_by_name("Удочка");
 		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
+		Item backpack = itemDAO.get_by_name("Рюкзак");
 
 		if (player.getInventory().getItems().contains(backpack))
 		{

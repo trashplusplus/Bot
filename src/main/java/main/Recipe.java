@@ -21,12 +21,12 @@ public class Recipe
 
 	public void createRecipe(String resultProduct, String... ingredients)
 	{
-		Item resultProductToItem = itemDAO.getByNameFromCollection(resultProduct);
+		Item resultProductToItem = itemDAO.get_by_name(resultProduct);
 		List<Item> ingredientsToItem = new ArrayList<>();
 
 		for (int i = 0; i < ingredients.length; i++)
 		{
-			ingredientsToItem.add(itemDAO.getByNameFromCollection(ingredients[i]));
+			ingredientsToItem.add(itemDAO.get_by_name(ingredients[i]));
 		}
 
 		recipes.put(resultProductToItem, ingredientsToItem);

@@ -1,18 +1,19 @@
 package commands;
 
+import database.dao.IItemDAO;
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import main.Bot;
 import main.Item;
 import main.Player;
 
 public class Give extends Command{
 
-    CachedItemDAO itemDAO;
+    IItemDAO itemDAO;
     InventoryDAO inventoryDAO;
 
-    public Give(CachedItemDAO itemDAO, InventoryDAO inventoryDAO){
+    public Give(IItemDAO itemDAO, InventoryDAO inventoryDAO){
         this.itemDAO = itemDAO;
         this.inventoryDAO = inventoryDAO;
     }
@@ -35,10 +36,10 @@ class Give1 extends State{
     Player invoker;
     IPlayerDAO playerDAO;
     Bot host;
-    CachedItemDAO itemDAO;
+    IItemDAO itemDAO;
     InventoryDAO inventoryDAO;
 
-    public Give1(Player invoker, BaseState base, Bot host, CachedItemDAO itemDAO, InventoryDAO inventoryDAO){
+    public Give1(Player invoker, BaseState base, Bot host, IItemDAO itemDAO, InventoryDAO inventoryDAO){
         this.invoker = invoker;
         this.base = base;
         this.itemDAO = itemDAO;
@@ -51,7 +52,7 @@ class Give1 extends State{
     public void process(String arg) {
         long player_id = invoker.getId();
         try{
-            Item item = itemDAO.getByNameFromCollection(arg);
+            Item item = itemDAO.get_by_name(arg);
             host.sendMsg(player_id, String.format("Предмет `%s` добавлен в Ваш инвентарь", item.getEmojiTitle()));
             inventoryDAO.putItem(player_id, item.getId());
             invoker.getInventory().putItem(item);

@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Player
 {
 	private final long id;
-	private final Inventory inventory;
+	public final Inventory inventory;
 	public Money balance;
 	public Long needle;
 	private String username;
@@ -20,12 +20,13 @@ public class Player
 	public int page = 0;
 	public commands.State state;
 	public final Bot host;
-
 	public Item status;
 
-	public Player(long id, Bot host)
+	public Event<Integer> level_reached = new Event<>(this);
+
+	public Player(long id, Bot host, String name)
 	{
-		this(id, 0, 1, "player" + id, 0L, 0L, new Inventory(), new Stats(), null, host);
+		this(id, 0, 1, name, 0L, 0L, new Inventory(), new Stats(), null, host);
 	}
 
 	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Stats stats, Item status, Bot host)
@@ -92,9 +93,12 @@ public class Player
 
 	public void levelUp()
 	{
-		xp -= 10 * level++;
-		// back-notify the owner
-		host.level_up_notification(this);
+		while (xp > 10 * level)
+		{
+			xp -= 10 * level++;
+			on_level_reached(level);
+		}
+		//host.level_up_notification(this);
 	}
 
 	public void ach_treeHard()
@@ -143,5 +147,10 @@ public class Player
 	public int hashCode()
 	{
 		return Objects.hash(id);
+	}
+
+	void on_level_reached(int level)
+	{
+		level_reached.raise(level);
 	}
 }

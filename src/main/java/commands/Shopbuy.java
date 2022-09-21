@@ -1,17 +1,17 @@
 package commands;
 
 import database.dao.InventoryDAO;
-import database.dao.CachedItemDAO;
+import database.dao.IItemDAO;
 import database.dao.ShopDAO;
 import main.*;
 
 public class Shopbuy extends Command
 {
 	ShopDAO shopDAO;
-	CachedItemDAO itemDAO;
+	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 
-	public Shopbuy(ShopDAO shopDAO, CachedItemDAO itemDAO, InventoryDAO inventoryDAO)
+	public Shopbuy(ShopDAO shopDAO, IItemDAO itemDAO, InventoryDAO inventoryDAO)
 	{
 		this.shopDAO = shopDAO;
 		this.itemDAO = itemDAO;
@@ -23,7 +23,7 @@ public class Shopbuy extends Command
 	{
 		long player_id = player.getId();
 		int limitSpace;
-		Item backpack = itemDAO.getByNameFromCollection("Рюкзак");
+		Item backpack = itemDAO.get_by_name("Рюкзак");
 		if (player.getInventory().getItems().contains(backpack))
 		{
 			limitSpace = 25;

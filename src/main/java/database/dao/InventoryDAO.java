@@ -68,7 +68,7 @@ public class InventoryDAO
 			while (rs.next())
 			{
 				long item_id = rs.getLong("item_id");
-				inventory.putItem(itemDAO.get(item_id));
+				inventory.putItem(itemDAO.get_by_id(item_id));
 			}
 			rs.close();
 		}
