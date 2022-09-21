@@ -50,14 +50,14 @@ class CheckState extends State
 			player.state = base;
 			if (inventory.getInvSize() != 0)
 			{
-				StringBuilder sb = new StringBuilder("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`");
+				StringBuilder sb = new StringBuilder("\uD83D\uDC41 Инвентарь игрока " + anotherPlayer.getFormattedUsername());
 				sb.append("\n").append(inventory.repr());
 				sb.append("\n\uD83D\uDC41 Всего предметов: ").append(inventory.getInvSize());
 				host.sendMsg(player_id, sb.toString());
 			}
 			else
 			{
-				host.sendMsg(player_id, "\uD83C\uDF81\t Инвентарь `" + name + "` пуст\n");
+				host.sendMsg(player_id, "\uD83C\uDF81\t Инвентарь `" + anotherPlayer.getFormattedUsername() + "` пуст\n");
 			}
 		}
 		else

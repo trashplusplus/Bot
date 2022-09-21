@@ -48,7 +48,7 @@ class TouchState extends State
 		this.host = host;
 		this.player = player;
 		this.base = base;
-		hint = "Введите номер предмета, который хотите осмотреть";
+		hint = player.getInventory().repr() + "\nВведите номер предмета, который хотите осмотреть";
 	}
 
 	@Override
@@ -64,12 +64,12 @@ class TouchState extends State
 		long id = player.getId();
 		try
 		{
-			int item_id = Integer.parseInt(arg);
+			int item_id = Integer.parseInt(arg) - 1;
 			Item energy = itemDAO.get_by_name("Энергетик");
 			String responseText = touch.getInfo().get(player.getInventory().getItem(item_id));
 
 			player.state = base;
-			if (responseText != null && responseText != touch.getInfo().get(energy))
+			if (responseText != null && !responseText.equals(touch.getInfo().get(energy)))
 			{
 				if (touch.getMagazines().containsKey(responseText))
 					host.execute(touch.getMagazinePhoto(responseText));
