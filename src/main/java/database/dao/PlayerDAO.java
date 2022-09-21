@@ -40,7 +40,14 @@ public class PlayerDAO implements IPlayerDAO
 			ps.setLong(4, player.needle);
 			ps.setString(5, player.getUsername());
 			ps.setLong(6, player.balance.value);
-			ps.setLong(7, player.status.getId());
+			if (player.status == null)
+			{
+				ps.setNull(7, Types.BIGINT);
+			}
+			else
+			{
+				ps.setLong(7, player.status.getId());
+			}
 			ps.execute();
 			statsDAO.put(player.getStats(), player.getId());
 			abilityDAO.put(player.getId());
