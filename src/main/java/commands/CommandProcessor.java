@@ -4,6 +4,7 @@ import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
 import database.dao.CachedItemDAO;
 import database.dao.ShopDAO;
+import main.AllDayShop;
 import main.Item;
 import main.Roller;
 
@@ -73,6 +74,8 @@ public class CommandProcessor
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
 
 		map.put("/stats", () -> new Stats());
+		map.put("/shop", () -> new Shop(itemDAO));
+
 
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
 		map.put(STATUS_BUTTON, () -> new Status(inventoryDAO, itemDAO));

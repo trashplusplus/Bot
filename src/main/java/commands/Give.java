@@ -24,7 +24,7 @@ public class Give extends Command{
             player.state = new Give1(player, player.state.base, host, itemDAO, inventoryDAO);
 
         }else{
-            host.sendMsg(player.getId(), "У вас недостаточно прав для этой комманды");
+            host.sendMsg(player.getId(), "У вас недостаточно прав для этой команды");
         }
     }
 
