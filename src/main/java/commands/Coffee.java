@@ -2,6 +2,7 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.IItemDAO;
+import database.dao.InventoryDAO;
 import main.Bot;
 import main.Item;
 import main.Money;
@@ -11,11 +12,13 @@ public class Coffee extends Command
 {
 	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
+	InventoryDAO inventoryDAO;
 
-	public Coffee(IItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Coffee(IItemDAO itemDAO, IPlayerDAO playerDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
+		this.inventoryDAO = inventoryDAO;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class Coffee extends Command
 		}
 		else
 		{
-			player.state = new CoffeeState1(host, player, cost, itemDAO, playerDAO, player.state.base);
+			player.state = new CoffeeState1(host, player, cost, itemDAO, playerDAO, player.state.base, inventoryDAO);
 			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
@@ -43,8 +46,9 @@ class CoffeeState1 extends State
 	long cost;
 	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
+	InventoryDAO inventoryDAO;
 
-	public CoffeeState1(Bot host, Player sender, long cost, IItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
+	public CoffeeState1(Bot host, Player sender, long cost, IItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base, InventoryDAO inventoryDAO)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -52,6 +56,7 @@ class CoffeeState1 extends State
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
 		this.base = base;
+		this.inventoryDAO = inventoryDAO;
 		hint = String.format("☕(%s) Введите ник игрока: ", new Money(cost));
 	}
 
@@ -65,7 +70,7 @@ class CoffeeState1 extends State
 			Player receiver = playerDAO.get_by_name(name);
 			if (receiver != null)
 			{
-				sender.state = new CoffeeState2(host, sender, receiver, cost, itemDAO, this, base);
+				sender.state = new CoffeeState2(host, sender, receiver, cost, itemDAO, this, base, inventoryDAO);
 				host.sendMsg(player_id, sender.state.hint);
 			}
 			else
@@ -87,8 +92,9 @@ class CoffeeState2 extends State
 	Player receiver;
 	long cost;
 	IItemDAO itemDAO;
+	InventoryDAO inventoryDAO;
 
-	public CoffeeState2(Bot host, Player sender, Player receiver, long cost, IItemDAO itemDAO, State previous, BaseState base)
+	public CoffeeState2(Bot host, Player sender, Player receiver, long cost, IItemDAO itemDAO, State previous, BaseState base, InventoryDAO inventoryDAO)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -117,6 +123,9 @@ class CoffeeState2 extends State
 				if (receiver.getStats().coffee == 75)
 				{
 					receiver.ach_coffee();
+					Item johnCoffi = itemDAO.get_by_name("Джон Коффи");
+					receiver.getInventory().putItem(johnCoffi);
+					inventoryDAO.putItem(receiver.getId(), johnCoffi.getId());
 				}
 				sender.addXp(1);
 

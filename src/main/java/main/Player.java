@@ -1,6 +1,8 @@
 package main;
 
 import commands.BaseState;
+import database.dao.IItemDAO;
+import database.dao.InventoryDAO;
 
 import java.util.Objects;
 
@@ -22,6 +24,8 @@ public class Player
 	public final Bot host;
 	public Item status;
 
+	IItemDAO itemDAO;
+	InventoryDAO inventoryDAO;
 	public Event<Integer> level_reached = new Event<>(this);
 
 	public Player(long id, Bot host, String name)
@@ -110,17 +114,19 @@ public class Player
 
 	public void ach_treeHard()
 	{
-		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Зеленый лес*", 15000);
+
+		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Форрест Гамп*\nДобавлен новый предмет в инвентарь", 15000);
+
 	}
 
 	public void ach_coffee()
 	{
-		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Джон Коффи*", 7500);
+		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Джон Коффи*\nДобавлен новый предмет в инвентарь", 7500);
 	}
 
 	public void ach_tea()
 	{
-		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Гринфилд*", 7500);
+		host.achievement_notification(this, "Поздравляем! Вы заработали достижение *Гринфилд*\nДобавлен новый предмет в инвентарь", 7500);
 	}
 
 	public void addXp(int xp)

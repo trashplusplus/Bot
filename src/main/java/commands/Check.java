@@ -52,11 +52,12 @@ class CheckState extends State
 			{
 
 				StringBuilder sb = new StringBuilder();
-				if(anotherPlayer.isStatus()){
-					sb.append("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "` \\[" + anotherPlayer.getStatus() + "]");
-				}else{
-					sb.append("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`");
-				}
+
+				String sb_text = anotherPlayer.isStatus() ? "\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername()
+						+ "` \\[" + anotherPlayer.getStatus() + "]"
+						:"\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`";
+
+				sb.append(sb_text);
 				sb.append("\n").append(inventory.repr());
 				sb.append("\n\uD83D\uDC41 Всего предметов: ").append(inventory.getInvSize());
 

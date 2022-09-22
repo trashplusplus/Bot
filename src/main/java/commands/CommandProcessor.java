@@ -120,11 +120,11 @@ public class CommandProcessor
 		map.put("/shopplace", () -> new Shopplace(itemDAO, inventoryDAO, shopDAO));
 		map.put(SHOPPLACE_BUTTON, () -> new Shopplace(itemDAO, inventoryDAO, shopDAO));
 
-		map.put("/tea", () -> new Tea(itemDAO, playerDAO));
-		map.put(TEA_BUTTON, () -> new Tea(itemDAO, playerDAO));
+		map.put("/tea", () -> new Tea(itemDAO, playerDAO, inventoryDAO));
+		map.put(TEA_BUTTON, () -> new Tea(itemDAO, playerDAO, inventoryDAO));
 
-		map.put("/coffee", () -> new Coffee(itemDAO, playerDAO));
-		map.put(COFFEE_BUTTON, () -> new Coffee(itemDAO, playerDAO));
+		map.put("/coffee", () -> new Coffee(itemDAO, playerDAO, inventoryDAO));
+		map.put(COFFEE_BUTTON, () -> new Coffee(itemDAO, playerDAO, inventoryDAO));
 
 		map.put("/forest", () -> new Forest(itemDAO, inventoryDAO));
 		map.put(FOREST_BUTTON, () -> new Forest(itemDAO, inventoryDAO));

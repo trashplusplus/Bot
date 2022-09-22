@@ -2,6 +2,7 @@ package commands;
 
 import database.dao.IPlayerDAO;
 import database.dao.IItemDAO;
+import database.dao.InventoryDAO;
 import main.Bot;
 import main.Item;
 import main.Money;
@@ -11,11 +12,13 @@ public class Tea extends Command
 {
 	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
+	InventoryDAO inventoryDAO;
 
-	public Tea(IItemDAO itemDAO, IPlayerDAO playerDAO)
+	public Tea(IItemDAO itemDAO, IPlayerDAO playerDAO, InventoryDAO inventoryDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
+		this.inventoryDAO = inventoryDAO;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class Tea extends Command
 		}
 		else
 		{
-			player.state = new TeaState1(host, player, cost, itemDAO, playerDAO, player.state.base);
+			player.state = new TeaState1(host, player, cost, itemDAO, playerDAO, player.state.base, inventoryDAO);
 			host.sendMsg(player.getId(), player.state.hint);
 		}
 	}
@@ -43,8 +46,9 @@ class TeaState1 extends State
 	long cost;
 	IItemDAO itemDAO;
 	IPlayerDAO playerDAO;
+	InventoryDAO inventoryDAO;
 
-	public TeaState1(Bot host, Player sender, long cost, IItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base)
+	public TeaState1(Bot host, Player sender, long cost, IItemDAO itemDAO, IPlayerDAO playerDAO, BaseState base, InventoryDAO inventoryDAO)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -52,6 +56,7 @@ class TeaState1 extends State
 		this.itemDAO = itemDAO;
 		this.playerDAO = playerDAO;
 		this.base = base;
+		this.inventoryDAO = inventoryDAO;
 		hint = String.format("\uD83C\uDF3F(%s) Введите ник игрока: ", new Money(cost));
 	}
 
@@ -65,7 +70,7 @@ class TeaState1 extends State
 			Player receiver = playerDAO.get_by_name(name);
 			if (receiver != null)
 			{
-				sender.state = new TeaState2(host, sender, receiver, cost, itemDAO, this, base);
+				sender.state = new TeaState2(host, sender, receiver, cost, itemDAO, this, base, inventoryDAO);
 				host.sendMsg(player_id, sender.state.hint);
 			}
 			else
@@ -87,8 +92,9 @@ class TeaState2 extends State
 	Player receiver;
 	long cost;
 	IItemDAO itemDAO;
+	InventoryDAO inventoryDAO;
 
-	public TeaState2(Bot host, Player sender, Player receiver, long cost, IItemDAO itemDAO, State previous, BaseState base)
+	public TeaState2(Bot host, Player sender, Player receiver, long cost, IItemDAO itemDAO, State previous, BaseState base, InventoryDAO inventoryDAO)
 	{
 		this.host = host;
 		this.sender = sender;
@@ -97,6 +103,7 @@ class TeaState2 extends State
 		this.itemDAO = itemDAO;
 		this.previous = previous;
 		this.base = base;
+		this.inventoryDAO = inventoryDAO;
 		hint = "Введите сообщение для игрока (256 символов):";
 	}
 
@@ -117,6 +124,9 @@ class TeaState2 extends State
 				if (receiver.getStats().tea == 75)
 				{
 					receiver.ach_tea();
+					Item johnCoffi = itemDAO.get_by_name("Гринфилд");
+					receiver.getInventory().putItem(johnCoffi);
+					inventoryDAO.putItem(receiver.getId(), johnCoffi.getId());
 				}
 				sender.addXp(1);
 				if(sender.status != null){

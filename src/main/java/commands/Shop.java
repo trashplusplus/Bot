@@ -20,9 +20,10 @@ public class Shop extends Command{
         AllDayShop shop = new AllDayShop(itemDAO);
         StringBuilder sb = new StringBuilder("\uD83C\uDFEA Добро пожаловать в Магазин 24/7\n\n");
         sb.append("Здесь вы можете купить разные товары по интересным ценам\n");
+        sb.append("*Статусы*\n");
         sb.append("========================\n");
-        for(int i = 0; i < shop.getGoods().size(); i++){
-            sb.append(String.format("\uD83D\uDECD Товар |`%d`| %s \n", i, shop.getById(i)));
+        for(int i = 0; i < shop.getStatusList().size(); i++){
+            sb.append(String.format("\uD83D\uDECD Товар |`%d`| %s \n", i, shop.getStatusById(i)));
         }
         sb.append("========================\n\n");
         sb.append("Выберите ID предмета, который вы хотите купить: \n");
@@ -54,7 +55,7 @@ public class Shop extends Command{
         try{
 
             int thisItemID = Integer.parseInt(arg);
-            Item good = shop.getById(thisItemID);
+            Item good = shop.getStatusById(thisItemID);
 
             if(player.getMoney().value >= good.getCost().value){
                 player.getMoney().transfer(-good.getCost().value);
