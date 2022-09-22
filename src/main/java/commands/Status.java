@@ -20,11 +20,12 @@ public class Status extends Command{
         StringBuilder sb = new StringBuilder();
 
 
-        if(player.getInventory().getItems().stream().anyMatch(item -> item.getRarity().equals(ItemRarity.Status))){
+        if(player.getInventory().getItems().stream().anyMatch(item -> item.getRarity().equals(ItemRarity.Status) ||
+                item.getRarity().equals(ItemRarity.Pet))){
             sb.append("\uD83C\uDF38 Ваши статусы: \n\n");
 
             for(int i = 0; i < player.getInventory().getInvSize(); i++){
-                if(player.getInventory().getItem(i).getRarity() == ItemRarity.Status){
+                if(player.getInventory().getItem(i).getRarity() == ItemRarity.Status || player.getInventory().getItem(i).getRarity() ==ItemRarity.Pet){
                     sb.append("Статус |#" + i + player.getInventory().getItem(i) + "\n");
                 }
             }
@@ -64,7 +65,7 @@ class StatusID extends State{
             int itemID = Integer.parseInt(arg);
             Item statusItem = itemDAO.get_by_name(player.getInventory().getItem(itemID).getTitle());
 
-            if(statusItem.getRarity().equals(ItemRarity.Status)){
+            if(statusItem.getRarity().equals(ItemRarity.Status) || statusItem.getRarity().equals(ItemRarity.Pet)){
                 if(player.status != statusItem){
                     player.status = statusItem;
                     host.sendMsg(id, String.format("Статус `%s` успешно установлен", statusItem.getEmojiTitle()));

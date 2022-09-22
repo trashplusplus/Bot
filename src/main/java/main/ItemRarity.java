@@ -7,7 +7,8 @@ public enum ItemRarity
 	Rare,
 	Gift,
 	Limited,
-	Status;
+	Status,
+	Pet;
 
 	@Override
 	public String toString()
