@@ -70,7 +70,7 @@ public class CommandProcessor
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
 
 		map.put("/stats", () -> new Stats());
-		map.put("/shop", () -> new Shop(itemDAO));
+		map.put("/shop", () -> new Shop(itemDAO, inventoryDAO));
 
 
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
