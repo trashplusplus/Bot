@@ -56,7 +56,17 @@ class SellState extends State
 			}
 			else
 			{
-				host.sendMsg(player_id, "\uD83D\uDC8D Лимитированные вещи нельзя продавать");
+				long downCost = (item.getCost().value / 100) * 30;
+				//при продаже статуса мы будем делить цену на 3
+				invoker.balance.transfer(downCost);
+				inventory.removeItem(sell_id);
+				inventoryDAO.delete(player_id, item.getId(), 1);
+				host.sendMsg(player_id, "\uD83D\uDCC9Стоимость предмета была снижена на 70% | +" + new Money(downCost));
+				//invoker.st = new SellState(invoker, base, host, inventoryDAO);
+				rebuild_hint();
+				host.sendMsg(player_id, invoker.state.hint);
+
+			//	host.sendMsg(player_id, "\uD83D\uDC8D Лимитированные вещи нельзя продавать");
 			}
 		}
 		catch (NumberFormatException e)

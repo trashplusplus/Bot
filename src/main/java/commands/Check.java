@@ -50,7 +50,12 @@ class CheckState extends State
 			player.state = base;
 			if (inventory.getInvSize() != 0)
 			{
-				StringBuilder sb = new StringBuilder("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`");
+				StringBuilder sb = new StringBuilder();
+				if(anotherPlayer.isStatus()){
+					sb.append("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "` \\[" + anotherPlayer.getStatus() + "]");
+				}else{
+					sb.append("\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`");
+				}
 				sb.append("\n");
 				sb.append("========================\n");
 				for (int i = 0; i < inventory.getInvSize(); i++)

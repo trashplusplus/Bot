@@ -15,11 +15,17 @@ public class AllDayShop{
     public AllDayShop(IItemDAO itemDAO){
         this.itemDAO = itemDAO;
 
-        createGood("Статусная Аянами");
-        createGood("Отвертка");
-        createGood("Курточка");
-        createGood("Тег");
-        createGood("Веревка");
+        createGood("Сияющий Ригель");
+        createGood("Слеза Зевса");
+        createGood("Скарлетт");
+        createGood("Апельсиновый сон");
+        createGood("Плантера");
+        createGood("Сапфировый клубок");
+        createGood("Страсть");
+        createGood("Ангельская пыль");
+        createGood("Мишк Фреде");
+        createGood("Сатурн");
+        createGood("Мыльные пузыри");
 
 
     }

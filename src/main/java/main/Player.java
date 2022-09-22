@@ -65,6 +65,13 @@ public class Player
 		return username;
 	}
 
+	public boolean isStatus(){
+		if(status != null)
+			return true;
+
+		return false;
+	}
+
 
 	public void setUsername(String username)
 	{
