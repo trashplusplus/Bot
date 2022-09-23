@@ -44,7 +44,7 @@ class SellState extends State
 			Inventory inventory = invoker.getInventory();
 			int sell_id = Integer.parseInt(arg) - 1;
 			Item item = inventory.getItem(sell_id);
-			if (item.getRarity() != ItemRarity.Limited && item.getRarity() != ItemRarity.Status)
+			if (item.getRarity() != ItemRarity.Limited && item.getRarity() != ItemRarity.Status && item.getRarity() != ItemRarity.Pet)
 			{
 				if (item.getTitle().equals("Рюкзак")
 						&& inventory.getInvSize() >= 20

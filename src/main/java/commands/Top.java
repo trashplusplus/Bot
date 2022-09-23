@@ -33,7 +33,7 @@ public class Top extends Command
 						players_list.append("========================");
 						players_list.append("\n");
 					}else{
-						players_list.append(String.format("Игрок `%s` | %s | %d Ур.", pl.getUsername(), pl.balance, pl.getLevel()));
+						players_list.append(String.format("Игрок \uD83D\uDC51`%s` | %s | %d Ур.", pl.getUsername(), pl.balance, pl.getLevel()));
 						players_list.append("\n");
 						players_list.append("========================");
 						players_list.append("\n");

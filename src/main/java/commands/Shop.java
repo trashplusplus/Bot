@@ -19,19 +19,30 @@ public class Shop extends Command{
     public void consume(Bot host, Player player) {
         AllDayShop shop = new AllDayShop(itemDAO);
         StringBuilder sb = new StringBuilder("\uD83C\uDFEA Добро пожаловать в Магазин 24/7\n\n");
-        sb.append("Здесь можно купить разные товары по интересным ценам\n");
-        sb.append("*Статусы*\n");
+        sb.append("Здесь можно купить разные товары по интересным ценам\n\n");
         sb.append("========================\n");
-        for(int i = 0; i < shop.getStatusList().size(); i++){
-            sb.append(String.format("\uD83D\uDECD Товар |`%d`| %s \n", i, shop.getStatusById(i)));
+        sb.append("*Статусы*\n\n");
+
+        String prefix;
+        for(int i = 0; i < shop.getGoodsList().size(); i++){
+            prefix = shop.getGoodById(i).getRarity() == ItemRarity.Pet ? "\uD83D\uDC36 Питомец" : "\uD83D\uDECD Товар";
+            if(shop.getGoodById(i).isNeedleCost()){
+                sb.append(String.format("%s |`%d`| %s \n",prefix, i, shop.getGoodById(i).getNeedleCostFormat()));
+            }else{
+                sb.append(String.format("%s |`%d`| %s \n",prefix, i, shop.getGoodById(i)));
+            }
 
             if(i == 11){
-                sb.append("\n");
+                sb.append("\n*Питомцы*\n\n");
+            }else if (i == 20){
+                sb.append("\n*Предметы*\n\n");
             }
+
         }
+
         sb.append("========================\n\n");
 
-        sb.append("Выберите ID предмета, который вы хотите купить: \n");
+        sb.append("Выберите номер предмета, который вы хотите купить: \n");
         player.state = new Shop1(player, player.state.base, host, inventoryDAO, itemDAO);
         host.sendMsg(player.getId(), sb.toString());
 
@@ -60,22 +71,34 @@ public class Shop extends Command{
         try{
 
             int thisItemID = Integer.parseInt(arg);
-            Item good = shop.getStatusById(thisItemID);
-
-            if(player.getMoney().value >= good.getCost().value){
-                player.getMoney().transfer(-good.getCost().value);
-                inventoryDAO.putItem(id, good.getId());
-                player.getInventory().putItem(good);
-                host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
-                player.state = base;
+            Item good = shop.getGoodById(thisItemID);
+            if(good.isNeedleCost()){
+                if(player.needle >= good.getNeedleCost()){
+                    player.needle -= good.getNeedleCost();
+                    inventoryDAO.putItem(id, good.getId());
+                    player.getInventory().putItem(good);
+                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
+                    player.state = base;
+                }else{
+                    throw new Money.MoneyException();
+                }
+            }else{
+                if(player.getMoney().value >= good.getCost().value){
+                    player.getMoney().transfer(-good.getCost().value);
+                    inventoryDAO.putItem(id, good.getId());
+                    player.getInventory().putItem(good);
+                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
+                    player.state = base;
+                }
             }
+
 
         }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
             host.sendMsg(id, "Неверный ID");
         }catch (Money.MoneyException ee){
             ee.printStackTrace();
-            host.sendMsg(id, "Недостаточно средств");
+            host.sendMsg(id, "\uD83E\uDDE2 Упс! Недостаточно средств");
         }catch (NumberFormatException e){
             host.sendMsg(id, "Укажите число");
             e.printStackTrace();

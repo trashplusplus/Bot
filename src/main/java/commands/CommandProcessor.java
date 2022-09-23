@@ -12,7 +12,8 @@ import java.util.function.Supplier;
 
 public class CommandProcessor
 {
-	public static final String SHOPSHOW_BUTTON = "\uD83D\uDED2 Магазин";
+	public static final String SHOPSHOW_BUTTON = "\uD83D\uDED2 Маркет";
+	public static final String SHOP_BUTTON = "\uD83C\uDFEA Магазин 24/7";
 	public static final String SELL_BUTTON = "\uD83D\uDCDE Скупщик";
 	public static final String TOP_BUTTON = "\uD83C\uDF80 Топ 10";
 	public static final String POCKETS_BUTTON = "\uD83E\uDDF6 Проверить карманы";
@@ -43,6 +44,8 @@ public class CommandProcessor
 	public static final String CANCEL_BUTTON = "\uD83D\uDEAB Отменить";
 	public static final String DONATE_BUTTON = "\uD83D\uDC8E Донат";
 	public static final String STATUS_BUTTON = "✨ Статусы";
+	public static final String STATS_BUTTON = "\uD83D\uDCCA Статистика";
+	public static final String DUELS_BUTTON = "\uD83C\uDFF9 Дуэли";
 	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
@@ -71,6 +74,8 @@ public class CommandProcessor
 
 		map.put("/stats", () -> new Stats());
 		map.put("/shop", () -> new Shop(itemDAO, inventoryDAO));
+		map.put(SHOP_BUTTON, () -> new Shop(itemDAO, inventoryDAO));
+		map.put(STATS_BUTTON, () -> new Stats());
 
 
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));

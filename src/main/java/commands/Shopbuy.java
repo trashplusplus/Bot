@@ -44,7 +44,7 @@ public class Shopbuy extends Command
 				StringBuilder sb = new StringBuilder("\uD83D\uDC5C Все предметы в магазине:\n\n");
 				for (ShopItem i : shopDAO.getAll())
 				{
-					sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %s | Продавец: `%s` \n", i.getId(), i.getItem().getTitle(), i.getCost(), i.getSeller().getUsername()));
+					sb.append(String.format("\uD83C\uDFA9 Товар |# %d| `%s` | Цена: %s | Продавец: `%s` \n", i.getId(), i.getItem().getEmojiTitle(), i.getCost(), i.getSeller().getUsername()));
 				}
 				sb.append("\n");
 
@@ -95,7 +95,7 @@ class ShopbuyState extends State
 					inventoryDAO.putItem(player.getId(), item.getId());
 					player.getInventory().putItem(item);
 					player.state = player.state.base;
-					host.sendMsg(player.getId(), String.format("Ваш товар %s снят с продажи", item));
+					host.sendMsg(player.getId(), String.format("Ваш товар %s снят с продажи", item.getEmojiTitle()));
 					shopDAO.delete(userInput);
 				}
 				else if (player.balance.value >= itemCost)
@@ -107,8 +107,8 @@ class ShopbuyState extends State
 					player.getInventory().putItem(item);
 
 					player.state = player.state.base;
-
-					host.sendMsg(player.getId(), String.format("\uD83C\uDF6D Предмет `%s` успешно куплен", item));
+					//Обработать тут статусы в конце купил игрок
+					host.sendMsg(player.getId(), String.format("\uD83C\uDF6D Предмет `%s` успешно куплен", item.getEmojiTitle()));
 					host.sendMsg(seller.getId(), String.format("\uD83D\uDCC8 Ваш предмет `%s` купил игрок `%s` | + %s", item.getEmojiTitle(), player.getUsername(), new Money(itemCost)));
 					seller.addXp(3);
 

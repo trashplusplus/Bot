@@ -9,6 +9,7 @@ public class Item
 	private final ItemRarity rarity;
 	private final Money cost;
 	private String emoji;
+	private int needleCost;
 
 	public Item(long id, String title, ItemRarity rarity, long cost)
 	{
@@ -17,6 +18,7 @@ public class Item
 		this.rarity = rarity;
 		this.cost = new Money(cost);
 		this.emoji = "";
+		needleCost = 0;
 	}
 
 	public Item(long id, String title, ItemRarity rarity, long cost, String emoji)
@@ -51,6 +53,11 @@ public class Item
 		return id;
 	}
 
+	public boolean isNeedleCost(){
+		if(needleCost != 0){return true;}
+		return false;
+	}
+
 	public String getEmoji(){
 		return emoji;
 	}
@@ -58,6 +65,17 @@ public class Item
 	public String toString()
 	{
 		return String.format("|%s|%s|%s|", emoji + title, rarity.toString(), cost);
+	}
+	public String getNeedleCostFormat(){
+		return String.format("|%s|%s|\uD83E\uDDF7%d|", emoji + title, rarity.toString(), needleCost);
+	}
+
+	public void setNeedleCost(int needleCost){
+		this.needleCost = needleCost;
+	}
+
+	public int getNeedleCost(){
+		return needleCost;
 	}
 
 	@Override

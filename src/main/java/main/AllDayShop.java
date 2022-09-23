@@ -5,60 +5,68 @@ import database.dao.CachedItemDAO;
 import database.dao.IItemDAO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AllDayShop{
 
     IItemDAO itemDAO;
     private List<Item> statusList = new ArrayList<>();
     private List<Item> petList = new ArrayList<>();
+    private Map<Item, Integer> itemNeedles = new HashMap<>();
 
 
     public AllDayShop(IItemDAO itemDAO){
         this.itemDAO = itemDAO;
 
-        createStatus("Сияющий Ригель");
-        createStatus("Слеза Зевса");
-        createStatus("Скарлетт");
-        createStatus("Апельсиновый сон");
-        createStatus("Плантера");
-        createStatus("Сапфировый клубок");
-        createStatus("Страсть");
-        createStatus("Ангельская пыль");
-        createStatus("Мишк Фреде");
-        createStatus("Сатурн");
-        createStatus("Мыльные пузыри");
-        createStatus("Фея");
+        createGood("Сияющий Ригель");
+        createGood("Слеза Зевса");
+        createGood("Скарлетт");
+        createGood("Полумесяц");
+        createGood("Плантера");
+        createGood("Дисперсия");
+        createGood("Страсть");
+        createGood("Ангельская пыль");
+        createGood("Сатурн");
+        createGood("Мыльные пузыри");
+        createDonateGood("Фея", 3);
+        createDonateGood("Мишк Фреде", 4);
 
-        createStatus("Пчелка");
-        createStatus("Корова Бога");
-        createStatus("Вамп");
-        createStatus("Стелла");
-        createStatus("Поня");
-        createStatus("Дино");
-        createStatus("Кит");
-        createStatus("Бабочка");
-        createStatus("Бог Смерти");
+
+
+        createGood("Пчелка");
+        createGood("Корова Бога");
+        createGood("Бог Смерти");
+        createGood("Вамп");
+        createGood("Стелла");
+        createGood("Поня");
+        createDonateGood("Кибо", 5);
+        createDonateGood("Кит", 5);
+        createDonateGood("Бабочка", 5);
+
+        createDonateGood("Ключ от кейса", 1);
 
     }
 
-    public Item getStatusById(int id){
+
+
+    public Item getGoodById(int id){
         return statusList.get(id);
     }
-    public Item getPetById(int id){
-        return petList.get(id);
-    }
 
-    public List<Item> getStatusList(){
+    public List<Item> getGoodsList(){
         return statusList;
     }
-    public List<Item> getPetList(){
-        return petList;
-    }
 
-    public void createStatus(String item){
+
+    public void createGood(String item){
         statusList.add(itemDAO.get_by_name(item));
     }
-    public void createPet(String pet){petList.add(itemDAO.get_by_name(pet));}
+    public void createDonateGood(String item, int needles){
+        itemDAO.get_by_name(item).setNeedleCost(needles);
+        statusList.add(itemDAO.get_by_name(item));
+    }
+
 
 }

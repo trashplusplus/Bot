@@ -87,7 +87,7 @@ class RecipesState extends State
 				inventory.putItem(craftName);
 
 				player.addXp(4);
-				host.sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен " + craftName.getTitle());
+				host.sendMsg(player_id, "\uD83D\uDD27 Предмет изготовлен " + craftName.getEmojiTitle());
 			}
 			else
 			{
