@@ -73,8 +73,8 @@ public class CommandProcessor
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
 
 		map.put("/stats", () -> new Stats());
-		map.put("/shop", () -> new Shop(itemDAO, inventoryDAO));
-		map.put(SHOP_BUTTON, () -> new Shop(itemDAO, inventoryDAO));
+		map.put("/shop", () -> new Shop(itemDAO, inventoryDAO, playerDAO));
+		map.put(SHOP_BUTTON, () -> new Shop(itemDAO, inventoryDAO, playerDAO));
 		map.put(STATS_BUTTON, () -> new Stats());
 
 

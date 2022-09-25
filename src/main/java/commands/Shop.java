@@ -2,6 +2,7 @@ package commands;
 
 import database.dao.CachedItemDAO;
 import database.dao.IItemDAO;
+import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
 import main.*;
 
@@ -9,10 +10,12 @@ public class Shop extends Command{
 
     IItemDAO itemDAO;
     InventoryDAO inventoryDAO;
+	IPlayerDAO playerDAO;
 
-    Shop(IItemDAO itemDAO, InventoryDAO inventoryDAO){
+    Shop(IItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO){
         this.itemDAO = itemDAO;
         this.inventoryDAO = inventoryDAO;
+		this.playerDAO = playerDAO;
     }
 
     @Override
@@ -27,9 +30,9 @@ public class Shop extends Command{
         for(int i = 0; i < shop.getGoodsList().size(); i++){
             prefix = shop.getGoodById(i).getRarity() == ItemRarity.Pet ? "\uD83D\uDC36 Питомец" : "\uD83D\uDECD Товар";
             if(shop.getGoodById(i).isNeedleCost()){
-                sb.append(String.format("%s |`%d`| %s \n",prefix, i, shop.getGoodById(i).getNeedleCostFormat()));
+                sb.append(String.format("%s |`%d`| %s \n", prefix, i, shop.getGoodById(i).getNeedleCostFormat()));
             }else{
-                sb.append(String.format("%s |`%d`| %s \n",prefix, i, shop.getGoodById(i)));
+                sb.append(String.format("%s |`%d`| %s \n", prefix, i, shop.getGoodById(i)));
             }
 
             if(i == 11){
@@ -43,7 +46,7 @@ public class Shop extends Command{
         sb.append("========================\n\n");
 
         sb.append("Выберите номер предмета, который вы хотите купить: \n");
-        player.state = new Shop1(player, player.state.base, host, inventoryDAO, itemDAO);
+        player.state = new Shop1(player, player.state.base, host, inventoryDAO, itemDAO, playerDAO);
         host.sendMsg(player.getId(), sb.toString());
 
     }
@@ -55,12 +58,14 @@ public class Shop extends Command{
     Bot host;
     InventoryDAO inventoryDAO;
     IItemDAO itemDAO;
+	IPlayerDAO playerDAO;
 
-    Shop1(Player player, BaseState base, Bot host, InventoryDAO inventoryDAO, IItemDAO itemDAO){
+    Shop1(Player player, BaseState base, Bot host, InventoryDAO inventoryDAO, IItemDAO itemDAO, IPlayerDAO playerDAO){
         this.player = player;
         this.host = host;
         this.inventoryDAO = inventoryDAO;
         this.itemDAO = itemDAO;
+		this.playerDAO = playerDAO;
     }
 
      @Override
@@ -69,7 +74,7 @@ public class Shop extends Command{
          AllDayShop shop = new AllDayShop(itemDAO);
 
         try{
-
+				
             int thisItemID = Integer.parseInt(arg);
             Item good = shop.getGoodById(thisItemID);
             if(good.isNeedleCost()){
@@ -79,6 +84,9 @@ public class Shop extends Command{
                     player.getInventory().putItem(good);
                     host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
                     player.state = base;
+					//all players notification
+
+
                 }else{
                     throw new Money.MoneyException();
                 }
@@ -89,6 +97,19 @@ public class Shop extends Command{
                     player.getInventory().putItem(good);
                     host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
                     player.state = base;
+
+                    for(Player p : playerDAO.get_all()){
+                        if(p.getId() == 501446180){
+                            if(player.isStatus()){
+                                host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Вау! Игрок `%s`\\[%s] приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), player.getStatus(), good.getEmojiTitle()));
+                            }else{
+                                host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Ого! Игрок `%s` приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), good.getEmojiTitle()));
+                            }
+                        }
+                    }
+
+                }else{
+                    throw new Money.MoneyException();
                 }
             }
 

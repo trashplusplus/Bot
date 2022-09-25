@@ -15,14 +15,17 @@ public class Me extends Command
 	{
 		try
 		{
+			//fix this after dump petPic disappears
 			long player_id = player.getId();
 			SendPhoto photo = new SendPhoto();
 			for(Item i : player.getInventory().getItems()){
 				if(i.getRarity().equals(ItemRarity.Pet)){
 					photo.setPhoto(new InputFile(new File(".\\pics\\petMe.jpg")));
-				}else{
-					photo.setPhoto(new InputFile(new File(".\\pics\\me.jpg")));
+					break;
 				}
+
+				photo.setPhoto(new InputFile(new File(".\\pics\\me.jpg")));
+
 			}
 
 			photo.setChatId(player_id);
