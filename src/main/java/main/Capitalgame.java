@@ -72,6 +72,7 @@ public class Capitalgame {
         counCapi.put("Венесуэлла", "Каракас");
         counCapi.put("Французская Гвиана", "Кайенна");
         counCapi.put("Тринидад и Тобаго", "Порт-оф-Спейн");
+        counCapi.put("Тайвань", "Тайбэй");
 
 
         for(String oneKey: counCapi.keySet()){

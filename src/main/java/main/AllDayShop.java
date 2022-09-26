@@ -13,9 +13,6 @@ public class AllDayShop{
 
     IItemDAO itemDAO;
     private List<Item> statusList = new ArrayList<>();
-    private List<Item> petList = new ArrayList<>();
-    private Map<Item, Integer> itemNeedles = new HashMap<>();
-
 
     public AllDayShop(IItemDAO itemDAO){
         this.itemDAO = itemDAO;
@@ -32,7 +29,6 @@ public class AllDayShop{
         createGood("Мыльные пузыри");
         createDonateGood("Фея", 3);
         createDonateGood("Мишк Фреде", 4);
-
 
 
         createGood("Пчелка");

@@ -50,18 +50,22 @@ class CheckState extends State
 			player.state = base;
 			if (inventory.getInvSize() != 0)
 			{
+				if(anotherPlayer.stats.hideInv <= 0){
 
-				StringBuilder sb = new StringBuilder();
+					StringBuilder sb = new StringBuilder();
 
-				String sb_text = anotherPlayer.isStatus() ? "\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername()
-						+ "` \\[" + anotherPlayer.getStatus() + "]"
-						:"\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`";
+					String sb_text = anotherPlayer.isStatus() ? "\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername()
+							+ "` \\[" + anotherPlayer.getStatus() + "]"
+							:"\uD83D\uDC41 Инвентарь игрока `" + anotherPlayer.getUsername() + "`";
 
-				sb.append(sb_text);
-				sb.append("\n").append(inventory.repr());
-				sb.append("\n\uD83D\uDC41 Всего предметов: ").append(inventory.getInvSize());
+					sb.append(sb_text);
+					sb.append("\n").append(inventory.repr());
+					sb.append("\n\uD83D\uDC41 Всего предметов: ").append(inventory.getInvSize());
 
-				host.sendMsg(player_id, sb.toString());
+					host.sendMsg(player_id, sb.toString());
+				}else{
+					host.sendMsg(player_id, "\uD83D\uDD12 Игрок скрыл свой инвентарь");
+				}
 			}
 			else
 			{

@@ -13,11 +13,12 @@ public class Stats {
     public int coinLosses;
     public int trees;
     public int capitals;
+    public int hideInv;
     public Stats(){
 
     }
 
-    public Stats(int bonus, int coinWins, int coinLosses, int coffee, int tea, int trees, int capitals){
+    public Stats(int bonus, int coinWins, int coinLosses, int coffee, int tea, int trees, int capitals, int hideInv){
         this.coinWins = coinWins;
         this.coinLosses = coinLosses;
         this.coffee = coffee;
@@ -25,6 +26,7 @@ public class Stats {
         this.bonus = bonus;
         this.trees = trees;
         this.capitals = capitals;
+        this.hideInv = hideInv;
     }
 
 

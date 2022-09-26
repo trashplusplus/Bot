@@ -347,7 +347,7 @@ public class PlayerDAO implements IPlayerDAO
 				ps.execute();
 
 				String update_stats =
-						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea, trees, capitals) values (?, ?, ?, ?, ?, ?, ?, ?);";
+						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv) values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 				ps = connection.prepareStatement(update_stats);
 				Stats stats = player.stats;
 				ps.setLong(1, id);
@@ -358,6 +358,7 @@ public class PlayerDAO implements IPlayerDAO
 				ps.setInt(6, stats.tea);
 				ps.setInt(7, stats.trees);
 				ps.setInt(8, stats.capitals);
+				ps.setInt(9, stats.hideInv);
 				ps.execute();
 
 				String update_cooldowns =
@@ -470,7 +471,8 @@ public class PlayerDAO implements IPlayerDAO
 		int tea = rs.getInt("tea");
 		int trees = rs.getInt("trees");
 		int capitals = rs.getInt("capitals");
-		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals);
+		int hideInv = rs.getInt("hideInv");
+		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv);
 		Inventory inventory = inventoryDAO.get(id);
 		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, emojiStatus, host);
 		player.findExpiration = findExpiration;

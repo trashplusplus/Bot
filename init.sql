@@ -161,7 +161,11 @@ insert or ignore into items (name, rarity, cost, emoji) values
     ('Кибо', 'Pet', 8000000,'🦕'),
     ('Кит', 'Pet', 8000000,'🐳'),
     ('Бабочка', 'Pet', 8000000,'🦋'),
-    ('Needle Admin', 'Status', 1337,'Админ');
+    ('UFO', 'Status', 75000,'👽'),
+    ('Nosebleed', 'Status', 45000,'🩸'),
+    ('C4', 'Status', 14000,'🧨'),
+    ('Шина', 'Status', 12000,'🛞'),
+    ('Антидождик', 'Status', 15000,'⛱');
 
 
 create table if not exists inventory
@@ -184,7 +188,8 @@ create table if not exists stats
     coffee integer default 0,
     tea integer default 0,
     trees integer default 0,
-    capitals integer default 0
+    capitals integer default 0,
+    hideInv integer not null default 0
 );
 
 
@@ -193,7 +198,7 @@ create view if not exists player as
     select
         id, name, xp, level, balance, needle, emojiStatus,
         find_expiration as FIND, pockets_expiration as POCKETS,
-        coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals
+        coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals, hideInv
     from
     (
         players

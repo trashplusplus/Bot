@@ -49,9 +49,17 @@ public class Case extends Command
 				}
 			}
 
-			sb.append("В кейсах могут выпадать различные предметы редкости `Gift` и `Rare`\n");
-			sb.append("Кейсы можно скрафтить из `Отвертки` и `Подшипника` в разделе `\uD83E\uDD65 Рецепты`\n");
-			sb.append("Чтобы открыть кейс нужен предмет `\uD83D\uDD11 Ключ от кейса`\n\n");
+			sb.append("В кейсах можно найти предметы редкостей `Rare`, `Gift`, `Status`, а также `Common`\n");
+			sb.append("Кейсы можно скрафтить из `Отвертки` и `Подшипника` в разделе `\uD83E\uDD65 Рецепты`\n\n");
+			//sb.append("Чтобы открыть кейс нужен предмет `\uD83D\uDD11 Ключ от кейса`\n\n");
+			sb.append("Список уникальных статусов, которые можно найти только в кейсах: \n\n");
+			sb.append(itemDAO.get_by_name("Шина").getEmojiTitle() + "\n");
+			sb.append(itemDAO.get_by_name("C4").getEmojiTitle() + "\n");
+			sb.append(itemDAO.get_by_name("Антидождик").getEmojiTitle() + "\n");
+			sb.append(itemDAO.get_by_name("Nosebleed").getEmojiTitle() + "\n");
+			sb.append(itemDAO.get_by_name("UFO").getEmojiTitle() + "\n");
+			sb.append(itemDAO.get_by_name("Лапки").getEmojiTitle() + "\n");
+			sb.append(itemDAO.get_by_name("Вояджер-1").getEmojiTitle() + "\n\n");
 
 			sb.append(String.format("\uD83D\uDCE6 Кейсы: %d\n", casesCounter));
 			sb.append(String.format("\uD83D\uDD11 Ключи: %d\n", keysCounter));

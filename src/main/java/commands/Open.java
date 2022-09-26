@@ -5,6 +5,7 @@ import database.dao.InventoryDAO;
 import database.dao.IItemDAO;
 import main.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,15 @@ public class Open extends Command
 
 		loot = Streams.concat(itemDAO.get_by_rarity(ItemRarity.Gift).stream(), itemDAO.get_by_rarity(ItemRarity.Rare).stream())
 				.collect(Collectors.toList());
+
+		loot.add(itemDAO.get_by_name("Лапки"));
+		loot.add(itemDAO.get_by_name("Вояджер-1"));
+		loot.add(itemDAO.get_by_name("UFO"));
+		loot.add(itemDAO.get_by_name("Nosebleed"));
+		loot.add(itemDAO.get_by_name("C4"));
+		loot.add(itemDAO.get_by_name("Шина"));
+		loot.add(itemDAO.get_by_name("Антидождик"));
+
 		int ranIndex = ran.nextInt(loot.size());
 
 		Inventory inventory = player.getInventory();
