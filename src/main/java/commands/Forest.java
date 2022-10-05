@@ -62,7 +62,7 @@ public class Forest extends Command
 			}
 			else
 			{
-				host.sendMsg(player.getId(), String.format("Для похода в лес вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине", flashlight.getTitle()));
+				host.sendMsg(player.getId(), String.format("Для похода в лес вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине", flashlight.getEmojiTitle()));
 			}
 		}
 		catch (RuntimeException | Money.MoneyException e)

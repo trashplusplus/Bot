@@ -2,10 +2,7 @@ package commands;
 
 import database.dao.InventoryDAO;
 import database.dao.IItemDAO;
-import main.Bot;
-import main.Item;
-import main.Player;
-import main.Roller;
+import main.*;
 
 public class Fish extends Command
 {
@@ -48,7 +45,13 @@ public class Fish extends Command
 					{
 						inventoryDAO.putItem(player.getId(), item.getId());
 						player.getInventory().putItem(item);
-						host.sendMsg(player.getId(), String.format("Вы поймали %s", item));
+
+						if(item.getRarity() == ItemRarity.Rare) {
+							host.sendMsg(player.getId(), String.format("\uD83D\uDC21 Вы поймали %s", item));
+						}else{
+							host.sendMsg(player.getId(), String.format("Вы поймали %s", item));
+						}
+
 						player.addXp(1);
 					}
 					else
@@ -63,7 +66,7 @@ public class Fish extends Command
 			}
 			else
 			{
-				host.sendMsg(player.getId(), String.format("Для похода на рыбалку вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getTitle()));
+				host.sendMsg(player.getId(), String.format("Для похода на рыбалку вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getEmojiTitle()));
 			}
 		}
 		else

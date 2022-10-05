@@ -18,13 +18,18 @@ public class Me extends Command
 			//fix this after dump petPic disappears
 			long player_id = player.getId();
 			SendPhoto photo = new SendPhoto();
-			for(Item i : player.getInventory().getItems()){
-				if(i.getRarity().equals(ItemRarity.Pet)){
-					photo.setPhoto(new InputFile(new File(".\\pics\\petMe.jpg")));
-					break;
-				}
 
+			if(player.getInventory().getItems().isEmpty()){
 				photo.setPhoto(new InputFile(new File(".\\pics\\me.jpg")));
+			}else{
+
+
+				//stream:
+				if(player.getInventory().getItems().stream().anyMatch(item -> item.getRarity() == ItemRarity.Pet)){
+					photo.setPhoto(new InputFile(new File(".\\pics\\petMe.jpg")));
+				}else{
+					photo.setPhoto(new InputFile(new File(".\\pics\\me.jpg")));
+				}
 
 			}
 

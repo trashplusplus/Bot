@@ -27,8 +27,8 @@ public class AllDayShop{
         createGood("Ангельская пыль");
         createGood("Сатурн");
         createGood("Мыльные пузыри");
-        createDonateGood("Фея", 3);
-        createDonateGood("Мишк Фреде", 4);
+        createDonateGood("Фея", 4);
+        createDonateGood("Мишк Фреде", 5);
 
 
         createGood("Пчелка");
@@ -38,8 +38,8 @@ public class AllDayShop{
         createGood("Стелла");
         createGood("Поня");
         createDonateGood("Кибо", 5);
-        createDonateGood("Кит", 5);
-        createDonateGood("Бабочка", 5);
+        createDonateGood("Кит", 10);
+        createDonateGood("Бабочка", 15);
 
         createDonateGood("Ключ от кейса", 1);
 
