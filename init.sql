@@ -165,7 +165,12 @@ insert or ignore into items (name, rarity, cost, emoji) values
     ('Nosebleed', 'Status', 45000,'🩸'),
     ('C4', 'Status', 14000,'🧨'),
     ('Шина', 'Status', 12000,'🛞'),
-    ('Антидождик', 'Status', 15000,'⛱');
+    ('Антидождик', 'Status', 15000,'⛱'),
+    ('Журнал Hello Kitty 1/3', 'Rare', 16100,'🔮'),
+    ('Журнал Hello Kitty 2/3', 'Rare', 15000,'🔮'),
+    ('Журнал Hello Kitty 3/3', 'Rare', 5900,'🔮'),
+    ('Граффити', 'Rare', 9500,'🛢'),
+    ('Статус поддержки Украины', 'Status', 10000,'🇺🇦');
 
 
 create table if not exists inventory

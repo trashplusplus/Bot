@@ -4,6 +4,8 @@ import database.dao.IPlayerDAO;
 import main.Bot;
 import main.Player;
 
+import java.util.ArrayList;
+
 public class Settings extends Command{
 
     IPlayerDAO playerDAO;

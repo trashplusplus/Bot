@@ -26,13 +26,13 @@ public class Sellfish extends Command
 		long id = player.getId();
 
 		LocalTime open = LocalTime.of(10, 0);
-		LocalTime close = LocalTime.of(15, 0);
+		LocalTime close = LocalTime.of(20, 0);
 
 		LocalTime currentTime = LocalTime.now();
 
 		if (currentTime.isBefore(open) || currentTime.isAfter(close))  // wtf?
 		{
-			host.sendMsg(id, "\uD83E\uDD88 Рыбная лавка работает с 10:00 до 15:00\n\nСдавая рыбу в лавке, Вы можете получить " +
+			host.sendMsg(id, "\uD83E\uDD88 Рыбная лавка работает с 10:00 до 20:00\n\nСдавая рыбу в лавке, Вы можете получить " +
 					"в несколько раз больше выручки, чем если бы сдавали ее \uD83D\uDCDE Скупщику");
 		}
 		else
