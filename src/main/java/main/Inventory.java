@@ -60,6 +60,15 @@ public class Inventory
 		return true;
 	}
 
+	public boolean hasPet(){
+		for(Item i: inventory){
+			if(i.getRarity().equals(ItemRarity.Pet)){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void change_capacity()
 	{
 		inventory_capacity = inventory.stream().anyMatch(i -> i.getTitle().equals("Рюкзак")) ? 25 : 20;
@@ -75,6 +84,8 @@ public class Inventory
 			//System.out.printf(", capacity after change: %d \n", inventory.inventory_capacity);
 		}
 	}
+
+
 
 	void on_inventory_updated(Item item)
 	{

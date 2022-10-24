@@ -13,13 +13,15 @@ import java.util.Map;
 import static main.RollerFactory.itemDAO;
 
 public class Touch {
-    Map<String, SendPhoto> magazines = new HashMap<>();
-    Map<Item, String> info = new HashMap<>();
+    private Map<String, SendPhoto> magazines = new HashMap<>();
+    private Map<String, SendPhoto> pets = new HashMap<>();
+    private Map<Item, String> info = new HashMap<>();
 
 
     public Touch(Player player, String anotherPlayer){
         infoInit(player, anotherPlayer);
         magazinesInit(player);
+        petsInit(player);
 
     }
 
@@ -121,6 +123,15 @@ public class Touch {
         newFlavourTxt("Журнал Hello Kitty 3/3", "Вы прочитали журнал Hello Kitty 2/3");
         newFlavourTxt("Статус поддержки Украины", "Статус можно повесить на военный корабль и он явно станет лучше");
         newFlavourTxt("Граффити", "Буквально граффити");
+        //Питомцы
+        newFlavourTxt("Пчелка", "Укуси меня пчела, это же *Пчелка* \uD83D\uDC1D");
+        newFlavourTxt("Корова Бога", "Если Бога нет, то чья это корова? Молоко, конечно, она не несет, но башню кому-то снести может \uD83D\uDC1E");
+        newFlavourTxt("Вамп", "Bro thinks he carti \uD83E\uDD87");
+        newFlavourTxt("Поня", "Ходят слухи, что у *Пони* тысяча лошадиных сил \uD83E\uDD84");
+        newFlavourTxt("Кит", "Очень редкий кит, он плавно течет по волнам, наслаждаясь каждой минутой своего существования \uD83D\uDC33");
+        newFlavourTxt("Кибо", "Очень редкий динозавр *Кибо*, который может делать *Ррр-Ррр* \uD83E\uDD95");
+        newFlavourTxt("Стелла", "Очень редкая паучиха *Стелла*, обычно висит под мостом \uD83D\uDD77");
+        newFlavourTxt("Бабочка", "День бабочек, они все летают по спирали в нашей комнате... \uD83E\uDD8B");
     }
 
     private void magazinesInit(Player player){
@@ -145,12 +156,26 @@ public class Touch {
         magazines.put("Вы прочитали журнал Hello Kitty 3/3", getPhoto(".\\pics\\mag\\magazine_kitty3.jpg", player));
     }
 
+    private void petsInit(Player player){
+        pets.put("Кибо", getPhoto(".\\pics\\pet\\pet_kibo.jpg", player));
+        pets.put("Пчелка", getPhoto(".\\pics\\pet\\pet_bee.jpg", player));
+        pets.put("Поня", getPhoto(".\\pics\\pet\\pet_unicorn.jpg", player));
+        pets.put("Кит", getPhoto(".\\pics\\pet\\pet_whale.jpg", player));
+        pets.put("Бабочка", getPhoto(".\\pics\\pet\\pet_butterfly.jpg", player));
+        pets.put("Бог Смерти", getPhoto(".\\pics\\pet\\pet_godofdeath.jpg", player));
+        pets.put("Вамп", getPhoto(".\\pics\\pet\\pet_bat.jpg", player));
+    }
+
     public Map<Item, String> getInfo(){
         return info;
     }
 
     public Map<String, SendPhoto> getMagazines(){
         return magazines;
+    }
+
+    public Map<String, SendPhoto> getPets(){
+        return pets;
     }
 
     public SendPhoto getMagazinePhoto(String responseText){

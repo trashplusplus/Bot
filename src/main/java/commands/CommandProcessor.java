@@ -46,6 +46,7 @@ public class CommandProcessor
 	public static final String STATUS_BUTTON = "✨ Статусы";
 	public static final String STATS_BUTTON = "\uD83D\uDCCA Статистика";
 	public static final String DUELS_BUTTON = "\uD83C\uDFF9 Дуэли";
+	public static final String MYPET_BUTTON = "\uD83D\uDC36 Мой Питомец";
 	public static final String SETTINGS_BUTTON = "⚙ Настройки";
 	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
@@ -72,6 +73,8 @@ public class CommandProcessor
 		map = new HashMap<>();
 
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
+		map.put("/mypet", () -> new Mypet());
+		map.put(MYPET_BUTTON, () -> new Mypet());
 
 		map.put("/stats", () -> new Stats());
 		map.put("/shop", () -> new Shop(itemDAO, inventoryDAO, playerDAO));
