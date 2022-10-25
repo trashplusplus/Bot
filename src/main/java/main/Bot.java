@@ -180,12 +180,14 @@ public class Bot extends TelegramLongPollingBot
 								player = new Player(id, this, text);
 								player.setUsername(text);
 								playerDAO.put(player);
-								sendMsg(id, "Спасибо за регистрацию, приятной игры :)");
+								sendMsg(id, "\uD83C\uDF3A Спасибо за регистрацию, приятной игры :)");
+								sendMsg(id, "\uD83C\uDF81 Бонус за регистрацию +2 \uD83E\uDDF7 ");
+								playerDAO.get_by_id(player.getId());
 								unregistered_players.remove(id);
 							}
 							else
 							{
-								sendMsg(id, "Это имя уже занято, введите другое:");
+								sendMsg(id, "Это имя уже занято, введите другое");
 							}
 						}
 						else

@@ -55,15 +55,17 @@ public class Open extends Command
 			if (key_idx != -1)  // player has key
 			{
 				Item prize = loot.get(ranIndex);
-				host.sendMsg(player.getId(), String.format("\uD83C\uDF89 Ура! Вам выпал предмет: `%s`", prize.getEmojiTitle()));
-				inventoryDAO.putItem(id, prize.getId());
-				inventory.putItem(prize);
+				inventoryDAO.delete(id, _case.getId(), 1);
+				inventory.removeItem(case_idx);
 
 				inventoryDAO.delete(id, _key.getId(), 1);
 				inventory.removeItem(key_idx);
 
-				inventoryDAO.delete(id, _case.getId(), 1);
-				inventory.removeItem(case_idx);
+
+				inventoryDAO.putItem(id, prize.getId());
+				inventory.putItem(prize);
+
+				host.sendMsg(player.getId(), String.format("\uD83C\uDF89 Ура! Вам выпал предмет: `%s`", prize.getEmojiTitle()));
 			}
 			else
 			{

@@ -119,7 +119,7 @@ public class Touch {
         newFlavourTxt("Петарда", "У вас в руках корсар-1");
         newFlavourTxt("Тетрадка", "У вас в руках крутая тетрадка с машинами и голыми девушками, пруфов не будет, поверьте мне наслово");
         newFlavourTxt("Журнал Hello Kitty 1/3", "Вы прочитали журнал Hello Kitty 1/3");
-        newFlavourTxt("Журнал Hello Kitty 3/3", "Вы прочитали журнал Hello Kitty 2/3");
+        newFlavourTxt("Журнал Hello Kitty 2/3", "Вы прочитали журнал Hello Kitty 2/3");
         newFlavourTxt("Журнал Hello Kitty 3/3", "Вы прочитали журнал Hello Kitty 2/3");
         newFlavourTxt("Статус поддержки Украины", "Статус можно повесить на военный корабль и он явно станет лучше");
         newFlavourTxt("Граффити", "Буквально граффити");
@@ -157,14 +157,19 @@ public class Touch {
     }
 
     private void petsInit(Player player){
-        pets.put("Кибо", getPhoto(".\\pics\\pet\\pet_kibo.jpg", player));
-        pets.put("Пчелка", getPhoto(".\\pics\\pet\\pet_bee.jpg", player));
-        pets.put("Поня", getPhoto(".\\pics\\pet\\pet_unicorn.jpg", player));
-        pets.put("Кит", getPhoto(".\\pics\\pet\\pet_whale.jpg", player));
-        pets.put("Бабочка", getPhoto(".\\pics\\pet\\pet_butterfly.jpg", player));
-        pets.put("Бог Смерти", getPhoto(".\\pics\\pet\\pet_godofdeath.jpg", player));
-        pets.put("Вамп", getPhoto(".\\pics\\pet\\pet_bat.jpg", player));
+        pets.put(getDesc("Кибо"), getPhoto(".\\pics\\pets\\pet_kibo.jpg", player));
+        pets.put(getDesc("Пчелка"), getPhoto(".\\pics\\pets\\pet_bee.jpg", player));
+        pets.put(getDesc("Поня"), getPhoto(".\\pics\\pets\\pet_unicorn.jpg", player));
+        pets.put(getDesc("Кит"), getPhoto(".\\pics\\pets\\pet_whale.jpg", player));
+        pets.put(getDesc("Бабочка"), getPhoto(".\\pics\\pets\\pet_butterfly.jpg", player));
+        pets.put(getDesc("Бог Смерти"), getPhoto(".\\pics\\pets\\pet_godofdeath.jpg", player));
+        pets.put(getDesc("Вамп"), getPhoto(".\\pics\\pets\\pet_bat.jpg", player));
     }
+
+    private String getDesc(String itemName){
+        return info.get(itemName);
+    }
+
 
     public Map<Item, String> getInfo(){
         return info;
@@ -178,7 +183,11 @@ public class Touch {
         return pets;
     }
 
+
     public SendPhoto getMagazinePhoto(String responseText){
         return magazines.get(responseText);
+    }
+    public SendPhoto getPetPhoto(String responseText){
+        return pets.get(responseText);
     }
 }

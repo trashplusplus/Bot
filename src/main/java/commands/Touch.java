@@ -74,6 +74,11 @@ class TouchState extends State
 				if (touch.getMagazines().containsKey(responseText)){
 					host.execute(touch.getMagazinePhoto(responseText));
 					player.getInventory().removeItem(item_id);
+					inventoryDAO.delete(id, item_id, 1);
+
+
+				}else if(touch.getPets().containsKey(responseText)){
+					host.execute(touch.getPetPhoto(responseText));
 				}
 
 				host.sendMsg(id, "\uD83E\uDEA1 " + responseText);
@@ -84,8 +89,9 @@ class TouchState extends State
 				{
 					if (player.findExpiration != null)
 					{
-						inventoryDAO.delete(id, energy.getId(), 1);
 						player.getInventory().removeItem(item_id);
+						inventoryDAO.delete(id, energy.getId(), 1);
+
 						host.sendMsg(id, "⚡ Вы чувствуете прилив сил, время ожидания снижено на 2 минуты");
 						player.findExpiration -= 120L * 1000L;
 					}
