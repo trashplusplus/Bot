@@ -125,13 +125,14 @@ public class Touch {
         newFlavourTxt("Граффити", "Буквально граффити");
         //Питомцы
         newFlavourTxt("Пчелка", "Укуси меня пчела");
+        newFlavourTxt("Бог Смерти", "Если поставить его в статус, то все будут думать что ты Кира");
         newFlavourTxt("Корова Бога", "Если Бога нет, то чья это корова? Молоко, конечно, она не несет, но башню кому-то снести может");
         newFlavourTxt("Вамп", "Bro thinks he carti");
         newFlavourTxt("Поня", "Ходят слухи, что у *Пони* тысяча лошадиных сил");
         newFlavourTxt("Кит", "Очень редкий кит, он плавно течет по волнам, наслаждаясь каждой минутой своего существования");
         newFlavourTxt("Кибо", "Очень редкий динозавр *Кибо*, который может делать *Ррр-Ррр*");
         newFlavourTxt("Стелла", "Очень редкая паучиха *Стелла*, обычно висит под мостом");
-        newFlavourTxt("Бабочка", "День бабочек, они все летают по спирали в нашей комнате...");
+        newFlavourTxt("День бабочек", "День бабочек, они все летают по спирали в нашей комнате...");
         newFlavourTxt("Шина", "С ней не заносит на поворотах");
     }
 
@@ -160,14 +161,16 @@ public class Touch {
     private void petsInit(Player player){
         pets.put(getPetDesc("Пчелка"), getPhoto(".\\pics\\pets\\pet_bee.jpg", player));
         //pets.put(getPetDesc("Корова Бога"), getPhoto(".\\pics\\pets\\pet_bee.jpg", player));
-
-        pets.put(getPetDesc("Кибо"), getPhoto(".\\pics\\pets\\pet_kibo.jpg", player));
-
-        pets.put(getPetDesc("Поня"), getPhoto(".\\pics\\pets\\pet_unicorn.jpg", player));
-        pets.put(getPetDesc("Кит"), getPhoto(".\\pics\\pets\\pet_whale.jpg", player));
-        pets.put(getPetDesc("Бабочка"), getPhoto(".\\pics\\pets\\pet_butterfly.jpg", player));
-
+        pets.put(getPetDesc("Бог Смерти"), getPhoto(".\\pics\\pets\\pet_godofdeath.jpg", player));
         pets.put(getPetDesc("Вамп"), getPhoto(".\\pics\\pets\\pet_bat.jpg", player));
+        //pets.put(getPetDesc("Стелла"), getPhoto(".\\pics\\pets\\pet_bat.jpg", player));
+        pets.put(getPetDesc("Поня"), getPhoto(".\\pics\\pets\\pet_unicorn.jpg", player));
+        pets.put(getPetDesc("Кибо"), getPhoto(".\\pics\\pets\\pet_kibo.jpg", player));
+        pets.put(getPetDesc("Кит"), getPhoto(".\\pics\\pets\\pet_whale.jpg", player));
+        pets.put(getPetDesc("День бабочек"), getPhoto(".\\pics\\pets\\pet_butterfly.jpg", player));
+
+
+
 
     }
 

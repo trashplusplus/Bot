@@ -66,6 +66,10 @@ public class Open extends Command
 		int case_idx = player_items.indexOf(_case);
 		int key_idx = player_items.indexOf(_key);
 
+		List<Item> casesAndKeys = new ArrayList<>();
+		casesAndKeys.add(itemDAO.get_by_name("Кейс Gift"));
+		casesAndKeys.add(itemDAO.get_by_name("Ключ от кейса"));
+
 		if (case_idx != -1)  // player has case
 		{
 			if (key_idx != -1)  // player has key
@@ -87,12 +91,18 @@ public class Open extends Command
 					}
 				}
 
+				for(Item i: casesAndKeys){
+					inventoryDAO.delete(id, i.getId(), 1);
+					inventory.getItems().remove(i);
+				}
+
+				/*
 				inventoryDAO.delete(id, _case.getId(), 1);
 				inventory.removeItem(case_idx);
 
 				inventoryDAO.delete(id, _key.getId(), 1);
 				inventory.removeItem(key_idx);
-
+				*/
 
 				inventoryDAO.putItem(id, prize.getId());
 				inventory.putItem(prize);

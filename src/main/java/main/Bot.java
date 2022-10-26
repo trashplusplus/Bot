@@ -3,6 +3,7 @@ package main;
 import commands.BaseState;
 import commands.Command;
 import commands.CommandProcessor;
+import commands.Info;
 import database.dao.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -186,6 +187,7 @@ public class Bot extends TelegramLongPollingBot
 								sendMsg(id, "\uD83C\uDF81 Бонус за регистрацию +2 \uD83E\uDDF7 ");
 								playerDAO.get_by_id(player.getId()).needle = 2L;
 								unregistered_players.remove(id);
+								new Info().consume(player.host, player);
 							}
 							else
 							{
@@ -201,6 +203,7 @@ public class Bot extends TelegramLongPollingBot
 					{
 						unregistered_players.put(id, System.currentTimeMillis() + unregistered_cache_duration_s);
 						sendMsg(id, "\uD83C\uDF77 Добро пожаловать в Needle\nВведите имя для своего персонажа:");
+
 					}
 				}
 				else
