@@ -39,7 +39,7 @@ public class AllDayShop{
         createGood("Поня");
         createDonateGood("Кибо", 5);
         createDonateGood("Кит", 10);
-        createDonateGood("Бабочка", 15);
+        createDonateGood("День бабочек", 15);
 
         createDonateGood("Ключ от кейса", 1);
 

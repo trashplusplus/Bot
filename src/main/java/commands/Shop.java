@@ -82,9 +82,19 @@ public class Shop extends Command{
                     player.needle -= good.getNeedleCost();
                     inventoryDAO.putItem(id, good.getId());
                     player.getInventory().putItem(good);
-                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
                     player.state = base;
+                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
+
 					//all players notification
+                    for(Player p : playerDAO.get_all()){
+                        if(p.getId() != player.getId()) {
+                            if (player.isStatus()) {
+                                host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Вау! Игрок `%s` \\[%s] приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), player.getStatus(), good.getEmojiTitle()));
+                            } else {
+                                host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Ого! Игрок `%s` приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), good.getEmojiTitle()));
+                            }
+                        }
+                    }
 
 
                 }else{
@@ -95,14 +105,15 @@ public class Shop extends Command{
                     player.getMoney().transfer(-good.getCost().value);
                     inventoryDAO.putItem(id, good.getId());
                     player.getInventory().putItem(good);
-                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
                     player.state = base;
+                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
 
+                    //notification for all players
                     for(Player p : playerDAO.get_all()){
-                        if(p.getId() == 501446180){
-                            if(player.isStatus()){
-                                host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Вау! Игрок `%s`\\[%s] приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), player.getStatus(), good.getEmojiTitle()));
-                            }else{
+                        if(p.getId() != player.getId()) {
+                            if (player.isStatus()) {
+                                host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Вау! Игрок `%s` \\[%s] приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), player.getStatus(), good.getEmojiTitle()));
+                            } else {
                                 host.sendMsg(p.getId(), String.format("\uD83C\uDFEA Ого! Игрок `%s` приобрел себе новый товар %s в Магазине 24/7", player.getUsername(), good.getEmojiTitle()));
                             }
                         }

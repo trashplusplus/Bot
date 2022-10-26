@@ -26,6 +26,8 @@ public class Shopplace extends Command
 		if (player.getInventory().getInvSize() == 0)
 		{
 			host.sendMsg(player_id, "Вы не можете ничего продать, так как Ваш инвентарь пуст");
+		}else if(shopDAO.getAll().size() > 35){
+			host.sendMsg(player.getId(), "\uD83D\uDCE1 В магазине нет доступных слотов, подождите пока один из них освободится \\[`" + shopDAO.getAll().size() + "/35`]");
 		}
 		else
 		{
@@ -55,6 +57,8 @@ class ShopplaceState1 extends State
 		this.shopDAO = shopDAO;
 		this.base = base;
 		hint = "Введите ID предмета, который хотите продать:";
+
+
 	}
 
 	@Override
@@ -63,6 +67,8 @@ class ShopplaceState1 extends State
 		long id = player.getId();
 		try
 		{
+
+
 			int itemID = Integer.parseInt(arg) - 1;
 			Item i = player.getInventory().getItem(itemID);
 			if (i.getTitle().equals("Рюкзак")
@@ -76,6 +82,7 @@ class ShopplaceState1 extends State
 				player.state = new ShopplaceState2(host, player, inventoryDAO, shopDAO, itemID, this, base);
 				host.sendMsg(id, player.state.hint);
 			}
+
 		}
 		catch (NumberFormatException ex)
 		{

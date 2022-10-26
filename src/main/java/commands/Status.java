@@ -64,7 +64,7 @@ class StatusID extends State{
         try{
             int itemID = Integer.parseInt(arg);
             Item statusItem = itemDAO.get_by_name(player.getInventory().getItem(itemID).getTitle());
-
+            player.state = base;
             if(statusItem.getRarity().equals(ItemRarity.Status) || statusItem.getRarity().equals(ItemRarity.Pet)){
                 if(player.status != statusItem){
                     player.status = statusItem;
@@ -75,7 +75,7 @@ class StatusID extends State{
                     host.sendMsg(id, String.format("Статус `%s` деактивирован", statusItem.getEmojiTitle()));
                 }
 
-                //player.state = base;
+
 
             }
 

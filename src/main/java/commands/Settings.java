@@ -5,6 +5,9 @@ import main.Bot;
 import main.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Settings extends Command{
 
@@ -16,6 +19,7 @@ public class Settings extends Command{
     @Override
     public void consume(Bot host, Player player) {
         StringBuilder sb = new StringBuilder("⚙ Меню настроек\n\n");
+
         if(player.stats.hideInv == 0){
             sb.append("\uD83D\uDC40 \\[0] Ваш инвентарь виден другим игрокам\n\n");
         }else{
@@ -50,15 +54,22 @@ class Settings1 extends State{
                 }else{
                     player.stats.hideInv = 0;
                 }
-
-                host.sendMsg(player.getId(), "✅ Параметр успешно изменен");
                 player.state = player.state.base;
+                host.sendMsg(player.getId(), "✅ Параметр успешно изменен");
+
             }else{
                 throw new RuntimeException();
             }
+
         }catch (RuntimeException e){
             e.printStackTrace();
             host.sendMsg(player.getId(), "Введите корректный параметр");
         }
     }
+
+
+
+
 }
+
+

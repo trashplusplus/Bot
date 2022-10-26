@@ -155,7 +155,7 @@ public class CommandProcessor
 		map.put("/case", () -> new Case(itemDAO));
 		map.put(CASE_BUTTON, () -> new Case(itemDAO));
 
-		map.put("/open", () -> new Open(itemDAO, inventoryDAO));
+		map.put("/open", () -> new Open(itemDAO, inventoryDAO, playerDAO));
 
 		map.put("/touch", () -> new Touch(inventoryDAO, itemDAO, playerDAO));
 

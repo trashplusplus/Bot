@@ -3,9 +3,7 @@ package commands;
 import database.dao.IPlayerDAO;
 import database.dao.InventoryDAO;
 import database.dao.IItemDAO;
-import main.Bot;
-import main.Item;
-import main.Player;
+import main.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
@@ -66,22 +64,31 @@ class TouchState extends State
 		{
 			int item_id = Integer.parseInt(arg) - 1;
 			Item energy = itemDAO.get_by_name("Энергетик");
+			Item mag = player.getInventory().getItem(item_id);
 			String responseText = touch.getInfo().get(player.getInventory().getItem(item_id));
 
 			player.state = base;
 			if (responseText != null && !responseText.equals(touch.getInfo().get(energy)))
 			{
+				//картинка журналов
 				if (touch.getMagazines().containsKey(responseText)){
 					host.execute(touch.getMagazinePhoto(responseText));
 					player.getInventory().removeItem(item_id);
-					inventoryDAO.delete(id, item_id, 1);
+					inventoryDAO.delete(id, mag.getId(), 1);
 
+				//fix this
+				}
 
-				}else if(touch.getPets().containsKey(responseText)){
+				if(touch.getPets().containsKey(responseText)){
 					host.execute(touch.getPetPhoto(responseText));
 				}
 
-				host.sendMsg(id, "\uD83E\uDEA1 " + responseText);
+				if(player.getInventory().getItem(item_id).getRarity() == ItemRarity.Pet){
+					host.sendMsg(id, player.getInventory().getItem(item_id).getEmoji() + " " + responseText);
+				}else{
+					host.sendMsg(id, "\uD83E\uDEA1 " + responseText);
+				}
+
 			}
 			else
 			{

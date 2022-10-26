@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -182,7 +184,7 @@ public class Bot extends TelegramLongPollingBot
 								playerDAO.put(player);
 								sendMsg(id, "\uD83C\uDF3A Спасибо за регистрацию, приятной игры :)");
 								sendMsg(id, "\uD83C\uDF81 Бонус за регистрацию +2 \uD83E\uDDF7 ");
-								playerDAO.get_by_id(player.getId());
+								playerDAO.get_by_id(player.getId()).needle = 2L;
 								unregistered_players.remove(id);
 							}
 							else
@@ -283,13 +285,16 @@ public class Bot extends TelegramLongPollingBot
 
 	public void dump_database()
 	{
+		DateFormat sdf = new SimpleDateFormat("HH:mm");
+
+
 		System.out.println("Dump database fired");
 		if (playerDAO instanceof CachedPlayerDAO)
 		{
 			CachedPlayerDAO cpd = (CachedPlayerDAO) playerDAO;
 			cpd.dump();
 			System.out.printf("Active players:\n%s\n", cpd.cached_players().stream().map(Player::getUsername).collect(Collectors.toList()));
-			System.out.println("Database dumped");
+			System.out.println(String.format("Database dumped [" + sdf.format(new Date())) + "]");
 		}
 	}
 

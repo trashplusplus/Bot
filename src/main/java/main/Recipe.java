@@ -19,6 +19,7 @@ public class Recipe
 		createRecipe("Статусная Аянами", "Плюшевая Аянами Рей", "Whirr - Feels Like You", "Рецепт Статусной Аянами");
 		createRecipe("Граффити", "Баллончик с краской", "Текст песни 'FF'");
 		createRecipe("Статус поддержки Украины", "Синий браслет", "Желтый браслет");
+
 	}
 
 	public void createRecipe(String resultProduct, String... ingredients)
