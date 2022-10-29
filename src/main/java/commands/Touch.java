@@ -73,15 +73,19 @@ class TouchState extends State
 				//картинка журналов
 				if (touch.getMagazines().containsKey(responseText)){
 					host.execute(touch.getMagazinePhoto(responseText));
-					player.getInventory().removeItem(item_id);
 					inventoryDAO.delete(id, mag.getId(), 1);
+					player.getInventory().removeItem(item_id);
+					host.sendMsg(id, "\uD83E\uDEA1 " + responseText);
+					return;
+					//нужен return, потому что когда мы удаляем журнал, idшники смещаются
+					//и после responseText вылетает IndexOutOfBoundsException
 
 				//fix this
-				}
-
-				if(touch.getPets().containsKey(responseText)){
+				}else if(touch.getPets().containsKey(responseText)){
 					host.execute(touch.getPetPhoto(responseText));
 				}
+
+
 
 				if(player.getInventory().getItem(item_id).getRarity() == ItemRarity.Pet){
 					host.sendMsg(id, player.getInventory().getItem(item_id).getEmoji() + " " + responseText);

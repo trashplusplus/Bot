@@ -168,7 +168,7 @@ public class Touch {
         pets.put(getPetDesc("Кибо"), getPhoto(".\\pics\\pets\\pet_kibo.jpg", player));
         pets.put(getPetDesc("Кит"), getPhoto(".\\pics\\pets\\pet_whale.jpg", player));
         pets.put(getPetDesc("День бабочек"), getPhoto(".\\pics\\pets\\pet_butterfly.jpg", player));
-
+        System.out.println();
 
 
 
@@ -176,7 +176,10 @@ public class Touch {
 
     private String getPetDesc(String itemName){
         return info.get(itemDAO.get_by_name(itemName));
-
+        /**
+         * Returns description of any item from info list
+         * @return zhopa zhopa
+         */
     }
 
 

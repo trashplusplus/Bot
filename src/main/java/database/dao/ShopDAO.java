@@ -22,6 +22,7 @@ public class ShopDAO
 	Bot host;
 
 	private static final long shopItemDuration = 24L * 60L * 60L * 1000L;
+	//private static final long shopItemDuration = 10000L;
 
 	public ShopDAO(Connection connection, Bot host, IPlayerDAO playerDAO)
 	{

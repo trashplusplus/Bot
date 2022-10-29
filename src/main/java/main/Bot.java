@@ -269,9 +269,10 @@ public class Bot extends TelegramLongPollingBot
 		for (ShopItem shopItem : shopItems)
 		{
 			Player seller = shopItem.getSeller();
-			long seller_id = seller.getId();
-			inventoryDAO.putItem(seller_id, shopItem.getItem().getId());
-			sendMsg(seller_id, String.format("Ваш товар %sбыл снят с продажи, предмет добавлен в ваш инвентарь", shopItem));
+			long id = seller.getId();
+			inventoryDAO.putItem(id, shopItem.getItem().getId());
+			seller.getInventory().putItem(shopItem.getItem());
+			sendMsg(id, String.format("Ваш товар %sбыл снят с продажи, предмет добавлен в ваш инвентарь", shopItem));
 		}
 	}
 
