@@ -26,23 +26,37 @@ public class Stats extends Command{
         //create right declension depend on value of variables 31.10.22
         StringBuilder sb = new StringBuilder("\uD83C\uDF38\uD83C\uDF38\uD83C\uDF38\n\n");
         sb.append("*Общая статистика*\n");
-        sb.append("\uD83C\uDF3F Выпито кружек чая: *" + player.stats.tea + "* раз\n");
-        sb.append(   "☕️ Выпито кружек кофе: *" + player.stats.coffee + "* раз\n");
-        sb.append("\uD83C\uDF31 Посажено деревьев: *" + player.stats.trees + "* шт.\n");
-        sb.append("\uD83D\uDD2E Прочитано журналов: *" + player.stats.magazines + "* шт.\n");
-        sb.append(randomEmoji + " Отгадано столиц: *" + player.stats.capitals + "* раз\n\n");
+        sb.append("\uD83C\uDF3F Выпито кружек чая: *" + declension(player.stats.tea) + "*\n");
+        sb.append(   "☕️ Выпито кружек кофе: *" + declension(player.stats.coffee) + "*\n");
+        sb.append("\uD83C\uDF31 Посажено деревьев: *" + declension2(player.stats.trees) + "*\n");
+        sb.append("\uD83D\uDD2E Прочитано журналов: *" + declension2(player.stats.magazines) + "*\n");
+        sb.append(randomEmoji + " Отгадано столиц: *" + declension(player.stats.capitals) + "*\n\n");
 
         sb.append("*Предметы*\n");
-        sb.append("\uD83D\uDC8E Редкие предметы: *" + player.stats.findCounter + "* шт.\n");
-        sb.append("\uD83D\uDC5E Найдено в грязи: *" + player.stats.mudCounter + "*  шт.\n");
-        sb.append("\uD83D\uDD26 Всего поисков в грязи: *" + player.stats.totalMud + "* раз\n");
-        sb.append("\uD83E\uDD65 Изготовлено предметов: *" + player.stats.craftCounter + "* раз\n\n");
+        sb.append("\uD83D\uDC8E Редкие предметы: *" + declension2(player.stats.findCounter) + "*\n");
+        sb.append("\uD83D\uDC5E Найдено в грязи: *" + declension2(player.stats.mudCounter) + "*\n");
+        sb.append("\uD83D\uDD26 Всего поисков в грязи: *" + declension(player.stats.totalMud) + "*\n");
+        sb.append("\uD83E\uDD65 Изготовлено предметов: *" + declension(player.stats.craftCounter) + "*\n\n");
 
         sb.append("*Монетка*\n");
-        sb.append("\uD83C\uDFC6 Победы в монетке: *" + player.stats.coinWins + "* раз\n");
-        sb.append("\uD83D\uDCC9 Проигрыши в монетке: *" + player.stats.coinLosses + "* раз\n");
+        sb.append("\uD83C\uDFC6 Победы в монетке: *" + declension(player.stats.coinWins) + "*\n");
+        sb.append("\uD83D\uDCC9 Проигрыши в монетке: *" + declension(player.stats.coinLosses) + "*\n");
         sb.append("\uD83D\uDCB0 Общий выигрыш: *" + new Money(player.stats.totalWonMoney) + "*\n");
         sb.append("❌ Общий проигрыш: *" + new Money(player.stats.totalLostMoney) + "*\n");
         host.sendMsg(player.getId(), sb.toString());
+    }
+
+    private static String declension(int num){
+        boolean bool1 = num % 10 == 1 && num % 100 != 11 || num == 0;
+        boolean bool2 = num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20);
+        return bool1 || !bool2 ? num + " раз" : num + " раза";
+    }
+
+    private static String declension2(int num){
+        boolean bool1 = num % 10 == 1 && num % 100 != 11;
+        boolean bool2 = num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20);
+        return bool1 ? num + " штука" : bool2 ? num + " штук" : num + " штуки";
+
+
     }
 }
