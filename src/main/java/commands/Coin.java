@@ -53,15 +53,14 @@ class CoinState extends State
 		try
 		{
 			int i_dash = Integer.parseInt(dash);
-			Random r = new Random();
-			int ran = r.nextInt(text.size());
+			String randomFlavourText = text.get(new Random().nextInt(text.size()));
 
 			if (i_dash > 0 && i_dash <= player.balance.value)
 			{
 
 				host.sendMsg(player_id, "\uD83C\uDFB0 Ваша ставка: " + new Money(i_dash));
 
-				host.sendMsg(player_id, text.get(ran));
+				host.sendMsg(player_id, randomFlavourText);
 
 				STPE.stpe.schedule(() -> coin_dash_callback(player, i_dash), 2L, TimeUnit.SECONDS);
 			}
@@ -85,6 +84,7 @@ class CoinState extends State
 		{
 			host.sendMsg(player_id, "\uD83D\uDCB0 Вы выиграли " + new Money(bid));
 			coinGame.coinWin(player, bid);
+			player.getStats().totalWonMoney += bid;
 			player.addXp(1);
 			player.stats.coinWins++;
 		}
@@ -92,7 +92,7 @@ class CoinState extends State
 		{
 			host.sendMsg(player_id, "❌ Вы проиграли " + new Money(bid));
 			coinGame.coinLose(player, bid);
-
+			player.getStats().totalLostMoney += bid;
 			player.stats.coinLosses++;
 		}
 

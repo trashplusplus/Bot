@@ -45,7 +45,7 @@ public class Forest extends Command
 						player.addXp(2);
 					}
 					player.stats.trees++;  // todo this is shit ??
-					if (player.stats.trees == 73)
+					if (player.stats.trees == 75)
 					{
 						player.ach_treeHard();
 						Item treeStatus = itemDAO.get_by_name("Форрест Гамп");

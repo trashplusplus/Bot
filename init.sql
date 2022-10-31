@@ -193,7 +193,14 @@ create table if not exists stats
     tea integer default 0,
     trees integer default 0,
     capitals integer default 0,
-    hideInv integer not null default 0
+    hideInv integer not null default 0,
+    magazines integer default 0,
+    totalWonMoney integer default 0,
+    totalLostMoney integer default 0,
+    findCounter integer default 0,
+    mudCounter integer default 0,
+    totalMud integer default 0,
+    craftCounter integer default 0
 );
 
 
@@ -202,7 +209,8 @@ create view if not exists player as
     select
         id, name, xp, level, balance, needle, emojiStatus,
         find_expiration as FIND, pockets_expiration as POCKETS,
-        coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals, hideInv
+        coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals,
+        hideInv, magazines, totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter
     from
     (
         players

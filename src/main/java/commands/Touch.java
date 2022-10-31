@@ -76,6 +76,7 @@ class TouchState extends State
 					inventoryDAO.delete(id, mag.getId(), 1);
 					player.getInventory().removeItem(item_id);
 					host.sendMsg(id, "\uD83E\uDEA1 " + responseText);
+					player.stats.magazines++;
 					return;
 					//нужен return, потому что когда мы удаляем журнал, idшники смещаются
 					//и после responseText вылетает IndexOutOfBoundsException

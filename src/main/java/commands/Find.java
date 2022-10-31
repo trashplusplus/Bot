@@ -47,7 +47,9 @@ public class Find extends Command
 				inventory.putItem(new_item);
 				host.sendMsg(player_id, String.format("\uD83C\uDF81\t Вы нашли: %s", new_item));
 				player.addXp(5);
+				player.stats.findCounter++;
 				player.findExpiration = now_ts + host.findCooldown;
+
 			}
 		}
 		else

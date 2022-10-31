@@ -347,7 +347,9 @@ public class PlayerDAO implements IPlayerDAO
 				ps.execute();
 
 				String update_stats =
-						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv) values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea," +
+								" trees, capitals, hideInv, magazines, totalWonMoney, totalLostMoney," +
+								" findCounter, mudCounter, totalMud, craftCounter) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 				ps = connection.prepareStatement(update_stats);
 				Stats stats = player.stats;
 				ps.setLong(1, id);
@@ -359,6 +361,13 @@ public class PlayerDAO implements IPlayerDAO
 				ps.setInt(7, stats.trees);
 				ps.setInt(8, stats.capitals);
 				ps.setInt(9, stats.hideInv);
+				ps.setInt(10, stats.magazines);
+				ps.setInt(11, stats.totalWonMoney);
+				ps.setInt(12, stats.totalLostMoney);
+				ps.setInt(13, stats.findCounter);
+				ps.setInt(14, stats.mudCounter);
+				ps.setInt(15, stats.totalMud);
+				ps.setInt(16, stats.craftCounter);
 				ps.execute();
 
 				String update_cooldowns =
@@ -472,7 +481,15 @@ public class PlayerDAO implements IPlayerDAO
 		int trees = rs.getInt("trees");
 		int capitals = rs.getInt("capitals");
 		int hideInv = rs.getInt("hideInv");
-		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv);
+		int magazines = rs.getInt("magazines");
+		int totalWonMoney = rs.getInt("totalWonMoney");
+		int totalLostMoney = rs.getInt("totalLostMoney");
+		int findCounter = rs.getInt("findCounter");
+		int mudCounter = rs.getInt("mudCounter");
+		int totalMud = rs.getInt("totalMud");
+		int craftCounter = rs.getInt("craftCounter");
+		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv, magazines,
+				totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter);
 		Inventory inventory = inventoryDAO.get(id);
 		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, emojiStatus, host);
 		player.findExpiration = findExpiration;

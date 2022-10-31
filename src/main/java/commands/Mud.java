@@ -32,11 +32,13 @@ public class Mud extends Command
 				inventoryDAO.putItem(id, item.getId());
 				inventory.putItem(item);
 				host.sendMsg(id, String.format("Вы нашли в грязи %s", item));
+				player.stats.mudCounter++;
 				player.addXp(1);
 			}
 			else
 			{
 				host.sendMsg(id, "Вы ничего не нашли");
+				player.stats.totalMud++;
 			}
 		}
 		else
