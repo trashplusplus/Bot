@@ -83,7 +83,7 @@ public class Shop extends Command{
                     inventoryDAO.putItem(id, good.getId());
                     player.getInventory().putItem(good);
                     player.state = base;
-                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s` Хорошего дня", good.getEmojiTitle()));
+                    host.sendMsg(id, String.format("\uD83C\uDFEA Ура! Вы успешно приобрели `%s`. Хорошего дня!", good.getEmojiTitle()));
 
 					//all players notification
                     for(Player p : playerDAO.get_all()){

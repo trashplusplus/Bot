@@ -37,7 +37,7 @@ public class Shopshow extends Command
 			else
 			{
 				StringBuilder sb = new StringBuilder("\uD83D\uDCE1 Новости\n\nОфициальный телеграм канал: *@needlechat*\n\n");
-				sb.append(String.format("\uD83E\uDDE6 В магазине всего %d товаров\n\n", shopDAO.getAll().size()));
+				sb.append(String.format("\uD83E\uDDE6 Всего товаров: *%d*\n\n", shopDAO.getAll().size()));
 				sb.append("\uD83D\uDC5C Все предметы в магазине:\n\n");
 				for (ShopItem i : shopDAO.getAll())
 				{
