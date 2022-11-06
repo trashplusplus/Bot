@@ -88,7 +88,7 @@ public class Bot extends TelegramLongPollingBot
 				.last(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, STATS_BUTTON, SETTINGS_BUTTON);
 		back_cancel_paginator = new KeyboardPaginator().collect(BACK_BUTTON, CANCEL_BUTTON);
 		cancel_paginator = new KeyboardPaginator().collect(CANCEL_BUTTON);
-
+		//here
 		capitalgame.init();
 	}
 
