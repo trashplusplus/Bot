@@ -100,7 +100,12 @@ class PayState2 extends State
 				invoker.balance.transfer(-cost);
 				acceptor.balance.transfer(cost);
 				invoker.state = invoker.state.base;
-				host.sendMsg(acceptor.getId(), String.format("\uD83D\uDCB3 Вам начислено %s | Отправитель: `%s` ", new Money(cost), invoker.getUsername()));
+				if(invoker.isStatus()){
+					host.sendMsg(acceptor.getId(), String.format("\uD83D\uDCB3 Вам начислено %s | Отправитель: `%s` \\[%s] ", new Money(cost), invoker.getUsername(), invoker.getStatus()));
+				}else{
+					host.sendMsg(acceptor.getId(), String.format("\uD83D\uDCB3 Вам начислено %s | Отправитель: `%s` ", new Money(cost), invoker.getUsername()));
+				}
+
 				host.sendMsg(invoker.getId(), "✅ Деньги отправлены");
 			}
 		}
