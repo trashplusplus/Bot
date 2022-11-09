@@ -102,6 +102,10 @@ public class Player
 		return status.getEmoji();
 	}
 
+	public Item getStatusItem(){
+		return status;
+	}
+
 	public void levelUp()
 	{
 		while (xp > 10 * level)

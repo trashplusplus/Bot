@@ -84,6 +84,7 @@ public class Capitalgame {
     public static String capitalizeString(String string) {
         char[] chars = string.toLowerCase().toCharArray();
         boolean found = false;
+        //исправляет регистр названий на те, которые используются в мапе
         for (int i = 0; i < chars.length; i++) {
             if (!found && Character.isLetter(chars[i])) {
                 chars[i] = Character.toUpperCase(chars[i]);

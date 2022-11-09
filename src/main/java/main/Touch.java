@@ -16,13 +16,21 @@ public class Touch {
     private Map<String, SendPhoto> magazines = new HashMap<>();
     private Map<String, SendPhoto> pets = new HashMap<>();
     private Map<Item, String> info = new HashMap<>();
+    private String anotherPlayer;
 
 
     public Touch(Player player, String anotherPlayer){
-        infoInit(player, anotherPlayer);
+        this.anotherPlayer = anotherPlayer;
+        infoInit(player, this.anotherPlayer);
         magazinesInit(player);
         petsInit(player);
 
+    }
+    //pets constructor
+    public Touch(Player player){
+        infoInit(player, "*пасхалка*");
+       // magazinesInit(player);
+        petsInit(player);
     }
 
     private SendPhoto getPhoto(String path, Player player){
@@ -95,13 +103,13 @@ public class Touch {
         newFlavourTxt("Футболка 'Drain'", "Если эта футболка у Вас, получается `" + anotherPlayer + "` сейчас без футболки?");
         newFlavourTxt("Бусы", "Красивые бусы, их можно продать скупщику");
         newFlavourTxt("Саженец", "Саженцы можно посадить в *Лесу* и получить за это опыт или деньги");
-        newFlavourTxt("Подшипник", "Вы искачкали руки в мазуте");
+        newFlavourTxt("Подшипник", "Вы испачкали руки в мазуте");
         newFlavourTxt("Часы", String.format("На часах %s ", sdf.format(new Date())));
         newFlavourTxt("Фея", "Карманная фея, ну такого `" + anotherPlayer + "` точно не видел");
         newFlavourTxt("Космический журнал", "Вы рассматриваете космический журнал");
         newFlavourTxt("Журнал Playboy 1/2", "Вы рассматриваете редкий журнал Playboy 1/2");
         newFlavourTxt("Журнал Playboy 2/2", "Вы рассматриваете редкий журнал Playboy 2/2");
-        newFlavourTxt("Журнал 'Стальной алхимик'", "Вы держите журнал по Стальному Алхимику");
+        newFlavourTxt("Журнал 'Стальной алхимик'", "Вы прочитали журнал, но так и не нашли филосовский камень");
         newFlavourTxt("Журнал Vogue 1/5", "Вы рассматриваете редкий журнал Vogue 1/5");
         newFlavourTxt("Журнал Vogue 2/5", "Вы рассматриваете журнал Vogue 2/5");
         newFlavourTxt("Журнал Vogue 3/5", "Вы рассматриваете журнал Vogue 3/5");
@@ -133,6 +141,7 @@ public class Touch {
         newFlavourTxt("Кибо", "Очень редкий динозавр *Кибо*, который может делать *Ррр-Ррр*");
         newFlavourTxt("Стелла", "Очень редкая паучиха *Стелла*, обычно висит под мостом");
         newFlavourTxt("День бабочек", "День бабочек, они все летают по спирали в нашей комнате...");
+
         newFlavourTxt("Шина", "С ней не заносит на поворотах");
     }
 
@@ -141,7 +150,7 @@ public class Touch {
         magazines.put("Вы рассматриваете винтажный журнал", getPhoto(".\\pics\\mag\\magazine_vintage.jpg", player));
         magazines.put("Вы рассматриваете космический журнал", getPhoto(".\\pics\\mag\\magazine_space.jpg", player));
         magazines.put("Продолжение следует", getPhoto(".\\pics\\mag\\magazine_playboy2.jpg", player));
-        magazines.put("Бегом искать филосовский камень", getPhoto(".\\pics\\mag\\magazine_fullmetal.jpg", player));
+        magazines.put("Вы прочитали журнал, но так и не нашли филосовский камень", getPhoto(".\\pics\\mag\\magazine_fullmetal.jpg", player));
         magazines.put("Вы рассматриваете редкий журнал Vogue 1/5", getPhoto(".\\pics\\mag\\magazine_fashion.jpg", player));
         magazines.put("Вы рассматриваете журнал Vogue 2/5", getPhoto(".\\pics\\mag\\magazine_fashion2.jpg", player));
         magazines.put("Вы рассматриваете журнал Vogue 3/5", getPhoto(".\\pics\\mag\\magazine_fashion3.jpg", player));
@@ -168,7 +177,7 @@ public class Touch {
         pets.put(getPetDesc("Кибо"), getPhoto(".\\pics\\pets\\pet_kibo.jpg", player));
         pets.put(getPetDesc("Кит"), getPhoto(".\\pics\\pets\\pet_whale.jpg", player));
         pets.put(getPetDesc("День бабочек"), getPhoto(".\\pics\\pets\\pet_butterfly.jpg", player));
-        System.out.println();
+
 
 
 
@@ -178,8 +187,11 @@ public class Touch {
         return info.get(itemDAO.get_by_name(itemName));
         /**
          * Returns description of any item from info list
-         * @return zhopa zhopa
          */
+    }
+
+    private String getMagDesc(String itemName){
+        return info.get(itemDAO.get_by_name(itemName));
     }
 
 

@@ -1,6 +1,7 @@
 package commands;
 
 import database.dao.*;
+import main.ActiveDuelPairs;
 import main.Item;
 import main.Roller;
 
@@ -59,7 +60,7 @@ public class CommandProcessor
 
 	public Map<String, Supplier<Command>> map;
 
-	public CommandProcessor(IItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame)
+	public CommandProcessor(IItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame, ActiveDuelPairs activeDuelPairs)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
@@ -73,8 +74,8 @@ public class CommandProcessor
 		map = new HashMap<>();
 
 		map.put("/give", () -> new Give(itemDAO, inventoryDAO));
-		map.put("/mypet", () -> new Mypet());
-		map.put(MYPET_BUTTON, () -> new Mypet());
+		map.put("/mypet", () -> new Mypet(itemDAO));
+		map.put(MYPET_BUTTON, () -> new Mypet(itemDAO));
 
 		map.put("/stats", () -> new Stats());
 		map.put("/shop", () -> new Shop(itemDAO, inventoryDAO, playerDAO));
@@ -83,6 +84,9 @@ public class CommandProcessor
 
 		map.put("/settings", () -> new Settings(playerDAO));
 		map.put(SETTINGS_BUTTON, () -> new Settings(playerDAO));
+		map.put("/duel", () -> new Duel(itemDAO, playerDAO,activeDuelPairs));
+		map.put("/accept", () -> new Accept(playerDAO,activeDuelPairs));
+		map.put("/decline", () -> new Decline(activeDuelPairs));
 
 
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));

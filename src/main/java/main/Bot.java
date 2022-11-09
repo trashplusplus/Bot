@@ -34,6 +34,9 @@ public class Bot extends TelegramLongPollingBot
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
 
+	//Для игры в дуэль
+	ActiveDuelPairs activeDuelPairs;
+
 	private static final Roller<Item> mudRoller = RollerFactory.getMudRoller(new Random());
 	private static final Roller<Integer> moneyRoller = RollerFactory.getMoneyRoller(new Random());
 	private static final Roller<Item> findRoller = RollerFactory.getFindRoller(new Random());
@@ -73,8 +76,9 @@ public class Bot extends TelegramLongPollingBot
 		shopDAO = new ShopDAO(connection, this, playerDAO);
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, this);
+		activeDuelPairs = new ActiveDuelPairs();
 		token = init_token();
-		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller, capitalgame);
+		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller, capitalgame, activeDuelPairs);
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
@@ -299,6 +303,8 @@ public class Bot extends TelegramLongPollingBot
 			cpd.dump();
 			System.out.printf("Active players:\n%s\n", cpd.cached_players().stream().map(Player::getUsername).collect(Collectors.toList()));
 			System.out.println(String.format("Database dumped [" + sdf.format(new Date())) + "]");
+			System.out.println(String.format("ActiveDuelPairs dumped [" + sdf.format(new Date())) + "]");
+			activeDuelPairs.dropAllPairs();
 		}
 	}
 
