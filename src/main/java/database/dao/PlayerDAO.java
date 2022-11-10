@@ -349,7 +349,7 @@ public class PlayerDAO implements IPlayerDAO
 				String update_stats =
 						"insert or replace into stats (player_id, bonus, coinWins, coinLosses, coffee, tea," +
 								" trees, capitals, hideInv, magazines, totalWonMoney, totalLostMoney," +
-								" findCounter, mudCounter, totalMud, craftCounter) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+								" findCounter, mudCounter, totalMud, craftCounter, duelWin, duelLose) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 				ps = connection.prepareStatement(update_stats);
 				Stats stats = player.stats;
 				ps.setLong(1, id);
@@ -368,6 +368,8 @@ public class PlayerDAO implements IPlayerDAO
 				ps.setInt(14, stats.mudCounter);
 				ps.setInt(15, stats.totalMud);
 				ps.setInt(16, stats.craftCounter);
+				ps.setInt(17, stats.duelWin);
+				ps.setInt(18, stats.duelLose);
 				ps.execute();
 
 				String update_cooldowns =
@@ -488,8 +490,10 @@ public class PlayerDAO implements IPlayerDAO
 		int mudCounter = rs.getInt("mudCounter");
 		int totalMud = rs.getInt("totalMud");
 		int craftCounter = rs.getInt("craftCounter");
+		int duelWin = rs.getInt("duelWin");
+		int duelLose = rs.getInt("duelLose");
 		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv, magazines,
-				totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter);
+				totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter, duelWin, duelLose);
 		Inventory inventory = inventoryDAO.get(id);
 		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, emojiStatus, host);
 		player.findExpiration = findExpiration;

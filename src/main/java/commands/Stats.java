@@ -42,7 +42,13 @@ public class Stats extends Command{
         sb.append("\uD83C\uDFC6 Победы в монетке: *" + declension(player.stats.coinWins) + "*\n");
         sb.append("\uD83D\uDCC9 Проигрыши в монетке: *" + declension(player.stats.coinLosses) + "*\n");
         sb.append("\uD83D\uDCB0 Общий выигрыш: *" + new Money(player.stats.totalWonMoney) + "*\n");
-        sb.append("❌ Общий проигрыш: *" + new Money(player.stats.totalLostMoney) + "*\n");
+        sb.append("❌ Общий проигрыш: *" + new Money(player.stats.totalLostMoney) + "*\n\n");
+
+        sb.append("*Дуэли*\n");
+        sb.append("\uD83C\uDFF9 Побед в дуэлях: *" + declension(player.stats.duelWin) + "*\n");
+        sb.append("\uD83D\uDC80 Проигрышей в дуэлях: *" + declension(player.stats.duelLose) + "*\n\n");
+
+
         host.sendMsg(player.getId(), sb.toString());
     }
 

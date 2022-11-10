@@ -23,12 +23,16 @@ public class Stats {
     public int totalMud;
     public int craftCounter;
 
+    public int duelWin;
+    public int duelLose;
+
     public Stats(){
 
     }
 
     public Stats(int bonus, int coinWins, int coinLosses, int coffee, int tea, int trees, int capitals, int hideInv, int magazines,
-    int totalWonMoney, int totalLostMoney, int findCounter, int mudCounter, int totalMud, int craftCounter){
+    int totalWonMoney, int totalLostMoney, int findCounter, int mudCounter, int totalMud, int craftCounter,
+    int duelWin, int duelLose){
         this.coinWins = coinWins;
         this.coinLosses = coinLosses;
         this.coffee = coffee;
@@ -44,6 +48,8 @@ public class Stats {
         this.mudCounter = mudCounter;
         this.totalMud = totalMud;
         this.craftCounter = craftCounter;
+        this.duelWin = duelWin;
+        this.duelLose = duelLose;
     }
 
 

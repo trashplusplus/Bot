@@ -85,7 +85,10 @@ public class CommandProcessor
 		map.put("/settings", () -> new Settings(playerDAO));
 		map.put(SETTINGS_BUTTON, () -> new Settings(playerDAO));
 		map.put("/duel", () -> new Duel(itemDAO, playerDAO,activeDuelPairs));
-		map.put("/accept", () -> new Accept(playerDAO,activeDuelPairs));
+		map.put(DUELS_BUTTON, () -> new Duel(itemDAO, playerDAO,activeDuelPairs));
+
+		//обернуть бы их в кнопки
+		map.put("/accept", () -> new Accept(inventoryDAO,playerDAO,activeDuelPairs));
 		map.put("/decline", () -> new Decline(activeDuelPairs));
 
 

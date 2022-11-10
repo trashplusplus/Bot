@@ -48,6 +48,22 @@ public class Open extends Command
 		loot.add(itemDAO.get_by_name("C4"));
 		loot.add(itemDAO.get_by_name("Шина"));
 		loot.add(itemDAO.get_by_name("Антидождик"));
+		loot.add(itemDAO.get_by_name("Записка от разработчка №101122"));
+
+		loot.add(itemDAO.get_by_name("Веревка"));
+		loot.add(itemDAO.get_by_name("Сомбреро"));
+		loot.add(itemDAO.get_by_name("Лопата"));
+		loot.add(itemDAO.get_by_name("Тег"));
+		loot.add(itemDAO.get_by_name("Бутылка"));
+		loot.add(itemDAO.get_by_name("Камень"));
+		loot.add(itemDAO.get_by_name("Удочка"));
+		loot.add(itemDAO.get_by_name("Ожерелье"));
+		loot.add(itemDAO.get_by_name("Рюкзак"));
+		loot.add(itemDAO.get_by_name("Банан"));
+		loot.add(itemDAO.get_by_name("Ручка"));
+		loot.add(itemDAO.get_by_name("Баллончик с краской"));
+		loot.add(itemDAO.get_by_name("Синий браслет"));
+		loot.add(itemDAO.get_by_name("Желтый браслет"));
 
 		//for compare
 

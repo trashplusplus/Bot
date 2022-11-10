@@ -170,7 +170,12 @@ insert or ignore into items (name, rarity, cost, emoji) values
     ('Журнал Hello Kitty 2/3', 'Rare', 15000,'🔮'),
     ('Журнал Hello Kitty 3/3', 'Rare', 5900,'🔮'),
     ('Граффити', 'Rare', 9500,'🛢'),
-    ('Статус поддержки Украины', 'Status', 10000,'🇺🇦');
+    ('Статус поддержки Украины', 'Status', 10000,'🇺🇦'),
+    ('Записка от разработчика №101122', 'Status', 10000,'📄'),
+    ('Одеяло', 'Common', 275,''),
+    ('Варежка', 'Cheap', 150,''),
+    ('Варежки', 'Common', 300,''),
+    ('Урановый стержень', 'Cheap', 235,'');
 
 create table if not exists inventory
 (
@@ -200,7 +205,9 @@ create table if not exists stats
     findCounter integer default 0,
     mudCounter integer default 0,
     totalMud integer default 0,
-    craftCounter integer default 0
+    craftCounter integer default 0,
+    duelWin integer default 0,
+    duelLose integer default 0
 );
 
 
@@ -210,7 +217,8 @@ create view if not exists player as
         id, name, xp, level, balance, needle, emojiStatus,
         find_expiration as FIND, pockets_expiration as POCKETS,
         coinWins as W, coinLosses as L, coffee, tea, bonus, trees, capitals,
-        hideInv, magazines, totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter
+        hideInv, magazines, totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud,
+        craftCounter, duelWin, duelLose
     from
     (
         players

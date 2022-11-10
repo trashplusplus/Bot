@@ -1,17 +1,19 @@
 package commands;
 
 import database.dao.IPlayerDAO;
-import main.ActiveDuelPairs;
-import main.Bot;
-import main.Player;
+import database.dao.InventoryDAO;
+import main.*;
+
 //TODO DUEEEEEEEEEEEELS
 public class Accept extends Command{
     IPlayerDAO playerDAO;
     ActiveDuelPairs activeDuelPairs;
+    InventoryDAO inventoryDAO;
 
-    Accept(IPlayerDAO playerDAO, ActiveDuelPairs activeDuelPairs){
+    Accept(InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ActiveDuelPairs activeDuelPairs){
         this.playerDAO = playerDAO;
         this.activeDuelPairs = activeDuelPairs;
+        this.inventoryDAO = inventoryDAO;
     }
 
     @Override
@@ -19,8 +21,14 @@ public class Accept extends Command{
         Player playerInviter = activeDuelPairs.getKeyByValue(this.activeDuelPairs.getAllPairs(), player);
 
         if(playerInviter != null){
-            host.sendMsg(player.getId(), "Вы сразились с " + playerInviter.getUsername());
-            host.sendMsg(playerInviter.getId(), "Вы сразились с " + player.getUsername());
+
+            Fight fight = new Fight(inventoryDAO, player, playerInviter);
+            host.sendMsg(player.getId(), fight.getResultsOfFight());
+            host.sendMsg(playerInviter.getId(), fight.getResultsOfFight());
+
+            //в процессе выполняются манипуляции над предметами, поэтому нужно сначала вывести,
+            // а потом удалить/добавить их
+            fight.processFight();
 
             activeDuelPairs.removePair(playerInviter, player);
         }else{

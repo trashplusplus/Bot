@@ -19,7 +19,7 @@ public class StatsDAO {
 		try {
 			PreparedStatement ps = connection.prepareStatement("insert into stats(player_id, bonus, coinWins, " +
 					"coinLosses, coffee, tea, trees, capitals, " +
-					"hideInv, magazines, totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+					"hideInv, magazines, totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter, duelWin, duelLose) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 			ps.setLong(1, id);
 			ps.setInt(2, stats.bonus);
 			ps.setInt(3, stats.coinWins);
@@ -36,6 +36,8 @@ public class StatsDAO {
 			ps.setInt(14, stats.mudCounter);
 			ps.setInt(15, stats.totalMud);
 			ps.setInt(16, stats.craftCounter);
+			ps.setInt(17, stats.duelWin);
+			ps.setInt(18, stats.duelLose);
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -48,7 +50,7 @@ public class StatsDAO {
 		try {
 			PreparedStatement ps = connection.prepareStatement("update stats set bonus = ?, coinWins = ?, coinLosses = ?, coffee = ?, " +
 					"tea = ?, trees = ?, capitals = ?, hideInv = ?, magazines = ?," +
-					"totalWonMoney = ?, totalLostMoney = ?, findCounter = ?, mudCounter = ?, totalMud = ?, craftCounter = ? where player_id = ?;");
+					"totalWonMoney = ?, totalLostMoney = ?, findCounter = ?, mudCounter = ?, totalMud = ?, craftCounter = ?, duelWin = ?, duelLose = ? where player_id = ?;");
 			ps.setInt(1, stats.bonus);
 			ps.setInt(2, stats.coinWins);
 			ps.setInt(3, stats.coinLosses);
@@ -64,7 +66,9 @@ public class StatsDAO {
 			ps.setInt(13, stats.mudCounter);
 			ps.setInt(14, stats.totalMud);
 			ps.setInt(15, stats.craftCounter);
-			ps.setLong(16, id);
+			ps.setInt(16, stats.duelWin);
+			ps.setInt(17, stats.duelLose);
+			ps.setLong(18, id);
 			ps.execute();
 
 		} catch (SQLException e) {
@@ -95,7 +99,9 @@ public class StatsDAO {
 						rs.getInt("findCounter"),
 						rs.getInt("mudCounter"),
 						rs.getInt("totalMud"),
-						rs.getInt("craftCounter")
+						rs.getInt("craftCounter"),
+						rs.getInt("duelWin"),
+						rs.getInt("duelLose")
 				);
 			}
 

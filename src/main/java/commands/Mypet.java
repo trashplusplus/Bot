@@ -28,7 +28,7 @@ public class Mypet extends Command{
         if(player.getInventory().hasPet()){
            Item pet;
            Touch touch = new Touch(player);
-            String statusHint = "\uD83E\uDEA1 Установите питомца в статус, чтобы он отображался";
+            String statusHint = "\uD83D\uDC36  Установите питомца в статус, чтобы он отображался";
             if(player.getStatusItem() != null){
                 if(player.getStatusItem().getRarity().equals(ItemRarity.Pet)){
                     pet = player.getStatusItem();
@@ -50,7 +50,7 @@ public class Mypet extends Command{
 
 
         }else{
-            host.sendMsg(player.getId(), "У вас в статусе нет питомца :'(");
+            host.sendMsg(player.getId(), "\uD83D\uDC36 У вас в статусе нет питомца :'(");
         }
     }
 }

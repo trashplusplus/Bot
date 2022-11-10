@@ -70,6 +70,22 @@ public class Player
 		return username;
 	}
 
+	public String getFormattedUsernameWithTelegramFormatting(){
+		if(inventory.getItems().contains(status)){
+			if(status != null){
+				return "`" + username + "`" + " \\[" + status.getEmoji() + "]";
+			}
+		}else{
+			status = null;
+		}
+
+		return getUsernameWithWithTelegramFormatting();
+	}
+
+	public String getUsernameWithWithTelegramFormatting(){
+		return String.format("`%s`", username);
+	}
+
 	public boolean isStatus(){
 		if(status != null)
 			return true;
@@ -99,7 +115,14 @@ public class Player
 	}
 
 	public String getStatus(){
+
 		return status.getEmoji();
+	}
+
+
+	public String getStatusOrPassedEmoji(String emoji){
+		//если не обнаружит статус то вернет заданное эмоджи
+		if(status != null) {return status.getEmoji();}else{ return emoji; }
 	}
 
 	public Item getStatusItem(){

@@ -4,6 +4,7 @@ import database.dao.IItemDAO;
 import database.dao.IPlayerDAO;
 import main.ActiveDuelPairs;
 import main.Bot;
+import main.Money;
 import main.Player;
 
 public class Duel extends Command{
@@ -20,8 +21,27 @@ public class Duel extends Command{
     @Override
     public void consume(Bot host, Player player) {
         long id = player.getId();
-        host.sendMsg(id, "Введите ник игрока, с которым вы хотите сразиться: ");
-        player.state = new DuelState(player, itemDAO, playerDAO, host, activeDuelPairs);
+        if(player.getLevel() <= 5){
+            host.sendMsg(id, "☠ Для участия в дуэлях нужен 5 уровень");
+            return;
+        }
+        if(player.getInventory().getInvSize() >= 5) {
+            if (player.getMoney().value >= 1500) {
+                player.state = player.state.base;
+                host.sendMsg(id, "☠ ($1,500) Введите ник игрока, с которым вы хотите сразиться: ");
+                player.state = new DuelState(player, itemDAO, playerDAO, host, activeDuelPairs);
+                try {
+                    player.getMoney().transfer(-1500);
+                } catch (Money.MoneyException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                host.sendMsg(id, "☠ Недостаточно средств для участия в дуэлях");
+            }
+        }else{
+            host.sendMsg(id, "☠ В инвентаре должно быть как минимум 5 предметов");
+        }
     }
 }
 
@@ -45,27 +65,33 @@ class DuelState extends State{
     public void process(String arg) {
         try{
             Player playerAcceptor = playerDAO.get_by_name(arg);
-            if(playerAcceptor != null && playerAcceptor.getUsername() != player.getUsername()){
+            if(playerAcceptor != null){
+                if(playerAcceptor.getUsername() != player.getUsername()) {
 
-                if(playerAcceptor.getInventory().getInvSize() != 0){
-                    if(activeDuelPairs.getByKey(player) != null){
+                    if (playerAcceptor.getInventory().getInvSize() >= 5) {
+                        if (activeDuelPairs.getByKey(player) != null &&
+                                activeDuelPairs.getKeyByValue(activeDuelPairs.getAllPairs(), playerAcceptor) == null) {
+                            player.state = player.state.base;
+                            host.sendMsg(player.getId(), "\uD83C\uDFF9 Вы уже отправили приглашение игроку " + activeDuelPairs.getByKey(player).getFormattedUsernameWithTelegramFormatting() + ", чтобы отменить введите /decline");
+
+                        } else {
+
+
+                            activeDuelPairs.putNewDuelPair(player, playerAcceptor);
+                            player.state = player.state.base;
+                            host.sendMsg(playerAcceptor.getId(), String.format("\uD83C\uDFF9 Игрок %s приглашает вас на дуэль\n\n✅ Принять - /accept\n❌ Отклонить - /decline", player.getFormattedUsernameWithTelegramFormatting()));
+                            host.sendMsg(player.getId(), String.format("\uD83C\uDFF9 Вы отправили приглашение игроку %s", playerAcceptor.getFormattedUsernameWithTelegramFormatting()));
+                        }
+                    } else {
                         player.state = player.state.base;
-                        host.sendMsg(player.getId(), "\uD83C\uDFF9 Вы уже отправили приглашение игроку `" + activeDuelPairs.getByKey(player).getUsername() + "`");
-
-                    }else{
-
-
-                   activeDuelPairs.putNewDuelPair(player, playerAcceptor);
-                    player.state = player.state.base;
-                   host.sendMsg(playerAcceptor.getId(), String.format("\uD83C\uDFF9 Игрок `%s` приглашает вас на дуэль", player.getUsername()));
-                   host.sendMsg(player.getId(), String.format("\uD83C\uDFF9 Вы отправили приглашение игроку `%s`", playerAcceptor.getUsername()));
+                        host.sendMsg(player.getId(), "\uD83C\uDFF9 В инвентаре у игрока `" + playerAcceptor.getUsername() + "` должно быть как минимум 5 предметов");
                     }
                 }else{
-                    player.state = player.state.base;
-                    host.sendMsg(player.getId(), "\uD83C\uDFF9 Инвентарь игрока `" + playerAcceptor.getUsername() + "` пуст");
+                    host.sendMsg(player.getId(), "\uD83C\uDFF9 Вы не можете вызвать на дуэль самого себя");
                 }
+            }
 
-            }else{
+             else {
                 host.sendMsg(player.getId(), "\uD83C\uDFF9 Такого игрока не существует");
             }
         }catch (NullPointerException e){
