@@ -48,7 +48,7 @@ public class Open extends Command
 		loot.add(itemDAO.get_by_name("C4"));
 		loot.add(itemDAO.get_by_name("Шина"));
 		loot.add(itemDAO.get_by_name("Антидождик"));
-		loot.add(itemDAO.get_by_name("Записка от разработчка №101122"));
+		loot.add(itemDAO.get_by_name("Записка от разработчика №101122"));
 
 		loot.add(itemDAO.get_by_name("Веревка"));
 		loot.add(itemDAO.get_by_name("Сомбреро"));
@@ -64,6 +64,7 @@ public class Open extends Command
 		loot.add(itemDAO.get_by_name("Баллончик с краской"));
 		loot.add(itemDAO.get_by_name("Синий браслет"));
 		loot.add(itemDAO.get_by_name("Желтый браслет"));
+		loot.add(itemDAO.get_by_name("Белый Monster Energy"));
 
 		//for compare
 
@@ -74,9 +75,9 @@ public class Open extends Command
 		rareItemsWithNotification.add(itemDAO.get_by_name("C4"));
 		rareItemsWithNotification.add(itemDAO.get_by_name("Шина"));
 		rareItemsWithNotification.add(itemDAO.get_by_name("Антидождик"));
+		rareItemsWithNotification.add(itemDAO.get_by_name("Редкое кольцо"));
 
 		int ranIndex = ran.nextInt(loot.size());
-
 		Inventory inventory = player.getInventory();
 		List<Item> player_items = inventory.getItems();
 		int case_idx = player_items.indexOf(_case);

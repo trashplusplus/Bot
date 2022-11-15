@@ -64,6 +64,7 @@ class TouchState extends State
 		{
 			int item_id = Integer.parseInt(arg) - 1;
 			Item energy = itemDAO.get_by_name("Энергетик");
+			Item energy2 = itemDAO.get_by_name("Белый Monster Energy");
 			Item mag = player.getInventory().getItem(item_id);
 			String responseText = touch.getInfo().get(player.getInventory().getItem(item_id));
 
@@ -98,6 +99,7 @@ class TouchState extends State
 			else
 			{
 				if (player.getInventory().getItem(item_id).getTitle().equals(energy.getTitle()))
+
 				{
 					if (player.findExpiration != null)
 					{
@@ -106,6 +108,20 @@ class TouchState extends State
 
 						host.sendMsg(id, "⚡ Вы чувствуете прилив сил, время ожидания снижено на 2 минуты");
 						player.findExpiration -= 120L * 1000L;
+					}
+					else
+					{
+						host.sendMsg(id, "Вы и так полны энергии");
+					}
+				}
+				else if( player.getInventory().getItem(item_id).getTitle().equals(energy2.getTitle())){
+					if (player.findExpiration != null)
+					{
+						player.getInventory().removeItem(item_id);
+						inventoryDAO.delete(id, energy.getId(), 1);
+
+						host.sendMsg(id, "⚡ Вы чувствуете прилив сил, время ожидания снижено на 15 минут");
+						player.findExpiration -= 60L * 15L * 1000L;
 					}
 					else
 					{

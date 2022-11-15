@@ -65,15 +65,18 @@ public class Fight {
     }
 
     public String getResultsOfFight(){
-        StringBuilder sb = new StringBuilder("\uD83C\uDFF9 Дуэль\n\n");
+        StringBuilder sb = new StringBuilder("\uD83C\uDFF9 Результаты дуэля\n\n");
+
         sb.append("-----------------\n");
         sb.append(String.format("%s Игроку %s попался %s\n", getRandomEmoji(), player1.getFormattedUsernameWithTelegramFormatting(), player1Item));
         sb.append(String.format("%s Игроку %s попался %s\n", getRandomEmoji(), player2.getFormattedUsernameWithTelegramFormatting(), player2Item));
         sb.append("-----------------\n\n");
         if(player1Item.getCost().value > player2Item.getCost().value){
+
             sb.append(String.format("%s Победил игрок %s, он забирает себе %s \n", player1.getStatusOrPassedEmoji("\uD83D\uDC8E"),player1.getFormattedUsernameWithTelegramFormatting(), player2Item));
             return sb.toString();
         }else if(player1Item.getCost().value < player2Item.getCost().value){
+
             sb.append(String.format("%s Победил игрок %s, он забирает себе %s \n", player2.getStatusOrPassedEmoji("\uD83D\uDC8E"), player2.getFormattedUsernameWithTelegramFormatting(), player1Item));
             return sb.toString();
         }else{

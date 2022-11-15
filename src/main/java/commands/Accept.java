@@ -27,7 +27,7 @@ public class Accept extends Command{
             host.sendMsg(playerInviter.getId(), fight.getResultsOfFight());
 
             //в процессе выполняются манипуляции над предметами, поэтому нужно сначала вывести,
-            // а потом удалить/добавить их
+            // а потом удалить/добавить их в инвентари
             fight.processFight();
 
             activeDuelPairs.removePair(playerInviter, player);

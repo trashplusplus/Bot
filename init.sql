@@ -175,7 +175,9 @@ insert or ignore into items (name, rarity, cost, emoji) values
     ('Одеяло', 'Common', 275,''),
     ('Варежка', 'Cheap', 150,''),
     ('Варежки', 'Common', 300,''),
-    ('Урановый стержень', 'Cheap', 235,'');
+    ('Урановый стержень', 'Cheap', 235,''),
+    ('Белый Monster Energy', 'Case', 3999,'🥤'),
+    ('Редкое кольцо', 'Case', 713317,'💍');
 
 create table if not exists inventory
 (

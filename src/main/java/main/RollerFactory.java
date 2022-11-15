@@ -78,6 +78,9 @@ public class RollerFactory
 				case Pet:
 					weights[i] = 0;
 					break;
+				case Case:
+					weights[i] = 0;
+					break;
 				default:
 					throw new RuntimeException("WTF?");
 			}

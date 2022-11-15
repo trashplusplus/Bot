@@ -151,6 +151,7 @@ public class Touch {
         newFlavourTxt("Вояджер-1", "" +
                 "• ••• •−•• ••   •−− •−− • ••• − ••   •−−   −••• −−− − •−   •−−• •• •−• −−− •••− −−− −•− •−•−•−   − −−−   −− −−− •••− −• −−−   •−−• −−− •−•• ••− −−−• •• − −••−   −••• −−− −• ••− ••• ");
         newFlavourTxt("Записка от разработчика №101122", developerNote);
+
     }
 
     private void magazinesInit(Player player){
