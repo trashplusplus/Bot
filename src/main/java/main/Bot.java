@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,8 @@ public class Bot extends TelegramLongPollingBot
 	private final ShopDAO shopDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
+
+	FileWriter logger;
 
 	//Для игры в дуэль
 	ActiveDuelPairs activeDuelPairs;
@@ -161,9 +164,12 @@ public class Bot extends TelegramLongPollingBot
 	@Override
 	public void onUpdateReceived(Update update)
 	{
+
+
 		try
 		{
 			Message message = update.getMessage();
+			logger = new FileWriter("log.txt", true);
 
 			if (message != null && message.hasText())
 			{
@@ -173,7 +179,8 @@ public class Bot extends TelegramLongPollingBot
 				Player player = playerDAO.get_by_id(id);
 
 				System.out.printf("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id);
-
+				logger.write(String.format("%s: %s [from %s | %d]\n", new Date(), text, player != null ? player.getUsername() : "new player", id));
+				logger.flush();
 				if (player == null)
 				{
 					if (unregistered_players.containsKey(id))
@@ -298,6 +305,7 @@ public class Bot extends TelegramLongPollingBot
 
 
 		System.out.println("Dump database fired");
+
 		if (playerDAO instanceof CachedPlayerDAO)
 		{
 			CachedPlayerDAO cpd = (CachedPlayerDAO) playerDAO;
