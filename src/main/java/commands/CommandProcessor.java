@@ -49,6 +49,10 @@ public class CommandProcessor
 	public static final String DUELS_BUTTON = "\uD83C\uDFF9 Дуэли";
 	public static final String MYPET_BUTTON = "\uD83D\uDC36 Мой Питомец";
 	public static final String SETTINGS_BUTTON = "⚙ Настройки";
+	public static final String TOUCH_BUTTON = "\uD83C\uDFA8 Осмотреть";
+	public static final String SKATE_BUTTON = "\uD83D\uDEF9 Катать на скейте";
+	public static final String PHONE_BUTTON = "\uD83D\uDCF1 Использовать телефон";
+	public static final String TRAVEL_BUTTON = "\uD83C\uDFCE Искать питомцев";
 	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
@@ -90,7 +94,16 @@ public class CommandProcessor
 		//обернуть бы их в кнопки
 		map.put("/accept", () -> new Accept(inventoryDAO,playerDAO,activeDuelPairs));
 		map.put("/decline", () -> new Decline(activeDuelPairs));
-
+		map.put("/needle", () -> new Needle(playerDAO));
+		map.put("/broadcast", () -> new Broadcast(playerDAO));
+		map.put("/online", () -> new Online(playerDAO));
+		map.put("/skate", () -> new Skate(playerDAO, itemDAO));
+		map.put(SKATE_BUTTON, () -> new Skate(playerDAO, itemDAO));
+		map.put(PHONE_BUTTON, () -> new Phone(itemDAO));
+		map.put("/phone", () -> new Phone(itemDAO));
+		map.put("/phone", () -> new Phone(itemDAO));
+		map.put("/travel", () -> new Travel(itemDAO, playerDAO, inventoryDAO));
+		map.put(TRAVEL_BUTTON, () -> new Travel(itemDAO, playerDAO, inventoryDAO));
 
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
 		map.put(STATUS_BUTTON, () -> new Status(inventoryDAO, itemDAO));
@@ -165,6 +178,7 @@ public class CommandProcessor
 		map.put("/open", () -> new Open(itemDAO, inventoryDAO, playerDAO));
 
 		map.put("/touch", () -> new Touch(inventoryDAO, itemDAO, playerDAO));
+		map.put(TOUCH_BUTTON, () -> new Touch(inventoryDAO, itemDAO, playerDAO));
 
 		map.put("/check", () -> new Check(playerDAO));
 		map.put(CHECK_BUTTON, () -> new Check(playerDAO));

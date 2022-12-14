@@ -21,7 +21,7 @@ public class Duel extends Command{
     @Override
     public void consume(Bot host, Player player) {
         long id = player.getId();
-        if(player.getLevel() <= 5){
+        if(player.getLevel() < 5){
             host.sendMsg(id, "☠ Для участия в дуэлях нужен 5 уровень");
             return;
         }

@@ -66,7 +66,7 @@ public class Fish extends Command
 			}
 			else
 			{
-				host.sendMsg(player.getId(), String.format("Для похода на рыбалку вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в магазине или найти", i.getEmojiTitle()));
+				host.sendMsg(player.getId(), String.format("Для похода на рыбалку вам нужен предмет `%s` \n\uD83D\uDED2 Его можно купить у других игроков в маркете или найти", i.getEmojiTitle()));
 			}
 		}
 		else

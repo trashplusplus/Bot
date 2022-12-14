@@ -49,10 +49,10 @@ public class Player
 
 	}
 
-	public long getId()
-	{
+	public long getId(){
 		return id;
 	}
+
 
 	public String getUsername()
 	{

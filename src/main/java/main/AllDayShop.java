@@ -42,6 +42,8 @@ public class AllDayShop{
         createDonateGood("День бабочек", 15);
 
         createDonateGood("Ключ от кейса", 1);
+        createGood("Обычная машинка");
+        createDonateGood("Легендарный спорткар", 35);
 
     }
 

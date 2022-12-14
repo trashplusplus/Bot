@@ -66,10 +66,10 @@ public class RollerFactory
 					weights[i] = 4;
 					break;
 				case Rare:
-					weights[i] = 5;
+					weights[i] = 7;
 					break;
 				case Gift:
-					weights[i] = 2;
+					weights[i] = 3;
 					break;
 				case Limited:
 				case Status:
@@ -79,6 +79,9 @@ public class RollerFactory
 					weights[i] = 0;
 					break;
 				case Case:
+					weights[i] = 0;
+					break;
+				case Craft:
 					weights[i] = 0;
 					break;
 				default:

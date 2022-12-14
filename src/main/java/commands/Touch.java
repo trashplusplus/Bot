@@ -106,8 +106,8 @@ class TouchState extends State
 						player.getInventory().removeItem(item_id);
 						inventoryDAO.delete(id, energy.getId(), 1);
 
-						host.sendMsg(id, "⚡ Вы чувствуете прилив сил, время ожидания снижено на 2 минуты");
-						player.findExpiration -= 120L * 1000L;
+						host.sendMsg(id, "⚡ Вы чувствуете прилив сил, время ожидания снижено на 5 минут");
+						player.findExpiration -= 300L * 1000L;
 					}
 					else
 					{

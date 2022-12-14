@@ -9,6 +9,7 @@ public enum ItemRarity
 	Limited,
 	Status,
 	Pet,
+	Craft,
 	Case;
 
 	@Override

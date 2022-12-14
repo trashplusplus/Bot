@@ -66,6 +66,10 @@ class SellState extends State
 					host.sendMsg(player_id, invoker.state.hint);
 				}
 			}
+			else if(item.getRarity() == ItemRarity.Limited){
+				host.sendMsg(player_id, "\uD83D\uDC8D Лимитированные вещи нельзя продавать");
+				rebuild_hint();
+			}
 			else
 			{
 				long downCost = (item.getCost().value / 100) * 30;

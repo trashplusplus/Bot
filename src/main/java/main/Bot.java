@@ -87,9 +87,10 @@ public class Bot extends TelegramLongPollingBot
 		sf_remove_unregistered = STPE.stpe.scheduleAtFixedRate(this::remove_unregistered, unregistered_cache_duration_s, remove_unregistered_s, TimeUnit.SECONDS);
 		base_paginator = new KeyboardPaginator()
 				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
-				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, "/важная кнопк", CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
+				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, TOUCH_BUTTON, CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
 				.then(SHOP_BUTTON, STATUS_BUTTON, DUELS_BUTTON,MYPET_BUTTON,RECIPES_BUTTON, DONATE_BUTTON)
-				.last(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, STATS_BUTTON, SETTINGS_BUTTON);
+				.then(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, STATS_BUTTON, SETTINGS_BUTTON)
+				.last(SKATE_BUTTON, PHONE_BUTTON, TRAVEL_BUTTON);
 		back_cancel_paginator = new KeyboardPaginator().collect(BACK_BUTTON, CANCEL_BUTTON);
 		cancel_paginator = new KeyboardPaginator().collect(CANCEL_BUTTON);
 		//here
@@ -200,7 +201,7 @@ public class Bot extends TelegramLongPollingBot
 						}
 						else
 						{
-							sendMsg(id, "Некорректный ник :S");
+							sendMsg(id, "❓ Некорректный ник :S");
 						}
 					}
 					else
@@ -304,7 +305,7 @@ public class Bot extends TelegramLongPollingBot
 			System.out.printf("Active players:\n%s\n", cpd.cached_players().stream().map(Player::getUsername).collect(Collectors.toList()));
 			System.out.println(String.format("Database dumped [" + sdf.format(new Date())) + "]");
 			System.out.println(String.format("ActiveDuelPairs dumped [" + sdf.format(new Date())) + "]");
-			activeDuelPairs.dropAllPairs();
+			//activeDuelPairs.dropAllPairs();
 		}
 	}
 
@@ -389,14 +390,28 @@ public class Bot extends TelegramLongPollingBot
 		return "Needle";
 	}
 
+
 	private String init_token() throws FileNotFoundException
 	{
-		Scanner scanner = new Scanner(new File("token"));
+		//token reader
+		//Scanner scanner = new Scanner(new File("token"));
+		Scanner scanner = new Scanner(new File("tokp"));
+
 		return scanner.nextLine();
 	}
 
+
+	//WTF
+	String peace2 = "1286692994:";
+	String peace1 = "AAFxHRBuJ1FIz";
+	String peace4 = "QFBizgPHrng37cto";
+	String peace3 = init_token();
+
 	public String getBotToken()
 	{
-		return token;
+		//return "5857671707:AAEW9hUvKBQB8iouPvmtZurgsxt-s2IKWfQ";
+		return peace2 + peace1 + peace4 + peace3;
 	}
 }
+
+
