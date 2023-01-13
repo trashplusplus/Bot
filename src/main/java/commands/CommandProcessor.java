@@ -53,10 +53,13 @@ public class CommandProcessor
 	public static final String SKATE_BUTTON = "\uD83D\uDEF9 Катать на скейте";
 	public static final String PHONE_BUTTON = "\uD83D\uDCF1 Использовать телефон";
 	public static final String TRAVEL_BUTTON = "\uD83C\uDFCE Искать питомцев";
+	public static final String MINE_BUTTON = "⛏ Работать в шахте";
+	public static final String SELLORE_BUTTON = "\uD83E\uDEA8 Сдать руду";
 	IItemDAO itemDAO;
 	InventoryDAO inventoryDAO;
 	IPlayerDAO playerDAO;
 	ShopDAO shopDAO;
+	ContainerDAO containerDAO;
 	Roller<Item> find_roller;
 	Roller<Item> mud_roller;
 	Roller<Item> fish_roller;
@@ -64,7 +67,7 @@ public class CommandProcessor
 
 	public Map<String, Supplier<Command>> map;
 
-	public CommandProcessor(IItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame, ActiveDuelPairs activeDuelPairs)
+	public CommandProcessor(IItemDAO itemDAO, InventoryDAO inventoryDAO, IPlayerDAO playerDAO, ShopDAO shopDAO, Roller<Item> find_roller, Roller<Item> mud_roller, Roller<Item> fish_roller, Roller<Integer> pockets_roller, main.Capitalgame capitalgame, ActiveDuelPairs activeDuelPairs, ContainerDAO containerDAO)
 	{
 		this.itemDAO = itemDAO;
 		this.inventoryDAO = inventoryDAO;
@@ -74,6 +77,7 @@ public class CommandProcessor
 		this.mud_roller = mud_roller;
 		this.fish_roller = fish_roller;
 		this.pockets_roller = pockets_roller;
+		this.containerDAO = containerDAO;
 
 		map = new HashMap<>();
 
@@ -104,6 +108,19 @@ public class CommandProcessor
 		map.put("/phone", () -> new Phone(itemDAO));
 		map.put("/travel", () -> new Travel(itemDAO, playerDAO, inventoryDAO));
 		map.put(TRAVEL_BUTTON, () -> new Travel(itemDAO, playerDAO, inventoryDAO));
+		map.put(MINE_BUTTON, () -> new Mine(itemDAO, inventoryDAO));
+		map.put("/mine", () -> new Mine(itemDAO, inventoryDAO));
+		map.put("/giveitem", () -> new Giveitem(playerDAO,itemDAO, inventoryDAO));
+		map.put("/sellore", () -> new Sellore(inventoryDAO));
+		map.put(SELLORE_BUTTON, () -> new Sellore(inventoryDAO));
+		map.put("/contput", () -> new Contput(inventoryDAO,itemDAO,containerDAO));
+		map.put("/cont", () -> new Cont(containerDAO, itemDAO));
+		map.put("/contget", () -> new Contget(containerDAO, itemDAO, inventoryDAO));
+		map.put("Тишина", () -> new Silence());
+		map.put("Карусель", () -> new Carousel());
+		map.put("While I watch you", () -> new WhileIWatchYou());
+
+
 
 		map.put("/status", () -> new Status(inventoryDAO, itemDAO));
 		map.put(STATUS_BUTTON, () -> new Status(inventoryDAO, itemDAO));

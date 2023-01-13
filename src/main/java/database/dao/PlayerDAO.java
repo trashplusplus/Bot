@@ -11,6 +11,7 @@ public class PlayerDAO implements IPlayerDAO
 {
 	private final Connection connection;
 	private final InventoryDAO inventoryDAO;
+	private final ContainerDAO containerDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
 	private final CachedItemDAO cachedItemDAO;
@@ -24,6 +25,7 @@ public class PlayerDAO implements IPlayerDAO
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, host);
 		cachedItemDAO = new CachedItemDAO(connection);
+		containerDAO = new ContainerDAO(connection);
 		this.host = host;
 	}
 
@@ -495,7 +497,8 @@ public class PlayerDAO implements IPlayerDAO
 		Stats stats = new Stats(bonus, coinWins, coinLosses, coffee, tea, trees, capitals, hideInv, magazines,
 				totalWonMoney, totalLostMoney, findCounter, mudCounter, totalMud, craftCounter, duelWin, duelLose);
 		Inventory inventory = inventoryDAO.get(id);
-		Player player = new Player(id, xp, level, username, balance, needle, inventory, stats, emojiStatus, host);
+		Container container = containerDAO.get(id);
+		Player player = new Player(id, xp, level, username, balance, needle, inventory, container, stats, emojiStatus, host);
 		player.findExpiration = findExpiration;
 		player.pocketsExpiration = pocketsExpiration;
 		player.level_reached.subscribe(player.host::level_up_handler);

@@ -47,7 +47,7 @@ public class Capitalgame {
         counCapi.put("Северная Македония", "Скопье");
         counCapi.put("Бельгия", "Брюссель");
         counCapi.put("Дания", "Копенгаген");
-        counCapi.put("Мальта", "Валетта");
+        counCapi.put("Мальта", "Валлетта");
         counCapi.put("Исландия", "Рейкьявик");
         counCapi.put("Финляндия", "Хельсинки");
         counCapi.put("Болгария", "София");

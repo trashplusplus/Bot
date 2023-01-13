@@ -6,19 +6,16 @@ import main.Player;
 
 import java.sql.*;
 
-public class InventoryDAO
-{
+public class InventoryDAO {
 	private Connection connection;
 	private CachedItemDAO itemDAO;
 
-	public InventoryDAO(Connection connection)
-	{
+	public InventoryDAO(Connection connection) {
 		this.connection = connection;
 		itemDAO = new CachedItemDAO(connection);
 	}
 
-	public InventoryDAO()
-	{
+	public InventoryDAO() {
 		//this(DriverManager.getConnection("jdbc:sqlite:data.db"));
 	}
 

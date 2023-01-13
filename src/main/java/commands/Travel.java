@@ -27,16 +27,31 @@ public class Travel extends Command{
         Item superCar = itemDAO.get_by_name("Легендарный спорткар");
         int x = ran.nextInt(35000);
         List<Item> ranPet = itemDAO.get_by_rarity(ItemRarity.Pet);
-
+        List<Item> gifts = itemDAO.get_by_rarity(ItemRarity.Gift);
+        List<Item> rares = itemDAO.get_by_rarity(ItemRarity.Rare);
 
         Item xPet = ranPet.get(new Random().nextInt(ranPet.size()));
+        Item xGift = gifts.get(new Random().nextInt(gifts.size()));
+        Item xRare = rares.get(new Random().nextInt(rares.size()));
 
         if(player.getInventory().getItems().contains(superCar) || player.getInventory().getItems().contains(auto)){
-            if(x == 19877){
+            if(x == 19877 || x == 19878) {
                 host.sendMsg(player.getId(), String.format("%s Ого! Вы нашли питомца '%s'", superCar.getEmoji(), xPet));
                 player.addXp(100);
                 player.inventory.putItem(xPet);
                 inventoryDAO.putItem(player.getId(), xPet.getId());
+            }else if(x > 500 && x < 1100) {
+
+                host.sendMsg(player.getId(), String.format("%s Ого! Вы нашли рарку '%s'", superCar.getEmoji(), xRare));
+                player.addXp(15);
+                player.inventory.putItem(xRare);
+                inventoryDAO.putItem(player.getId(), xRare.getId());
+
+            }else if(x > 15000 && x < 1590){
+                host.sendMsg(player.getId(), String.format("%s Ого! Вы нашли гифт '%s'", superCar.getEmoji(), xGift));
+                player.addXp(35);
+                player.inventory.putItem(xGift);
+                inventoryDAO.putItem(player.getId(), xGift.getId());
             }else{
                 host.sendMsg(player.getId(), String.format("%s %s", superCar.getEmoji(), phrases[new Random().nextInt(phrases.length)]));
 

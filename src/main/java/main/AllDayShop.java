@@ -26,6 +26,7 @@ public class AllDayShop{
         createGood("Страсть");
         createGood("Ангельская пыль");
         createGood("Сатурн");
+        //createGood("Ёлка 2023");
         createGood("Мыльные пузыри");
         createDonateGood("Фея", 4);
         createDonateGood("Мишк Фреде", 5);
@@ -40,9 +41,11 @@ public class AllDayShop{
         createDonateGood("Кибо", 5);
         createDonateGood("Кит", 10);
         createDonateGood("День бабочек", 15);
+        createDonateGood("XJ9", 25);
 
-        createDonateGood("Ключ от кейса", 1);
+
         createGood("Обычная машинка");
+        createDonateGood("Ключ от кейса", 1);
         createDonateGood("Легендарный спорткар", 35);
 
     }

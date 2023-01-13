@@ -18,13 +18,12 @@ public class Help extends Command
 			"\uD83D\uDD26 /mud - рыться в грязи \n\n" +
 			" \\[Команды маркета] \n" +
 			"\uD83C\uDFEA /shopshow - посмотреть магазин \n" +
-			"\uD83C\uDFEA /shopplace - продать предмет \n" +
-			"\uD83C\uDFEA /shopbuy - купить предмет \n" +
-			"\uD83C\uDFEA /shop - Магазин 24/7 \n\n" +
+			"\uD83E\uDDF7 /shopplace - продать предмет \n" +
+			"\uD83C\uDF81 /shopbuy - купить предмет \n" +
+			"\uD83D\uDCB0 /shop - Магазин 24/7 \n\n" +
 			" \\[Команды игрока] \n" +
 			"\uD83D\uDCC3 /inv - открыть инвентарь \n" +
 			"\uD83D\uDCB0 /sell - продать скупщику\n" +
-			"\uD83D\uDCB3 /balance - проверить баланс  \n" +
 			"\uD83D\uDCB0 /pay - переслать деньги \n" +
 			"\uD83D\uDC80 /rename - сменить никнейм \n" +
 			"⭐ /me - ифнормация о персонаже \n\n" +

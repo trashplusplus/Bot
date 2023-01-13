@@ -89,7 +89,7 @@ class Needle2 extends State
                 acceptor.needle += cost;
                 invoker.state = invoker.state.base;
 
-                host.sendMsg(acceptor.getId(), String.format("\\[\uD83E\uDDF7] На ваш баланс зачислено: *%s*\uD83E\uDDF7", cost));
+                host.sendMsg(acceptor.getId(), String.format("На ваш баланс зачислено: *%s*\uD83E\uDDF7", cost));
                 host.sendMsg(invoker.getId(), "\uD83E\uDDF7 Булавки успешно отправлены");
 
         }

@@ -4,12 +4,14 @@ import commands.BaseState;
 import database.dao.IItemDAO;
 import database.dao.InventoryDAO;
 
+import java.awt.event.ContainerAdapter;
 import java.util.Objects;
 
 public class Player
 {
 	private final long id;
 	public final Inventory inventory;
+	public final Container container;
 	public Money balance;
 	public Long needle;
 	private String username;
@@ -30,10 +32,10 @@ public class Player
 
 	public Player(long id, Bot host, String name)
 	{
-		this(id, 0, 1, name, 0L, 0L, new Inventory(), new Stats(), null, host);
+		this(id, 0, 1, name, 0L, 0L, new Inventory(), new Container(), new Stats(), null, host);
 	}
 
-	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Stats stats, Item status, Bot host)
+	public Player(long id, int xp, int level, String username, long balance, long needle, Inventory inventory, Container container, Stats stats, Item status, Bot host)
 	{
 		this.id = id;
 		this.username = username;
@@ -46,6 +48,7 @@ public class Player
 		this.needle = needle;
 		state = new BaseState(host, this);
 		this.status = status;
+		this.container = container;
 
 	}
 
@@ -119,6 +122,9 @@ public class Player
 		return status.getEmoji();
 	}
 
+	public Container getContainer() {
+		return container;
+	}
 
 	public String getStatusOrPassedEmoji(String emoji){
 		//если не обнаружит статус то вернет заданное эмоджи

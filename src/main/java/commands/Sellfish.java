@@ -21,8 +21,7 @@ public class Sellfish extends Command
 	}
 
 	@Override
-	public void consume(Bot host, Player player)
-	{
+	public void consume(Bot host, Player player) {
 		long id = player.getId();
 
 		LocalTime open = LocalTime.of(10, 0);

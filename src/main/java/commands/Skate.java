@@ -40,9 +40,11 @@ public class Skate extends Command{
             host.sendMsg(player.getId(), "❤️\u200D\uD83D\uDD25 Ого! Вы сделали эффектный трюк и получили 1 \uD83E\uDDF7");
             player.needle += 1;
 
-        }else if(x == 535){
-            host.sendMsg(player.getId(), "❤️\u200D\uD83D\uDD25 Ого! Вы сделали эффектный трюк и получили $25.000");
-            player.getMoney().transfer(25000L);
+        }else if((x > 100 && x < 2500) || (x > 55000 && x < 56100)){
+            int fee = new Random().nextInt(25000);
+            host.sendMsg(player.getId(), String.format("❤️\u200D\uD83D\uDD25 Ого! Вы сделали эффектный трюк и получили %s", new Money(new Random().nextInt(fee))));
+            player.getMoney().transfer(fee);
+            player.addXp(25);
         }
 
         else{

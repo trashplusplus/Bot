@@ -24,7 +24,7 @@ public class Decline extends Command{
             activeDuelPairs.removePair(player, anotherPlayerForAcceptor);
         }else if(activeDuelPairs.getKeyByValue(activeDuelPairs.getAllPairs(), player) != null){
             //DECLINE FOR ACCEPTOR
-            host.sendMsg(player.getId(), "Вы отказались от дуэля");
+            host.sendMsg(player.getId(), "Вы отказались от дуэли");
             host.sendMsg(anotherPlayerForInviter.getId(), String.format("Игрок `%s` отменил дуэль", player.getUsername()));
             activeDuelPairs.removePair(anotherPlayerForInviter, player);
         }

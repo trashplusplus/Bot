@@ -163,6 +163,31 @@ public class Touch {
         newFlavourTxt("Литий", "Химический элемент 1-й группы, второго периода периодической системы химических элементов, с атомным номером 3. Как простое вещество литий — это очень лёгкий, мягкий щелочной металл серебристо-белого цвета");
         newFlavourTxt("Авто", "На авто можно поехать в далекое путешествия и найти там питомца");
         newFlavourTxt("Легендарный спорткар", "*Скорость, я скорость...*");
+        newFlavourTxt("XJ9", "*Teenage robot... life..*");
+        newFlavourTxt("Ёлка 2023", "*Надеемся, что хоть 2023 будет чуть-чуть лучше*");
+        newFlavourTxt("Золото", "Золото можно откопать в шахте");
+        newFlavourTxt("Каменный уголь", "Каменным углем можно топить печку и будет тепло");
+        newFlavourTxt("Четырехлистный клевер", "Говорят, он приносит удачу...");
+        newFlavourTxt("Клевер", "Обычный клевер, его можно съесть");
+        newFlavourTxt("Редкая ваза", "*На вазе нарисованы переплетающиеся узоры и кони*");
+        newFlavourTxt("Обертка", "Обертка с какой-то конфеты");
+        newFlavourTxt("Болтик", "Балтика 7");
+        newFlavourTxt("Кирка", "*Киркой* можно работать в шахте*");
+        newFlavourTxt("Редкий кубок", "*Кубок поршня*");
+        newFlavourTxt("Каска", "Строительная каска, защищает от брошенных в вас камней");
+        newFlavourTxt("Кость", "Можно отдать питомцу");
+        newFlavourTxt("Сердце в золотистой корочке", "Очень аппетитное сердечко");
+        newFlavourTxt("Конспект", "|a| = sqrt(x^2 + y^2 + z^2)");
+        newFlavourTxt("Якорь", "Его можно бросить в скупщика");
+        newFlavourTxt("Коробка с игрой Bee The Warrior", "*В нее можно поиграть тут: murchikstudio.itch.io \n\n" +
+                "Программирование, звук и графика: 0x3 \nПриглашенный музыкант: Acid Gard3n*");
+        newFlavourTxt("Облако в бутылке", "*Климатическое оружие*");
+        newFlavourTxt("Deftones - Adrenaline", "Четвертый трек с альбома");
+        newFlavourTxt("Титан", "Используется в крафте ключа от контейнера");
+        newFlavourTxt("Слеза Зевса", "Молнии плачут");
+        newFlavourTxt("Шифр", "Что если ввести в чат *Тишина*");
+        newFlavourTxt("Ключ от контейнера", "Открывает контейнер");
+        newFlavourTxt("Вертиго", "Whirrrrrrrrrrl");
     }
 
     private void magazinesInit(Player player){
@@ -197,6 +222,9 @@ public class Touch {
         pets.put(getPetDesc("Кибо"), getPhoto(".\\pics\\pets\\pet_kibo.jpg", player));
         pets.put(getPetDesc("Кит"), getPhoto(".\\pics\\pets\\pet_whale.jpg", player));
         pets.put(getPetDesc("День бабочек"), getPhoto(".\\pics\\pets\\pet_butterfly.jpg", player));
+        pets.put(getPetDesc("XJ9"), getPhoto(".\\pics\\pets\\pet_xj9.jpg", player));
+        pets.put(getPetDesc("Стелла"), getPhoto(".\\pics\\pets\\pet_spider.jpg", player));
+        pets.put(getPetDesc("Корова Бога"), getPhoto(".\\pics\\pets\\pet_ladybug.jpg", player));
 
 
 

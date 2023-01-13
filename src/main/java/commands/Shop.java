@@ -37,7 +37,7 @@ public class Shop extends Command{
 
             if(i == 11){
                 sb.append("\n*Питомцы*\n\n");
-            }else if (i == 20){
+            }else if (i == 21){
                 sb.append("\n*Предметы*\n\n");
             }
 

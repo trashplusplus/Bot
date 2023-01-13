@@ -22,8 +22,7 @@ public class Inv extends Command
 		long player_id = player.getId();
 		Inventory inventory = player.getInventory();
 		int limitSpace = inventory.inventory_capacity;
-		if (inventory.getInvSize() != 0)
-		{
+		if (inventory.getInvSize() != 0) {
 			StringBuilder sb = new StringBuilder("\uD83C\uDF81\t Ваш инвентарь: \n").append(inventory.repr());
 			sb.append("\n\uD83C\uDF81\t Всего предметов: ").append(inventory.getInvSize()).append("/").append(limitSpace);
 			host.sendMsg(player_id, sb.toString());

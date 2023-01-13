@@ -34,6 +34,7 @@ public class Bot extends TelegramLongPollingBot
 	private final ShopDAO shopDAO;
 	private final StatsDAO statsDAO;
 	private final AbilityDAO abilityDAO;
+	private final ContainerDAO containerDAO;
 
 	FileWriter logger;
 
@@ -75,25 +76,26 @@ public class Bot extends TelegramLongPollingBot
 	{
 		playerDAO = new CachedPlayerDAO(connection, this);
 		inventoryDAO = new InventoryDAO(connection);
+		containerDAO = new ContainerDAO(connection);
 		itemDAO = new CachedItemDAO(connection);
 		shopDAO = new ShopDAO(connection, this, playerDAO);
 		statsDAO = new StatsDAO(connection);
 		abilityDAO = new AbilityDAO(connection, this);
 		activeDuelPairs = new ActiveDuelPairs();
 		token = init_token();
-		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller, capitalgame, activeDuelPairs);
+		command_processor = new CommandProcessor(itemDAO, inventoryDAO, playerDAO, shopDAO, findRoller, mudRoller, fishRoller, moneyRoller, capitalgame, activeDuelPairs, containerDAO);
 		sf_timers = STPE.stpe.scheduleAtFixedRate(this::cleanShopFromExpired, 0L, 5L, TimeUnit.SECONDS);
 		sf_find = STPE.stpe.scheduleAtFixedRate(this::sendFindCooldownNotification, 0L, expStepS, TimeUnit.SECONDS);
 		sf_pockets = STPE.stpe.scheduleAtFixedRate(abilityDAO::expirePockets, 0L, expStepS, TimeUnit.SECONDS);  // remove this shit
 		sf_dump = STPE.stpe.scheduleAtFixedRate(this::dump_database, dump_timer_s, dump_timer_s, TimeUnit.SECONDS);
 		unregistered_players = new HashMap<>();
-		sf_remove_unregistered = STPE.stpe.scheduleAtFixedRate(this::remove_unregistered, unregistered_cache_duration_s, remove_unregistered_s, TimeUnit.SECONDS);
+		sf_remove_unregistered = STPE.stpe.scheduleAtFixedRate(this::remove_unregistered, unregistered_cache_duration_s, unregistered_cache_duration_s, TimeUnit.SECONDS);
 		base_paginator = new KeyboardPaginator()
 				.first(INV_BUTTON, HELP_BUTTON, ME_BUTTON, FIND_BUTTON, MUD_BUTTON, POCKETS_BUTTON, DROP_BUTTON, SHOPSHOW_BUTTON, SELL_BUTTON)
 				.then(TOP_BUTTON, FISH_BUTTON, COIN_BUTTON, TOUCH_BUTTON, CAPITALGAME_BUTTON, CASE_BUTTON, FOREST_BUTTON, TEA_BUTTON, COFFEE_BUTTON)
 				.then(SHOP_BUTTON, STATUS_BUTTON, DUELS_BUTTON,MYPET_BUTTON,RECIPES_BUTTON, DONATE_BUTTON)
 				.then(PAY_BUTTON, INFO_BUTTON, RENAME_BUTTON, SHOPPLACE_BUTTON, CHECK_BUTTON, SELLFISH_BUTTON, STATS_BUTTON, SETTINGS_BUTTON)
-				.last(SKATE_BUTTON, PHONE_BUTTON, TRAVEL_BUTTON);
+				.last(MINE_BUTTON,SKATE_BUTTON , PHONE_BUTTON, TRAVEL_BUTTON, SELLORE_BUTTON);
 		back_cancel_paginator = new KeyboardPaginator().collect(BACK_BUTTON, CANCEL_BUTTON);
 		cancel_paginator = new KeyboardPaginator().collect(CANCEL_BUTTON);
 		//here
@@ -294,7 +296,7 @@ public class Bot extends TelegramLongPollingBot
 		for (long id : expires)
 		{
 			System.out.printf("Find expiration notification fired for player %s\n", playerDAO.get_by_id(id).getUsername());
-			sendMsg(id, "⭐ Вы снова можете искать редкие предметы!");
+			sendMsg(id, "\uD83D\uDD2E Вы снова можете искать редкие предметы!");
 			playerDAO.get_by_id(id).findExpiration = null;
 		}
 	}

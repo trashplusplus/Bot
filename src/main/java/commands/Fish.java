@@ -24,9 +24,11 @@ public class Fish extends Command
 		int limitSpace;
 		Item backpack = itemDAO.get_by_name("Рюкзак");
 
+
+
 		if (player.getInventory().getItems().contains(backpack))
 		{
-			limitSpace = 25;
+			limitSpace = 30;
 		}
 		else
 		{

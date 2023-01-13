@@ -71,7 +71,7 @@ public class Inventory
 
 	void change_capacity()
 	{
-		inventory_capacity = inventory.stream().anyMatch(i -> i.getTitle().equals("Рюкзак")) ? 25 : 20;
+		inventory_capacity = inventory.stream().anyMatch(i -> i.getTitle().equals("Рюкзак")) ? 30 : 20;
 	}
 
 	static void capacity_check_handler(Object o_inventory, Item item)

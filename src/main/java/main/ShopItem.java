@@ -43,6 +43,6 @@ public class ShopItem
 
 	@Override
 	public String toString(){
-		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %s | Продавец: `%s` \n", item.getEmojiTitle(), cost, seller.getUsername());
+		return String.format("\uD83C\uDFA9 Товар `%s` | Цена: %s | Продавец: %s \n", item.getEmojiTitle(), cost, seller.getFormattedUsernameWithTelegramFormatting());
 	}
 }
